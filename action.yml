@@ -3,7 +3,7 @@ description: 'Provide a description here'
 author: 'Your name or organization here'
 inputs:
   github-token:
-    description: GitHub repository token for publishing inline lint annotations. Should be ${{secrets.GITHUB_TOKEN}}.
+    description: GitHub repository token for publishing inline lint annotations. Should be secrets.GITHUB_TOKEN.
     required: true
 runs:
   using: 'node12'
