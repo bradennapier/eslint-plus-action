@@ -6,5 +6,7 @@ inputs:
     description: GitHub repository token for publishing inline lint annotations. Should be secrets.GITHUB_TOKEN.
     required: true
 runs:
-  using: 'node12'
-  main: 'lib/run.js'
+  using: docker
+  image: Dockerfile
+  args:
+  - "${{ inputs.github-token }}"
