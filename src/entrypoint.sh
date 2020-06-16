@@ -18,8 +18,8 @@ cd "${2:-.}" || echo "source root not found"
 [ -f package-lock.json ] && npm install
 
 pushd /action
-[ -f yarn.lock ] && yarn install
-[ -f package-lock.json ] && npm install
+[ -f yarn.lock ] && yarn install && yarn build
+[ -f package-lock.json ] && npm install && npm run build
 popd
 
 NODE_PATH=node_modules GITHUB_TOKEN="${GITHUB_TOKEN:-${1:-.}}" SOURCE_ROOT=${2:-.} node /action/lib/run.js
