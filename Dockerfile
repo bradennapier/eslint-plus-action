@@ -6,4 +6,4 @@ LABEL com.github.actions.icon="code"
 LABEL com.github.actions.color="yellow"
 RUN apt install make gcc g++ python git
 COPY lib /action/lib
-ENTRYPOINT ["/action/lib/entrypoint.sh"]
+ENTRYPOINT ["/action/entrypoint.sh"]
