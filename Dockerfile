@@ -5,5 +5,5 @@ LABEL com.github.actions.description="Lint your Javascript projects with inline 
 LABEL com.github.actions.icon="code"
 LABEL com.github.actions.color="yellow"
 RUN apt install make gcc g++ python git
-COPY lib /action/lib
+COPY . /action
 ENTRYPOINT ["/action/entrypoint.sh"]
