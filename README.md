@@ -116,3 +116,10 @@ jobs:
 <p align="center">
   <img src="docs/img/prcomment.png" width="100%" title="eslint-plus-action-pr-comment">
 </p>
+
+## Credits
+
+This action was adapted from other actions which didn't quite work for me but were close.  So special thanks to them for helping me get here.
+
+- https://github.com/marketplace/actions/eslint-annotate
+- https://github.com/marketplace/actions/eslint-action
