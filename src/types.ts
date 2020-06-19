@@ -12,6 +12,7 @@ export type GithubContext = typeof github['context'];
 export type ActionData = {
   sha: string;
   prID: number | undefined;
+  htmlUrl: string | undefined;
 
   includeGlob: string[];
   ignoreGlob: string[];
