@@ -53,19 +53,19 @@ export async function lintChangedFiles(
       },
     });
   }
-
+  const summary = `
+|     Type     |       Occurrences       |            Fixable           |
+| ------------ | ----------------------- | ---------------------------- | 
+| **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
+| **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
+  `;
   await updateCheck({
     conclusion: state.errorCount > 0 ? 'failure' : 'success',
     status: 'completed',
     completed_at: new Date().toISOString(),
     output: {
       title: 'Checks Complete',
-      summary: `
-|     Type     |       Occurrences       |            Fixable           |
-| ------------ | ----------------------- | ---------------------------- | 
-| **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
-| **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
-`,
+      summary,
     },
     actions:
       state.fixableErrorCount > 0 || state.fixableWarningCount > 0
@@ -80,14 +80,24 @@ export async function lintChangedFiles(
           ]
         : undefined,
   });
-  // client.repos.getContent({
+  if (data.prID) {
+    await client.issues.createComment({
+      owner: OWNER,
+      repo: REPO,
+      issue_number: data.prID,
+      body: `
+## Eslint Summary
 
-  // })
-  await client.repos.createOrUpdateFileContents({
-    owner: OWNER,
-    repo: REPO,
-    path: 'src/test.md',
-    message: 'Commit Message',
-    content: Buffer.from('Hello').toString('base64'),
-  });
+${summary}
+      `,
+    });
+  }
+
+  // await client.repos.createOrUpdateFileContents({
+  //   owner: OWNER,
+  //   repo: REPO,
+  //   path: 'src/test.md',
+  //   message: 'Commit Message',
+  //   content: Buffer.from('Hello').toString('base64'),
+  // });
 }
