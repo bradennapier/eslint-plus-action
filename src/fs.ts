@@ -62,19 +62,26 @@ async function* getFilesFromPR(
       cursor = result.endCursor;
     } catch (err) {
       core.error(err);
-      core.setFailed('Error occurred getting changed files.');
-      break;
+      throw err;
     }
   }
 }
 
-async function getFilesFromCommit(
+async function* getFilesFromCommit(
   client: Octokit,
   data: ActionData,
-): Promise<string[][]> {
-  const files = await fetchFilesBatchCommit(client, data);
-  const filtered = await filterFiles(files, data);
-  return [filtered];
+): AsyncGenerator<string[]> {
+  try {
+    const files = await fetchFilesBatchCommit(client, data);
+    const filtered = await filterFiles(files, data);
+
+    while (filtered.length > 0) {
+      yield filtered.splice(0, 50);
+    }
+  } catch (err) {
+    core.error(err);
+    throw err;
+  }
 }
 
 function hasPR(data: ActionData | ActionDataWithPR): data is ActionDataWithPR {
@@ -87,7 +94,7 @@ function hasPR(data: ActionData | ActionDataWithPR): data is ActionDataWithPR {
 export async function getChangedFiles(
   client: Octokit,
   data: ActionData,
-): Promise<string[][] | AsyncGenerator<string[]>> {
+): Promise<AsyncGenerator<string[]>> {
   if (hasPR(data)) {
     return getFilesFromPR(client, data);
   }

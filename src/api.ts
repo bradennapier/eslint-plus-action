@@ -1,6 +1,6 @@
 import * as core from '@actions/core';
 
-import { PrResponse, Octokit, ActionData } from './types';
+import { PrResponse, Octokit, ActionData, ExpectedUpdateParams } from './types';
 import { NAME, OWNER, REPO } from './constants';
 
 export async function fetchFilesBatchPR(
@@ -20,7 +20,7 @@ export async function fetchFilesBatchPR(
       ) {
         repository(owner: $owner, name: $repo) {
           pullRequest(number: $prNumber) {
-            files(first: 100, after: $startCursor) {
+            files(first: 50, after: $startCursor) {
               pageInfo {
                 hasNextPage
                 endCursor
@@ -91,13 +91,14 @@ export async function fetchFilesBatchCommit(
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function createCheck(
   client: Octokit,
   data: ActionData,
   owner: string = OWNER,
   repo: string = REPO,
-) {
+): Promise<
+  (params: Partial<ExpectedUpdateParams>) => ReturnType<typeof updateCheck>
+> {
   const result = await client.checks.create({
     name: NAME,
     head_sha: data.sha,
@@ -106,5 +107,27 @@ export async function createCheck(
     owner,
     repo,
   });
+  console.log('Check Created: ', result);
+  return (params: Partial<ExpectedUpdateParams>) =>
+    updateCheck(client, result.data.id, owner, repo, params);
+}
+
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+export async function updateCheck(
+  client: Octokit,
+  checkID: number,
+  owner: string,
+  repo: string,
+  params: Partial<ExpectedUpdateParams>,
+) {
+  const result = await client.checks.update({
+    name: NAME,
+    check_run_id: checkID,
+    status: 'in_progress',
+    owner,
+    repo,
+    ...params,
+  });
+  console.log('Check Updated: ', result);
   return result;
 }
