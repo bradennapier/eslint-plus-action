@@ -3,57 +3,92 @@ import * as core from '@actions/core';
 import { PrResponse, Octokit, ActionData, ExpectedUpdateParams } from './types';
 import { NAME, OWNER, REPO } from './constants';
 
+// export async function fetchFilesBatchPR(
+//   client: Octokit,
+//   prNumber: number,
+//   startCursor?: string,
+//   owner: string = OWNER,
+//   repo: string = REPO,
+// ): Promise<PrResponse> {
+//   const { repository } = await client.graphql(
+//     `
+//       query ChangedFilesBatch(
+//         $owner: String!
+//         $repo: String!
+//         $prNumber: Int!
+//         $startCursor: String
+//       ) {
+//         repository(owner: $owner, name: $repo) {
+//           pullRequest(number: $prNumber) {
+//             files(first: 50, after: $startCursor) {
+//               pageInfo {
+//                 hasNextPage
+//                 endCursor
+//               }
+//               totalCount
+//               edges {
+//                 cursor
+//                 node {
+//                   path
+//                 }
+//               }
+//             }
+//           }
+//         }
+//       }
+//     `,
+//     { owner, repo, prNumber, startCursor },
+//   );
+
+//   const pr = repository.pullRequest;
+
+//   if (!pr || !pr.files) {
+//     core.info(`No PR or PR files detected`);
+//     return { files: [] };
+//   }
+
+//   core.info(
+//     `PR with files detected: ${pr.files.edges.map((e: any) => e.node.path)}`,
+//   );
+
+//   return {
+//     ...pr.files.pageInfo,
+//     files: pr.files.edges.map((e: { node: { path: string } }) => e.node.path),
+//   };
+// }
+
 export async function fetchFilesBatchPR(
   client: Octokit,
   prNumber: number,
-  startCursor?: string,
+  page?: number,
   owner: string = OWNER,
   repo: string = REPO,
 ): Promise<PrResponse> {
-  const { repository } = await client.graphql(
-    `
-      query ChangedFilesBatch(
-        $owner: String!
-        $repo: String!
-        $prNumber: Int!
-        $startCursor: String
-      ) {
-        repository(owner: $owner, name: $repo) {
-          pullRequest(number: $prNumber) {
-            files(first: 50, after: $startCursor) {
-              pageInfo {
-                hasNextPage
-                endCursor
-              }
-              totalCount
-              edges {
-                cursor
-                node {
-                  path
-                }
-              }
-            }
-          }
-        }
-      }
-    `,
-    { owner, repo, prNumber, startCursor },
-  );
+  const result = await client.pulls.listFiles({
+    owner,
+    repo,
+    pull_number: prNumber,
+    per_page: 50,
+    page: page || 1,
+  });
 
-  const pr = repository.pullRequest;
-
-  if (!pr || !pr.files) {
+  if (!result || !result.data) {
     core.info(`No PR or PR files detected`);
-    return { files: [] };
+    return { files: [], data: [] };
   }
 
+  console.log('Result: ', JSON.stringify(result, null, 2));
+
   core.info(
-    `PR with files detected: ${pr.files.edges.map((e: any) => e.node.path)}`,
+    `PR with files detected: ${result.data
+      .map((file) => file.filename)
+      .join(', ')}`,
   );
 
   return {
-    ...pr.files.pageInfo,
-    files: pr.files.edges.map((e: { node: { path: string } }) => e.node.path),
+    nextPage: (page || 1) + 1,
+    files: result.data.map((file) => file.filename),
+    data: result.data,
   };
 }
 

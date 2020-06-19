@@ -30,14 +30,14 @@ async function* getFilesFromPR(
   client: Octokit,
   data: Omit<ActionData, 'prID'> & { prID: number },
 ): AsyncGenerator<string[]> {
-  let cursor: string | undefined = undefined;
+  let page = 1;
 
   while (true) {
     try {
       const result: PrResponse = await fetchFilesBatchPR(
         client,
         data.prID,
-        cursor,
+        page,
       );
 
       if (!result || !result.files.length) {
@@ -48,9 +48,9 @@ async function* getFilesFromPR(
 
       yield files;
 
-      if (!result.hasNextPage) break;
+      if (!result.nextPage) break;
 
-      cursor = result.endCursor;
+      page = result.nextPage;
     } catch (err) {
       core.error(err);
       throw err;

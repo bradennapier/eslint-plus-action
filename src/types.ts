@@ -1,9 +1,9 @@
 import * as github from '@actions/github';
 
 export type PrResponse = {
-  endCursor?: string;
-  hasNextPage?: boolean;
+  nextPage?: number;
   files: string[];
+  data: any[];
 };
 
 export type Octokit = ReturnType<typeof github['getOctokit']>;
