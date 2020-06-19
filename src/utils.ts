@@ -105,8 +105,7 @@ export function processLintResults(
         start_line: line,
         end_line: line,
         annotation_level: level,
-        title: ruleId,
-        message: `${message}${
+        message: `[${ruleId}] ${message}${
           suggestions && suggestions.length > 0
             ? `
 
