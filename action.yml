@@ -1,10 +1,43 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'ESLint++'
+description: 'Runs ESLint against changed files with customization, issue commenting, and more'
+author: 'Braden R. Napier'
 inputs:
   github-token:
-    description: GitHub repository token for publishing inline lint annotations. Should be secrets.GITHUB_TOKEN.
+    description: 'GitHub repository token for publishing inline lint annotations. Should be secrets.GITHUB_TOKEN.'
     required: true
+  annotateWarnings:
+    description: 'By setting this to "false", only errors will be annotated'
+    required: false
+  issueSummary:
+    description: 'Should the bot provide a summary of the results as a comment? Defaults to true'
+    required: false
+  extensions:
+    description: 'Optionally provide a comma-separated list of extensions (checks js, jsx, ts, tsx by default)'
+    required: false
+  includeGlob:
+    description: 'Optionally provide a glob to include. Will include all if not provided'
+    required: false
+  ignoreGlob:
+    description: 'Optionally provide ignore pattern to use.  Will also use eslintignore unless specified'
+    required: false
+  configFile:
+    description: 'A config file to use, defaults to the default config file at process.cwd()'
+    required: false
+  rulePaths:
+    description: 'Optional comma-separated list of rule paths to use'
+    required: false
+  errorOnUnmatchedPattern:
+    description: 'Throw error if unmatched pattern is seen?  Defaults to false'
+    required: false
+  useEslintrc:
+    description: 'Use eslintrc?  Defaults to true'
+    required: false
+  useEslintIgnore:
+    description: 'Set to false to not use eslintignore. Defaults to true'
+    required: false
+  fix:
+    description: 'Run with --fix? Defaults to false'
+    required: false
 runs:
   using: docker
   image: Dockerfile
