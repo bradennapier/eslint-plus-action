@@ -103,7 +103,7 @@ ${[...state.rulesSummaries]
     ([, summary]) =>
       `## [${summary.level}] ${
         summary.ruleUrl
-          ? `[${summary.ruleId}](${summary.ruleUrl})]`
+          ? `[${summary.ruleId}](${summary.ruleUrl})`
           : summary.ruleId
       } 
 

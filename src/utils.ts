@@ -88,8 +88,10 @@ export function processLintResults(
         continue;
       }
 
-      console.log(ruleId, suggestions, result, lintMessage);
-
+      console.log(ruleId, result, lintMessage);
+      if (suggestions) {
+        console.log(JSON.stringify(suggestions, null, 2));
+      }
       const annotation: ChecksUpdateParamsOutputAnnotations = {
         path: filePath.replace(`${GITHUB_WORKSPACE}/`, ''),
         start_line: line,
