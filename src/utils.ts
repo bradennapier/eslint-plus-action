@@ -88,7 +88,7 @@ export function processLintResults(
         continue;
       }
 
-      console.log(ruleId, suggestions);
+      console.log(ruleId, suggestions, result, lintMessage);
 
       const annotation: ChecksUpdateParamsOutputAnnotations = {
         path: filePath.replace(`${GITHUB_WORKSPACE}/`, ''),
