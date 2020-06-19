@@ -66,3 +66,9 @@ yarn && yarn build
 # or if you use npm it will run
 npm install && npm run build
 ```
+
+## More Previews
+
+<p align="center">
+  <img src="docs/img/prcomment.png" width="100%" title="eslint-plus-action-pr-comment">
+</p>
