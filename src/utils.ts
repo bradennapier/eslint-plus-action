@@ -90,7 +90,7 @@ export function processLintResults(
 
       const ruleUrl = engine.getRules().get(ruleId)?.meta?.docs?.url;
 
-      console.log('Rule: ', ruleUrl);
+      console.log('Rule: ', ruleUrl, suggestions);
 
       annotations.push({
         path: filePath.replace(`${GITHUB_WORKSPACE}/`, ''),
