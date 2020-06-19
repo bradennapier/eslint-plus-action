@@ -96,10 +96,10 @@ export async function lintChangedFiles(
     });
 
     // const actionIssues = issues.data.filter(issue => issue.user.id)
-    console.log('Issues: ', JSON.stringify(issues.data, null, 2));
+    // console.log('Issues: ', JSON.stringify(issues.data, null, 2));
 
-    const checkUrl = data.htmlUrl
-      ? `${data.htmlUrl}/checks?check_run_id=${checkResult.data.id}`
+    const checkUrl = data.prHtmlUrl
+      ? `${data.prHtmlUrl}/checks?check_run_id=${checkResult.data.id}`
       : checkResult.data.html_url;
 
     const commentResult = await client.issues.createComment({
@@ -130,7 +130,12 @@ ${[...state.rulesSummaries]
 
 > ${summary.message}
 
-${summary.annotations.map((annotation) => `- ${annotation.path}`).join('\n')}`,
+${summary.annotations
+  .map(
+    (annotation) =>
+      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${annotation.path})`,
+  )
+  .join('\n')}`,
   )
   .join('\n\n---\n\n')}
       `,
@@ -140,7 +145,7 @@ ${summary.annotations.map((annotation) => `- ${annotation.path}`).join('\n')}`,
 
     const userIssues = issues.data.filter((issue) => issue.user.id === userId);
 
-    console.log(userIssues);
+    // console.log(userIssues);
 
     if (userIssues.length > 0) {
       await Promise.all(

@@ -18,7 +18,8 @@ async function run(): Promise<void> {
     const data: ActionData = {
       prID: github.context.payload.pull_request?.number,
       sha: context.payload.pull_request?.head.sha || context.sha,
-      htmlUrl: context.payload.pull_request?.html_url,
+      repoHtmlUrl: context.payload.repository?.html_url,
+      prHtmlUrl: context.payload.pull_request?.html_url,
       includeGlob: processArrayInput('includeGlob', []),
       ignoreGlob: processArrayInput('ignoreGlob', []),
 

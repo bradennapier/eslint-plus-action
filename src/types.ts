@@ -1,9 +1,9 @@
 import * as github from '@actions/github';
 
 export type PrResponse = {
-  nextPage?: number;
+  endCursor?: string;
+  hasNextPage?: boolean;
   files: string[];
-  data: any[];
 };
 
 export type Octokit = ReturnType<typeof github['getOctokit']>;
@@ -12,7 +12,8 @@ export type GithubContext = typeof github['context'];
 export type ActionData = {
   sha: string;
   prID: number | undefined;
-  htmlUrl: string | undefined;
+  prHtmlUrl: string | undefined;
+  repoHtmlUrl: string | undefined;
 
   includeGlob: string[];
   ignoreGlob: string[];
