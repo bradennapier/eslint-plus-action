@@ -60,6 +60,7 @@ export async function lintChangedFiles(
 | **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
 | **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
   `;
+  console.log('Summary Length: ', summary.length)
   const checkResult = await updateCheck({
     conclusion: state.errorCount > 0 ? 'failure' : 'success',
     status: 'completed',
@@ -74,8 +75,8 @@ export async function lintChangedFiles(
             {
               label: `Fix ${
                 state.fixableErrorCount + state.fixableWarningCount
-              } Issues (UNFINISHED)`,
-              description: 'Run eslint --fix on the fixable errors & warnings?',
+              } Issues`,
+              description: '[UNFINISHED] Run eslint --fix on the fixable errors & warnings?',
               identifier: 'fix',
             },
           ]
