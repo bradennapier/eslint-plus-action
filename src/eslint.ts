@@ -88,6 +88,6 @@ export async function lintChangedFiles(
     repo: REPO,
     path: 'src/test.md',
     message: 'Commit Message',
-    content: 'Hello',
+    content: Buffer.from('Hello').toString('base64'),
   });
 }
