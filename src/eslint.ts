@@ -32,7 +32,6 @@ export async function lintChangedFiles(
     summary: '',
     rulesSummaries: new Map(),
   };
-  let errorCount = 0;
 
   for await (const changed of await getChangedFiles(client, data)) {
     console.log('[CHANGED BATCH] : Files : ', changed);
@@ -43,31 +42,32 @@ export async function lintChangedFiles(
 
     const results = await eslint.executeOnFiles(changed);
 
-    console.log(results);
-
     const output = processLintResults(eslint, results, state);
-
-    console.log(output);
-
-    errorCount += output.errorCount;
 
     await updateCheck({
       status: 'in_progress',
       output: {
         title: NAME,
-        summary: `${errorCount} error(s) found so far`,
+        summary: `${state.errorCount} error(s) found so far`,
         annotations: output.annotations,
       },
     });
   }
 
   await updateCheck({
-    conclusion: errorCount > 0 ? 'failure' : 'success',
+    conclusion: state.errorCount > 0 ? 'failure' : 'success',
     status: 'completed',
     completed_at: new Date().toISOString(),
     output: {
       title: NAME,
-      summary: `Checks Complete: ${errorCount} error(s) found`,
+      summary: `
+        ## Checks Complete
+
+        |     Type     |       Occurrences       |            Fixable           |
+        | ------------ | ----------------------- | ---------------------------- | 
+        | **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
+        | **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
+      `,
     },
   });
   // client.repos.getContent({

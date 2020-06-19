@@ -69,7 +69,10 @@ export function processLintResults(
   const { results } = report;
   const annotations: ChecksUpdateParamsOutputAnnotations[] = [];
 
-  let errorCount = 0;
+  state.errorCount += report.errorCount;
+  state.warningCount += report.warningCount;
+  state.fixableErrorCount += report.fixableErrorCount;
+  state.fixableWarningCount += report.fixableWarningCount;
 
   for (const result of results) {
     const { filePath, messages } = result;
