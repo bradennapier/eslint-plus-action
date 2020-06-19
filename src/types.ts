@@ -19,7 +19,7 @@ export type ActionData = {
   eslint: {
     rulePaths: string[];
     extensions: string[];
-    overrideConfigFile: string | undefined;
+    configFile: string | undefined;
     followSymbolicLinks: boolean;
     errorOnUnmatchedPattern: boolean;
     useEslintIgnore: boolean;

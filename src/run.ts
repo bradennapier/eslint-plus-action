@@ -38,8 +38,7 @@ async function run(): Promise<void> {
         useEslintIgnore: processBooleanInput('useEslintIgnore', true),
         ignorePath: processInput('ignorePath', null) || undefined,
         useEslintrc: processBooleanInput('useEslintrc', true),
-        overrideConfigFile:
-          processInput('overrideConfigFile', null) || undefined,
+        configFile: processInput('configFile', null) || undefined,
         fix: processBooleanInput('useEslintrc', false),
         fixTypes:
           (processArrayInput('fixTypes', null) as (

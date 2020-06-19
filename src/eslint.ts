@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import { ESLint, Linter } from 'eslint';
+import { CLIEngine } from 'eslint';
 import { getChangedFiles } from './fs';
 import { Octokit, ActionData } from './types';
 import { createCheck } from './api';
@@ -11,7 +11,7 @@ export async function lintChangedFiles(
   client: Octokit,
   data: ActionData,
 ): Promise<void> {
-  const eslint = new ESLint({
+  const eslint = new CLIEngine({
     extensions: data.eslint.extensions,
     ignorePath: data.eslint.useEslintIgnore ? '.gitignore' : undefined,
     ignore: data.eslint.useEslintIgnore,
@@ -19,8 +19,7 @@ export async function lintChangedFiles(
     rulePaths: data.eslint.rulePaths,
     errorOnUnmatchedPattern: data.eslint.errorOnUnmatchedPattern,
     fix: data.eslint.fix,
-    fixTypes: data.eslint.fixTypes,
-    overrideConfigFile: data.eslint.overrideConfigFile,
+    configFile: data.eslint.configFile,
   });
 
   const updateCheck = await createCheck(client, data);
@@ -34,25 +33,11 @@ export async function lintChangedFiles(
       break;
     }
 
-    const results = await eslint.lintFiles(changed);
+    const results = await eslint.executeOnFiles(changed);
 
     console.log(results);
 
-    const output = processLintResults(results);
-
-    if (core.isDebug()) {
-      results.forEach((result) => {
-        if (result.messages.length) {
-          console.log(result.filePath);
-          const linter = new Linter({ cwd: path.dirname(result.filePath) });
-          const rules = linter.getRules();
-          result.messages.forEach((message) => {
-            console.log(rules.get(message.ruleId as string));
-            console.log(JSON.stringify(message, null, 2));
-          });
-        }
-      });
-    }
+    const output = processLintResults(eslint, results);
 
     console.log(output);
 

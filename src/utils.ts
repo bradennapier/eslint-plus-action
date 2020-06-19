@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import { ESLint } from 'eslint';
+import { CLIEngine } from 'eslint';
 import {
   ChecksUpdateParamsOutputAnnotations,
   ChecksUpdateParamsOutput,
@@ -58,11 +58,13 @@ export const processInput = <D>(key: string, defaultValue?: D): string | D => {
 };
 
 export function processLintResults(
-  results: ESLint.LintResult[],
+  engine: CLIEngine,
+  report: CLIEngine.LintReport,
 ): {
   annotations: ChecksUpdateParamsOutput['annotations'];
   errorCount: number;
 } {
+  const { results } = report;
   const annotations: ChecksUpdateParamsOutputAnnotations[] = [];
 
   let errorCount = 0;
@@ -85,6 +87,10 @@ export function processLintResults(
       if (severity === 2) {
         errorCount++;
       }
+
+      const rule = engine.getRules().get(ruleId);
+
+      console.log('Rule: ', rule);
 
       annotations.push({
         path: filePath.replace(`${GITHUB_WORKSPACE}/`, ''),
