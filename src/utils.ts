@@ -88,7 +88,7 @@ export function processLintResults(
         continue;
       }
 
-      console.log(ruleId, result, lintMessage);
+      // console.log(ruleId, result, lintMessage);
       if (suggestions) {
         console.log(JSON.stringify(suggestions, null, 2));
       }

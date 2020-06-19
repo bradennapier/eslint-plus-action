@@ -107,7 +107,7 @@ export async function createCheck(
     owner,
     repo,
   });
-  console.log('Check Created: ', result);
+  // console.log('Check Created: ', result);
   return (params: Partial<ExpectedUpdateParams>) =>
     updateCheck(client, result.data.id, owner, repo, params);
 }
@@ -128,6 +128,6 @@ export async function updateCheck(
     repo,
     ...params,
   });
-  console.log('Check Updated: ', result);
+  // console.log('Check Updated: ', result);
   return result;
 }

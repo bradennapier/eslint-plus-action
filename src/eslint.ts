@@ -96,21 +96,25 @@ export async function lintChangedFiles(
     });
 
     // const actionIssues = issues.data.filter(issue => issue.user.id)
-    console.log(issues);
+    console.log('Issues: ', JSON.stringify(issues.data, null, 2));
+
+    const checkUrl = data.htmlUrl
+      ? `${data.htmlUrl}/checks?check_run_id=${checkResult.data.id}`
+      : checkResult.data.html_url;
 
     await client.issues.createComment({
       owner: OWNER,
       repo: REPO,
       issue_number: data.prID,
       body: `
-## [Eslint Summary](${checkResult.data.html_url})
+## [Eslint Summary](${checkUrl})
 
 ${summary}
 
 - **Result:**      ${checkResult.data.conclusion}
-- **Annotations:** [${checkResult.data.output.annotations_count} total](${
-        checkResult.data.html_url
-      })
+- **Annotations:** [${
+        checkResult.data.output.annotations_count
+      } total](${checkUrl})
 
 ---
 
