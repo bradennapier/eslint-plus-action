@@ -4,6 +4,7 @@ import {
   ChecksUpdateParamsOutputAnnotations,
   ChecksUpdateParamsOutput,
   LintState,
+  ActionData,
 } from './types';
 import { GITHUB_WORKSPACE } from './constants';
 
@@ -62,6 +63,7 @@ export function processLintResults(
   engine: CLIEngine,
   report: CLIEngine.LintReport,
   state: LintState,
+  data: ActionData,
 ): {
   annotations: ChecksUpdateParamsOutput['annotations'];
 } {
@@ -88,7 +90,13 @@ export function processLintResults(
         continue;
       }
 
-      console.log(ruleId, result, lintMessage);
+      const level = severity === 2 ? 'failure' : 'warning';
+
+      if (!data.annotateWarnings && level !== 'failure') {
+        continue;
+      }
+
+      // console.log(ruleId, result, lintMessage);
       // if (suggestions) {
       //   console.log(JSON.stringify(suggestions, null, 2));
       // }
@@ -96,7 +104,7 @@ export function processLintResults(
         path: filePath.replace(`${GITHUB_WORKSPACE}/`, ''),
         start_line: line,
         end_line: line,
-        annotation_level: severity === 2 ? 'failure' : 'warning',
+        annotation_level: level,
         message: `[${ruleId}] ${message}${
           suggestions && suggestions.length > 0
             ? `

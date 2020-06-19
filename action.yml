@@ -8,6 +8,9 @@ inputs:
   annotateWarnings:
     description: 'By setting this to "false", only errors will be annotated'
     required: false
+  issueSummary:
+    description: 'Should the bot provide a summary of the results as a comment? Defaults to true'
+    required: false
   extensions:
     description: 'Optionally provide a comma-separated list of extensions (checks js, jsx, ts, tsx by default)'
     required: false

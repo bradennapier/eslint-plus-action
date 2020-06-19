@@ -18,6 +18,9 @@ export type ActionData = {
   includeGlob: string[];
   ignoreGlob: string[];
 
+  annotateWarnings: boolean;
+  issueSummary: boolean;
+
   eslint: {
     rulePaths: string[];
     extensions: string[];

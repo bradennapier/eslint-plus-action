@@ -42,7 +42,7 @@ export async function lintChangedFiles(
 
     const results = await eslint.executeOnFiles(changed);
 
-    const output = processLintResults(eslint, results, state);
+    const output = processLintResults(eslint, results, state, data);
 
     await updateCheck({
       status: 'in_progress',
@@ -80,7 +80,7 @@ export async function lintChangedFiles(
           ]
         : undefined,
   });
-  if (data.prID) {
+  if (data.prID && data.issueSummary) {
     // const annotations = await client.checks.listAnnotations({
     //   check_run_id: checkResult.data.id,
     //   owner: OWNER,
@@ -137,7 +137,7 @@ ${[...state.rulesSummaries]
 ${summary.annotations
   .map(
     (annotation) =>
-      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${annotation.path}#L${annotation.start_line}-L${annotation.end_line}) Line ${annotation.start_line}`,
+      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${annotation.path}#L${annotation.start_line}-L${annotation.end_line}) Line ${annotation.start_line} - ${annotation.message}`,
   )
   .join('\n')}`,
   )

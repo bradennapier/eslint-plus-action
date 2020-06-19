@@ -22,7 +22,8 @@ async function run(): Promise<void> {
       prHtmlUrl: context.payload.pull_request?.html_url,
       includeGlob: processArrayInput('includeGlob', []),
       ignoreGlob: processArrayInput('ignoreGlob', []),
-
+      annotateWarnings: processBooleanInput('annotateWarnings', true),
+      issueSummary: processBooleanInput('issueSummary', true),
       eslint: {
         errorOnUnmatchedPattern: processBooleanInput(
           'errorOnUnmatchedPattern',
