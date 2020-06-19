@@ -86,7 +86,7 @@ export async function lintChangedFiles(
   await client.repos.createOrUpdateFileContents({
     owner: OWNER,
     repo: REPO,
-    path: path.join(process.cwd(), 'src/test.md'),
+    path: 'src/test.md',
     message: 'Commit Message',
     content: 'Hello',
   });

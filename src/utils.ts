@@ -98,9 +98,10 @@ export function processLintResults(
         message: `[${ruleId}] ${message}${
           suggestions && suggestions.length > 0
             ? `
+
 ${suggestions
-  .map((suggestion) => `- [SUGGESTION] | ${suggestion.desc}`)
-  .join('\n\n')}
+  .map((suggestion) => `* [SUGGESTION] ${suggestion.desc}`)
+  .join('\n')}
 `
             : ''
         }`,
