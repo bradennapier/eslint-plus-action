@@ -31,7 +31,6 @@ export type ActionData = {
     ignorePath: string | undefined;
     useEslintrc: boolean;
     fix: boolean;
-    fixTypes: undefined | ('problem' | 'suggestion' | 'layout' | undefined)[];
   };
 };
 

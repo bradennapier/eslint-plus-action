@@ -105,12 +105,13 @@ export function processLintResults(
         start_line: line,
         end_line: line,
         annotation_level: level,
-        message: `[${ruleId}] ${message}${
+        title: ruleId,
+        message: `${message}${
           suggestions && suggestions.length > 0
             ? `
 
 ${suggestions
-  .map((suggestion) => `* [SUGGESTION] ${suggestion.desc}`)
+  .map((suggestion) => `    * [SUGGESTION] ${suggestion.desc}`)
   .join('\n')}
 `
             : ''

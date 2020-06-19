@@ -42,13 +42,6 @@ async function run(): Promise<void> {
         useEslintrc: processBooleanInput('useEslintrc', true),
         configFile: processInput('configFile', null) || undefined,
         fix: processBooleanInput('useEslintrc', false),
-        fixTypes:
-          (processArrayInput('fixTypes', null) as (
-            | 'problem'
-            | 'suggestion'
-            | 'layout'
-            | undefined
-          )[]) || undefined,
       },
     };
 

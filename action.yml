@@ -20,9 +20,6 @@ inputs:
   ignoreGlob:
     description: 'Optionally provide ignore pattern to use.  Will also use eslintignore unless specified'
     required: false
-  followSymbolicLinks:
-    description: 'Optionally provide "false" to indicate we should never follow symbolic links'
-    required: false
   configFile:
     description: 'A config file to use, defaults to the default config file at process.cwd()'
     required: false
@@ -40,9 +37,6 @@ inputs:
     required: false
   fix:
     description: 'Run with --fix? Defaults to false'
-    required: false
-  fixTypes:
-    description: 'When using fix, optionally provide the types to fix, default is null (ex: "problem, suggestion, layout")'
     required: false
 runs:
   using: docker
