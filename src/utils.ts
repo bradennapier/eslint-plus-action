@@ -3,6 +3,7 @@ import { CLIEngine } from 'eslint';
 import {
   ChecksUpdateParamsOutputAnnotations,
   ChecksUpdateParamsOutput,
+  LintState,
 } from './types';
 import { GITHUB_WORKSPACE } from './constants';
 
@@ -60,6 +61,7 @@ export const processInput = <D>(key: string, defaultValue?: D): string | D => {
 export function processLintResults(
   engine: CLIEngine,
   report: CLIEngine.LintReport,
+  state: LintState,
 ): {
   annotations: ChecksUpdateParamsOutput['annotations'];
   errorCount: number;
@@ -89,7 +91,12 @@ export function processLintResults(
       }
 
       const ruleUrl = engine.getRules().get(ruleId)?.meta?.docs?.url;
-
+      if (!state.rulesSummaries.has(ruleId)) {
+        state.rulesSummaries.set(
+          ruleId,
+          `[${ruleUrl ? `[${ruleId}](${ruleUrl})` : ruleId}] ${message}`,
+        );
+      }
       console.log('Rule: ', ruleUrl, suggestions);
 
       annotations.push({
@@ -97,7 +104,7 @@ export function processLintResults(
         start_line: line,
         end_line: line,
         annotation_level: severity === 2 ? 'failure' : 'warning',
-        message: `[${ruleUrl ? `[${ruleId}](${ruleUrl})` : ruleId}] ${message}`,
+        message: `[${ruleId}] ${message}\n\nTest New Line?`,
       });
     }
   }

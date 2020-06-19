@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import { CLIEngine } from 'eslint';
 import { getChangedFiles } from './fs';
-import { Octokit, ActionData } from './types';
+import { Octokit, ActionData, LintState } from './types';
 import { createCheck } from './api';
 import { processLintResults } from './utils';
 import { NAME, OWNER, REPO } from './constants';
@@ -24,6 +24,14 @@ export async function lintChangedFiles(
 
   const updateCheck = await createCheck(client, data);
 
+  const state: LintState = {
+    errorCount: 0,
+    warningCount: 0,
+    fixableErrorCount: 0,
+    fixableWarningCount: 0,
+    summary: '',
+    rulesSummaries: new Map(),
+  };
   let errorCount = 0;
 
   for await (const changed of await getChangedFiles(client, data)) {
@@ -37,7 +45,7 @@ export async function lintChangedFiles(
 
     console.log(results);
 
-    const output = processLintResults(eslint, results);
+    const output = processLintResults(eslint, results, state);
 
     console.log(output);
 

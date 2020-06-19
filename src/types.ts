@@ -30,6 +30,15 @@ export type ActionData = {
   };
 };
 
+export type LintState = {
+  errorCount: number;
+  warningCount: number;
+  fixableErrorCount: number;
+  fixableWarningCount: number;
+  summary: string;
+  rulesSummaries: Map<string, string>;
+};
+
 type NotUndefined<T> = T extends undefined ? never : T;
 
 type UpdateParams = NotUndefined<Parameters<Octokit['checks']['update']>[0]>;
