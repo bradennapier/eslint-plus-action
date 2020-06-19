@@ -3,7 +3,7 @@
     <br/>
     <br/>
     <p align="center">
-      <img src="docs/img/annotation.png" width="600" title="eslint-plus-action">
+      <img src="docs/img/annotation.png" width="100%" title="eslint-plus-action">
     </p>
     <br />
     eslint-plus-action
