@@ -1,4 +1,4 @@
-name: 'ESLint++'
+name: 'ESLint Plus'
 description: 'Runs ESLint against changed files with customization, issue commenting, and more'
 author: 'Braden R. Napier'
 inputs:
