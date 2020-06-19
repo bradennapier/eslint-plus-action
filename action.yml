@@ -1,6 +1,9 @@
 name: 'ESLint Plus'
 description: 'Runs ESLint against changed files with customization, issue commenting, and more'
 author: 'Braden R. Napier'
+branding: 
+  icon: 'alert-triangle'
+  color: 'red'
 inputs:
   github-token:
     description: 'GitHub repository token for publishing inline lint annotations. Should be secrets.GITHUB_TOKEN.'
