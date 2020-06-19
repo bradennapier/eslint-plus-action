@@ -89,9 +89,9 @@ export function processLintResults(
       }
 
       // console.log(ruleId, result, lintMessage);
-      if (suggestions) {
-        console.log(JSON.stringify(suggestions, null, 2));
-      }
+      // if (suggestions) {
+      //   console.log(JSON.stringify(suggestions, null, 2));
+      // }
       const annotation: ChecksUpdateParamsOutputAnnotations = {
         path: filePath.replace(`${GITHUB_WORKSPACE}/`, ''),
         start_line: line,

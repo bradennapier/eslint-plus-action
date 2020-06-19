@@ -34,7 +34,7 @@ export async function lintChangedFiles(
   };
 
   for await (const changed of await getChangedFiles(client, data)) {
-    console.log('[CHANGED BATCH] : Files : ', changed);
+    // console.log('[CHANGED BATCH] : Files : ', changed);
 
     if (changed.length === 0) {
       break;
@@ -73,7 +73,7 @@ export async function lintChangedFiles(
             {
               label: `Fix ${
                 state.fixableErrorCount + state.fixableWarningCount
-              } Issues`,
+              } Issues (UNFINISHED)`,
               description: 'Run eslint --fix on the fixable errors & warnings?',
               identifier: 'fix',
             },
@@ -81,13 +81,13 @@ export async function lintChangedFiles(
         : undefined,
   });
   if (data.prID) {
-    const annotations = await client.checks.listAnnotations({
-      check_run_id: checkResult.data.id,
-      owner: OWNER,
-      repo: REPO,
-    });
+    // const annotations = await client.checks.listAnnotations({
+    //   check_run_id: checkResult.data.id,
+    //   owner: OWNER,
+    //   repo: REPO,
+    // });
 
-    console.log('Annotations: ', JSON.stringify(annotations.data, null, 2));
+    // console.log('Annotations: ', JSON.stringify(annotations.data, null, 2));
 
     const issues = await client.issues.listComments({
       issue_number: data.prID,

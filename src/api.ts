@@ -128,6 +128,6 @@ export async function updateCheck(
     repo,
     ...params,
   });
-  // console.log('Check Updated: ', result);
+  console.log('Check Updated: ', JSON.stringify(result, null, 2));
   return result;
 }
