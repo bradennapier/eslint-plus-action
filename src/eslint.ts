@@ -69,6 +69,18 @@ export async function lintChangedFiles(
         | **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
       `,
     },
+    actions:
+      state.fixableErrorCount > 0 || state.fixableWarningCount > 0
+        ? [
+            {
+              label: `Fix ${
+                state.fixableErrorCount + state.fixableWarningCount
+              } Issues`,
+              description: 'Run eslint --fix on the fixable errors & warnings?',
+              identifier: 'fix',
+            },
+          ]
+        : undefined,
   });
   // client.repos.getContent({
 
