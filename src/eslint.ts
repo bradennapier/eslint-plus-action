@@ -45,6 +45,7 @@ export async function lintChangedFiles(
     await updateCheck({
       status: 'in_progress',
       output: {
+        title: NAME,
         summary: `${errorCount} error(s) found so far`,
         annotations: output.annotations,
       },
