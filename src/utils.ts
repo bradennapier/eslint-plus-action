@@ -71,7 +71,7 @@ export function processLintResults(
     const { filePath, messages } = result;
 
     for (const lintMessage of messages) {
-      const { line, severity, ruleId, message } = lintMessage;
+      const { line, severity, ruleId, message, suggestions = [] } = lintMessage;
 
       core.debug(
         `Level ${severity} issue found on line ${line} [${ruleId}] ${message}`,

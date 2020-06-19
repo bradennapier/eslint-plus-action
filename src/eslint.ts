@@ -5,6 +5,7 @@ import { Octokit, ActionData } from './types';
 import { createCheck } from './api';
 import { processLintResults } from './utils';
 import { NAME } from './constants';
+import path from 'path';
 
 export async function lintChangedFiles(
   client: Octokit,
@@ -21,9 +22,6 @@ export async function lintChangedFiles(
     fixTypes: data.eslint.fixTypes,
     overrideConfigFile: data.eslint.overrideConfigFile,
   });
-
-  const linter = new Linter();
-  const rules = linter.getRules();
 
   const updateCheck = await createCheck(client, data);
 
@@ -46,7 +44,8 @@ export async function lintChangedFiles(
       results.forEach((result) => {
         if (result.messages.length) {
           console.log(result.filePath);
-
+          const linter = new Linter({ cwd: path.dirname(result.filePath) });
+          const rules = linter.getRules();
           result.messages.forEach((message) => {
             console.log(rules.get(message.ruleId as string));
             console.log(JSON.stringify(message, null, 2));

@@ -1656,7 +1656,7 @@ eslint-plugin-prettier@>=3.1.2, eslint-plugin-prettier@^3.1.4:
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
-eslint-rule-documentation@>=1.0.0:
+eslint-rule-documentation@>=1.0.0, eslint-rule-documentation@^1.0.23:
   version "1.0.23"
   resolved "https://registry.yarnpkg.com/eslint-rule-documentation/-/eslint-rule-documentation-1.0.23.tgz#4e0886145597a78d24524ec7e0cf18c6fedc23a8"
   integrity sha512-pWReu3fkohwyvztx/oQWWgld2iad25TfUdi6wvhhaDPIQjHU/pyvlKgXFw1kX31SQK2Nq9MH+vRDWB0ZLy8fYw==

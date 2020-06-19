@@ -28,6 +28,7 @@
     "@actions/core": "^1.2.0",
     "@actions/github": "^3.0.0",
     "@actions/glob": "^0.1.0",
+    "eslint-rule-documentation": "^1.0.23",
     "micromatch": "^4.0.2",
     "minimatch": "^3.0.4"
   },
