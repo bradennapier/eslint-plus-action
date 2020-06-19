@@ -109,11 +109,11 @@ ${suggestions
 
       const rule = state.rulesSummaries.get(ruleId);
       if (!rule) {
-        const ruleUrl = engine.getRules().get(ruleId)?.meta?.docs?.url;
+        const ruleDocs = engine.getRules().get(ruleId)?.meta?.docs;
         state.rulesSummaries.set(ruleId, {
-          ruleUrl,
+          ruleUrl: ruleDocs?.url,
           ruleId,
-          message,
+          message: ruleDocs?.description || '',
           level: severity === 2 ? 'failure' : 'warning',
           annotations: [annotation],
         });
