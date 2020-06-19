@@ -133,7 +133,7 @@ ${[...state.rulesSummaries]
 ${summary.annotations
   .map(
     (annotation) =>
-      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${annotation.path})`,
+      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${annotation.path}#L${annotation.start_line}-L${annotation.end_line})`,
   )
   .join('\n')}`,
   )
