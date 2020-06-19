@@ -61,12 +61,12 @@ export async function lintChangedFiles(
     output: {
       title: NAME,
       summary: `
-        ## Checks Complete
+## Checks Complete
 
-        |     Type     |       Occurrences       |            Fixable           |
-        | ------------ | ----------------------- | ---------------------------- | 
-        | **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
-        | **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
+|     Type     |       Occurrences       |            Fixable           |
+| ------------ | ----------------------- | ---------------------------- | 
+| **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
+| **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
       `,
     },
     actions:
