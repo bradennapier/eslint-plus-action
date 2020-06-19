@@ -43,7 +43,9 @@ export async function lintChangedFiles(
       results.forEach((result) => {
         if (result.messages.length) {
           console.log(result.filePath);
-          console.log(result.messages);
+          result.messages.forEach((message) => {
+            console.log(JSON.stringify(message, null, 2));
+          });
         }
       });
     }
