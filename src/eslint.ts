@@ -53,12 +53,14 @@ export async function lintChangedFiles(
       },
     });
   }
+  console.log('Final Check')
   const summary = `
 |     Type     |       Occurrences       |            Fixable           |
 | ------------ | ----------------------- | ---------------------------- | 
 | **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
 | **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
   `;
+  console.log('Summary Length: ', summary.length)
   const checkResult = await updateCheck({
     conclusion: state.errorCount > 0 ? 'failure' : 'success',
     status: 'completed',
@@ -67,21 +69,21 @@ export async function lintChangedFiles(
       title: 'Checks Complete',
       summary,
     },
-    // actions:
-    //   state.fixableErrorCount > 0 || state.fixableWarningCount > 0
-    //     ? [
-    //         {
-    //           label: `Fix ${
-    //             state.fixableErrorCount + state.fixableWarningCount
-    //           } Issues`,
-    //           description:
-    //             '[UNFINISHED] Run eslint --fix',
-    //           identifier: 'fix',
-    //         },
-    //       ]
-    //     : undefined,
+    actions:
+      state.fixableErrorCount > 0 || state.fixableWarningCount > 0
+        ? [
+            {
+              label: `Fix ${
+                state.fixableErrorCount + state.fixableWarningCount
+              } Issues`,
+              description: '[UNFINISHED] Run eslint --fix',
+              identifier: 'fix',
+            },
+          ]
+        : undefined,
   });
   if (data.prID && data.issueSummary) {
+    console.log('Handle Issues')
     // const annotations = await client.checks.listAnnotations({
     //   check_run_id: checkResult.data.id,
     //   owner: OWNER,
@@ -138,7 +140,7 @@ ${[...state.rulesSummaries]
 ${summary.annotations
   .map(
     (annotation) =>
-      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${annotation.path}#L${annotation.start_line}-L${annotation.end_line}) Line ${annotation.start_line} - ${annotation.message}`,
+      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${annotation.path}#L${annotation.start_line}-L${annotation.end_line}) Line ${annotation.start_line} - ${annotation.message.replace(`[${summary.ruleId}] `, '')}`,
   )
   .join('\n')}`,
   )
