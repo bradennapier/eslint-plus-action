@@ -88,17 +88,20 @@ export function processLintResults(
         errorCount++;
       }
 
-      const rule = engine.getRules().get(ruleId);
+      const ruleUrl = engine.getRules().get(ruleId)?.meta?.docs?.url;
 
-      console.log('Rule: ', rule);
+      console.log('Rule: ', ruleUrl, suggestions);
 
       annotations.push({
         path: filePath.replace(`${GITHUB_WORKSPACE}/`, ''),
         start_line: line,
         end_line: line,
         annotation_level: severity === 2 ? 'failure' : 'warning',
-        message: `[${ruleId}] ${message}`,
-      });
+        message: `[${ruleUrl ? `[${ruleId}](${ruleUrl})` : ruleId}] ${message}${suggestions ? `
+
+         a` : ''
+        }`,
+      });`
     }
   }
 
