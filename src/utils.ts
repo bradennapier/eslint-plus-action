@@ -64,7 +64,6 @@ export function processLintResults(
   state: LintState,
 ): {
   annotations: ChecksUpdateParamsOutput['annotations'];
-  errorCount: number;
 } {
   const { results } = report;
   const annotations: ChecksUpdateParamsOutputAnnotations[] = [];
@@ -89,10 +88,6 @@ export function processLintResults(
         continue;
       }
 
-      if (severity === 2) {
-        errorCount++;
-      }
-
       const ruleUrl = engine.getRules().get(ruleId)?.meta?.docs?.url;
       if (!state.rulesSummaries.has(ruleId)) {
         state.rulesSummaries.set(
@@ -114,6 +109,5 @@ export function processLintResults(
 
   return {
     annotations,
-    errorCount,
   };
 }
