@@ -59,15 +59,13 @@ export async function lintChangedFiles(
     status: 'completed',
     completed_at: new Date().toISOString(),
     output: {
-      title: NAME,
+      title: 'Checks Complete',
       summary: `
-## Checks Complete
-
 |     Type     |       Occurrences       |            Fixable           |
 | ------------ | ----------------------- | ---------------------------- | 
 | **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
 | **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
-      `,
+`,
     },
     actions:
       state.fixableErrorCount > 0 || state.fixableWarningCount > 0
