@@ -96,13 +96,12 @@ export function processLintResults(
         end_line: line,
         annotation_level: severity === 2 ? 'failure' : 'warning',
         message: `[${ruleId}] ${message}${
-          suggestions
+          suggestions && suggestions.length > 0
             ? `
-
-          ${suggestions
-            .map((suggestion) => `- [SUGGESTION] | ${suggestion.desc}`)
-            .join('\n\n')}
-        `
+${suggestions
+  .map((suggestion) => `- [SUGGESTION] | ${suggestion.desc}`)
+  .join('\n\n')}
+`
             : ''
         }`,
       };
