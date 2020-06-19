@@ -15,9 +15,6 @@
   <sup>
     <br />
     <br />
-    <a href="https://www.npmjs.com/package/eslint-plus-action">
-       <img src="https://img.shields.io/npm/v/eslint-plus-action.svg" alt="npm package" />
-    </a>
     <br />
     A Github Action which runs ESLint against the changed files in a PR with customizable options and rich summaries.  ESLint issues are annotated inline on your PR diff.
   </sup>
