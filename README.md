@@ -39,15 +39,13 @@
 - Button to run ESLint Fix [COMING SOON]
 - More...
 
-> This is fairly new some setup is coming but it should be straight forward by viewing the [`action.yml`](https://github.com/bradennapier/eslint-plus-action/blob/master/action.yml)
-
 > The summary comments have some redundancy when there are suggestions available.  This will be improved.
 
 > The `fix` property is not yet setup but will come shortly. If fixes are available, it will render an action button to run the fix as well.
 
 ## Configuration
 
-You provide configuration properties within your workflow by using the `with` property.  See the `Simple Workflow Example` for an example of providing your github-token.
+You provide configuration properties within your workflow by using the `with` property.  See the `Simple Workflow Example` for an example of providing your github-token.  
 
 > `boolean` types are expected to be strings that equal either `true` or `false`.
 
@@ -68,7 +66,7 @@ You provide configuration properties within your workflow by using the `with` pr
 | useEslintIgnore | boolean | true | false | Use eslintignore? |
 | fix | boolean | false | false | Commit fixes when possible (UNFINISHED) |
 
-
+> The official settings can always be seen by viewing the [`action.yml`](https://github.com/bradennapier/eslint-plus-action/blob/master/action.yml) schema for the action.
 
 ## Simple Workflow Example
 
