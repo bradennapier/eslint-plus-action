@@ -59,7 +59,7 @@ You provide configuration properties within your workflow by using the `with` pr
 | annotateWarnings | boolean | true | false | By setting this to "false", only errors will be annotated |
 | issueSummary | boolean | true | false | Should the bot provide a summary of the results as a comment? |
 | extensions | array | .js,.jsx,.ts,.tsx | false | An array of extensions to lint |
-| includeGlob | array | **/* | false | Optional array of globs to include from the changed files list |
+| includeGlob | array | \*\*/\* | false | Optional array of globs to include from the changed files list |
 | ignoreGlob | array | none | false | Optional array of globs to ignore from the changed files list |
 | configFile | string | none | false | A config file to use if the default config resolution doesn't work. |
 | rulePaths | array | none | false | Optional paths to custom rules directories to include. |
