@@ -1,5 +1,5 @@
-name: 'Eslint Changed'
-description: 'Runs ESLint against changed files'
+name: 'ESLint++'
+description: 'Runs ESLint against changed files with customization, issue commenting, and more'
 author: 'Braden R. Napier'
 inputs:
   github-token:
