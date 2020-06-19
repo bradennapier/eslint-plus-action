@@ -102,7 +102,7 @@ export async function lintChangedFiles(
       ? `${data.htmlUrl}/checks?check_run_id=${checkResult.data.id}`
       : checkResult.data.html_url;
 
-    await client.issues.createComment({
+    const commentResult = await client.issues.createComment({
       owner: OWNER,
       repo: REPO,
       issue_number: data.prID,
@@ -137,6 +137,7 @@ ${summary.annotations.map((annotation) => `- ${annotation.path}`).join('\n')}`,
     });
   }
 
+  console.log(commentResult);
   // await client.repos.createOrUpdateFileContents({
   //   owner: OWNER,
   //   repo: REPO,

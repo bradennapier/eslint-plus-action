@@ -8,14 +8,12 @@ import { ActionData } from './types';
 async function run(): Promise<void> {
   try {
     const { context } = github;
-    console.log(context);
+    console.log(context, process.env);
     core.debug('👋 Hello! You are an amazing person! 🙌');
 
     const client = github.getOctokit(
       core.getInput('github-token', { required: true }),
     );
-
-    console.log(await client.users.getAuthenticated());
 
     const data: ActionData = {
       prID: github.context.payload.pull_request?.number,
