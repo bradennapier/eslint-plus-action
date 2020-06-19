@@ -109,6 +109,10 @@ export async function lintChangedFiles(
       body: `
 ## [Eslint Summary](${checkUrl})
 
+> Annotations are provided inline on the [Files Changed](${
+        data.prHtmlUrl
+      }/files) tab. You can also see all annotations that were generated on the [annotations page](${checkUrl}).
+
 ${summary}
 
 - **Result:**      ${checkResult.data.conclusion}
@@ -133,7 +137,7 @@ ${[...state.rulesSummaries]
 ${summary.annotations
   .map(
     (annotation) =>
-      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${annotation.path}#L${annotation.start_line}-L${annotation.end_line})`,
+      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${annotation.path}#L${annotation.start_line}-L${annotation.end_line}) Line ${annotation.start_line}`,
   )
   .join('\n')}`,
   )
