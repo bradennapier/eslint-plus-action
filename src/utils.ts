@@ -114,6 +114,7 @@ ${suggestions
           ruleUrl,
           ruleId,
           message,
+          level: severity === 2 ? 'failure' : 'warning',
           annotations: [annotation],
         });
       } else {

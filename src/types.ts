@@ -42,6 +42,7 @@ export type LintState = {
       ruleUrl?: string;
       ruleId: string;
       message: string;
+      level: 'failure' | 'warning';
       annotations: ChecksUpdateParamsOutputAnnotations[];
     }
   >;

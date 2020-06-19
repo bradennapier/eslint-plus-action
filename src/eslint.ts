@@ -59,7 +59,7 @@ export async function lintChangedFiles(
 | **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
 | **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
   `;
-  await updateCheck({
+  const checkResult = await updateCheck({
     conclusion: state.errorCount > 0 ? 'failure' : 'success',
     status: 'completed',
     completed_at: new Date().toISOString(),
@@ -86,9 +86,32 @@ export async function lintChangedFiles(
       repo: REPO,
       issue_number: data.prID,
       body: `
-## Eslint Summary
+## [Eslint Summary](${checkResult.data.html_url})
 
 ${summary}
+
+- **Result:**      ${checkResult.data.conclusion}
+- **Annotations:** [${checkResult.data.output.annotations_count} total](${
+        checkResult.data.html_url
+      })
+
+---
+
+${[...state.rulesSummaries]
+  .sort(([, a], [, b]) => a.level.localeCompare(b.level))
+  .map(
+    ([, summary]) =>
+      `## [${summary.level}] ${
+        summary.ruleUrl
+          ? `[${summary.ruleId}](${summary.ruleUrl})]`
+          : summary.ruleId
+      } 
+
+> ${summary.message}
+
+${summary.annotations.map((annotation) => `- ${annotation.path}`).join('\n')}`,
+  )
+  .join('\n\n---\n\n')}
       `,
     });
   }
