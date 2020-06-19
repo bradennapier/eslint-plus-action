@@ -76,7 +76,7 @@ export async function lintChangedFiles(
               label: `Fix ${
                 state.fixableErrorCount + state.fixableWarningCount
               } Issues`,
-              description: '[UNFINISHED] Run eslint --fix on the fixable errors & warnings?',
+              description: '[UNFINISHED] Run eslint --fix',
               identifier: 'fix',
             },
           ]
