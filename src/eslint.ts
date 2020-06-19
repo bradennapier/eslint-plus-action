@@ -67,18 +67,19 @@ export async function lintChangedFiles(
       title: 'Checks Complete',
       summary,
     },
-    actions:
-      state.fixableErrorCount > 0 || state.fixableWarningCount > 0
-        ? [
-            {
-              label: `Fix ${
-                state.fixableErrorCount + state.fixableWarningCount
-              } Issues (UNFINISHED)`,
-              description: 'Run eslint --fix on the fixable errors & warnings?',
-              identifier: 'fix',
-            },
-          ]
-        : undefined,
+    // actions:
+    //   state.fixableErrorCount > 0 || state.fixableWarningCount > 0
+    //     ? [
+    //         {
+    //           label: `Fix ${
+    //             state.fixableErrorCount + state.fixableWarningCount
+    //           } Issues`,
+    //           description:
+    //             '[UNFINISHED] Run eslint --fix on the fixable errors & warnings?',
+    //           identifier: 'fix',
+    //         },
+    //       ]
+    //     : undefined,
   });
   if (data.prID && data.issueSummary) {
     // const annotations = await client.checks.listAnnotations({
