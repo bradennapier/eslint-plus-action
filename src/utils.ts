@@ -41,7 +41,7 @@ export const processInput = <D>(key: string, defaultValue?: D): string | D => {
     required: typeof defaultValue === 'undefined',
   });
   if (!result) {
-    if (!defaultValue) {
+    if (typeof defaultValue === 'undefined') {
       throw new Error(
         `No result for input '${key}' and no default value was provided`,
       );
