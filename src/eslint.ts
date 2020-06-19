@@ -53,6 +53,7 @@ export async function lintChangedFiles(
       },
     });
   }
+  console.log('Final Check')
   const summary = `
 |     Type     |       Occurrences       |            Fixable           |
 | ------------ | ----------------------- | ---------------------------- | 
@@ -81,6 +82,7 @@ export async function lintChangedFiles(
         : undefined,
   });
   if (data.prID && data.issueSummary) {
+    console.log('Handle Issues')
     // const annotations = await client.checks.listAnnotations({
     //   check_run_id: checkResult.data.id,
     //   owner: OWNER,
