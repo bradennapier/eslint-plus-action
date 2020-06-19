@@ -4,7 +4,7 @@ import { getChangedFiles } from './fs';
 import { Octokit, ActionData } from './types';
 import { createCheck } from './api';
 import { processLintResults } from './utils';
-import { NAME } from './constants';
+import { NAME, OWNER, REPO } from './constants';
 import path from 'path';
 
 export async function lintChangedFiles(
@@ -61,5 +61,15 @@ export async function lintChangedFiles(
       title: NAME,
       summary: `Checks Complete: ${errorCount} error(s) found`,
     },
+  });
+  // client.repos.getContent({
+
+  // })
+  await client.repos.createOrUpdateFileContents({
+    owner: OWNER,
+    repo: REPO,
+    path: path.join(process.cwd(), 'src/test.md'),
+    message: 'Commit Message',
+    content: 'Hello',
   });
 }
