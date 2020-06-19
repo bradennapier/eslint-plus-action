@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import { ESLint } from 'eslint';
+import { ESLint, Linter } from 'eslint';
 import { getChangedFiles } from './fs';
 import { Octokit, ActionData } from './types';
 import { createCheck } from './api';
@@ -22,6 +22,9 @@ export async function lintChangedFiles(
     overrideConfigFile: data.eslint.overrideConfigFile,
   });
 
+  const linter = new Linter();
+  const rules = linter.getRules();
+
   const updateCheck = await createCheck(client, data);
 
   let errorCount = 0;
@@ -43,7 +46,9 @@ export async function lintChangedFiles(
       results.forEach((result) => {
         if (result.messages.length) {
           console.log(result.filePath);
+
           result.messages.forEach((message) => {
+            console.log(rules.get(message.ruleId as string));
             console.log(JSON.stringify(message, null, 2));
           });
         }
