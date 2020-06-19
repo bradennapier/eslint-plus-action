@@ -135,9 +135,10 @@ ${summary.annotations.map((annotation) => `- ${annotation.path}`).join('\n')}`,
   .join('\n\n---\n\n')}
       `,
     });
+
+    console.log(commentResult);
   }
 
-  console.log(commentResult);
   // await client.repos.createOrUpdateFileContents({
   //   owner: OWNER,
   //   repo: REPO,
