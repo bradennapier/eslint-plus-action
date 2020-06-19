@@ -88,22 +88,39 @@ export function processLintResults(
         continue;
       }
 
-      const ruleUrl = engine.getRules().get(ruleId)?.meta?.docs?.url;
-      if (!state.rulesSummaries.has(ruleId)) {
-        state.rulesSummaries.set(
-          ruleId,
-          `[${ruleUrl ? `[${ruleId}](${ruleUrl})` : ruleId}] ${message}`,
-        );
-      }
-      console.log('Rule: ', ruleUrl, suggestions);
+      console.log(ruleId, suggestions);
 
-      annotations.push({
+      const annotation: ChecksUpdateParamsOutputAnnotations = {
         path: filePath.replace(`${GITHUB_WORKSPACE}/`, ''),
         start_line: line,
         end_line: line,
         annotation_level: severity === 2 ? 'failure' : 'warning',
-        message: `[${ruleId}] ${message}\n\nTest New Line?`,
-      });
+        message: `[${ruleId}] ${message}${
+          suggestions
+            ? `
+
+          ${suggestions
+            .map((suggestion) => `- [SUGGESTION] | ${suggestion.desc}`)
+            .join('\n\n')}
+        `
+            : ''
+        }`,
+      };
+
+      const rule = state.rulesSummaries.get(ruleId);
+      if (!rule) {
+        const ruleUrl = engine.getRules().get(ruleId)?.meta?.docs?.url;
+        state.rulesSummaries.set(ruleId, {
+          ruleUrl,
+          ruleId,
+          message,
+          annotations: [annotation],
+        });
+      } else {
+        rule.annotations.push(annotation);
+      }
+
+      annotations.push(annotation);
     }
   }
 

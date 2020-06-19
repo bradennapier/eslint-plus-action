@@ -36,7 +36,15 @@ export type LintState = {
   fixableErrorCount: number;
   fixableWarningCount: number;
   summary: string;
-  rulesSummaries: Map<string, string>;
+  rulesSummaries: Map<
+    string,
+    {
+      ruleUrl?: string;
+      ruleId: string;
+      message: string;
+      annotations: ChecksUpdateParamsOutputAnnotations[];
+    }
+  >;
 };
 
 type NotUndefined<T> = T extends undefined ? never : T;
