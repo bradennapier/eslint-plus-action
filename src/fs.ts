@@ -6,6 +6,10 @@ import micromatch from 'micromatch';
 import { fetchFilesBatchPR, fetchFilesBatchCommit } from './api';
 import { Octokit, PrResponse, ActionData, ActionDataWithPR } from './types';
 
+function isExpectedExtension(file: string, extensions: string[]) {
+  return extensions.some((ext) => file.endsWith(ext));
+}
+
 export async function filterFiles(
   files: string[],
   data: ActionData,
@@ -15,10 +19,11 @@ export async function filterFiles(
     data.includeGlob.length > 0 ? micromatch(files, data.includeGlob) : files;
   const ignore: string[] =
     data.ignoreGlob.length > 0 ? micromatch(include, data.ignoreGlob) : [];
-  if (ignore.length === 0) {
-    return include;
-  }
-  return include.filter((file) => !ignore.includes(file));
+  return include.filter(
+    (file) =>
+      !ignore.includes(file) &&
+      isExpectedExtension(file, data.eslint.extensions),
+  );
   // await Promise.all(
   //   filtered.map((file) =>
   //     fs

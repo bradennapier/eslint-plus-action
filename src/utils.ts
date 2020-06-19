@@ -2,7 +2,6 @@ import * as core from '@actions/core';
 import { ESLint } from 'eslint';
 import {
   ChecksUpdateParamsOutputAnnotations,
-  ChecksUpdateParams,
   ChecksUpdateParamsOutput,
 } from './types';
 import { GITHUB_WORKSPACE } from './constants';
