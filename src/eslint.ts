@@ -1,3 +1,4 @@
+import * as core from '@actions/core';
 import { ESLint } from 'eslint';
 import { getChangedFiles } from './fs';
 import { Octokit, ActionData } from './types';
@@ -37,6 +38,15 @@ export async function lintChangedFiles(
     console.log(results);
 
     const output = processLintResults(results);
+
+    if (core.isDebug()) {
+      results.forEach((result) => {
+        if (result.messages.length) {
+          console.log(result.filePath);
+          console.log(result.messages);
+        }
+      });
+    }
 
     console.log(output);
 
