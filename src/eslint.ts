@@ -1,11 +1,11 @@
-import * as core from '@actions/core';
+// import * as core from '@actions/core';
 import { CLIEngine } from 'eslint';
 import { getChangedFiles } from './fs';
 import { Octokit, ActionData, LintState } from './types';
 import { createCheck } from './api';
 import { processLintResults } from './utils';
 import { NAME, OWNER, REPO } from './constants';
-import path from 'path';
+// import path from 'path';
 
 export async function lintChangedFiles(
   client: Octokit,
@@ -136,7 +136,23 @@ ${summary.annotations.map((annotation) => `- ${annotation.path}`).join('\n')}`,
       `,
     });
 
-    console.log(commentResult);
+    const userId = commentResult.data.user.id;
+
+    const userIssues = issues.data.filter((issue) => issue.user.id === userId);
+
+    console.log(userIssues);
+
+    if (userIssues.length > 0) {
+      await Promise.all(
+        userIssues.map((issue) =>
+          client.issues.deleteComment({
+            owner: OWNER,
+            repo: REPO,
+            comment_id: issue.id,
+          }),
+        ),
+      );
+    }
   }
 
   // await client.repos.createOrUpdateFileContents({

@@ -8,7 +8,7 @@ import { ActionData } from './types';
 async function run(): Promise<void> {
   try {
     const { context } = github;
-    console.log(context, process.env);
+    // console.log(context, process.env);
     core.debug('👋 Hello! You are an amazing person! 🙌');
 
     const client = github.getOctokit(
@@ -50,7 +50,7 @@ async function run(): Promise<void> {
       },
     };
 
-    core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
+    // core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
 
     await lintChangedFiles(client, data);
   } catch (err) {
