@@ -5,6 +5,9 @@ inputs:
   github-token:
     description: 'GitHub repository token for publishing inline lint annotations. Should be secrets.GITHUB_TOKEN.'
     required: true
+  annotateWarnings:
+    description: 'By setting this to "false", only errors will be annotated'
+    required: false
   extensions:
     description: 'Optionally provide a comma-separated list of extensions (checks js, jsx, ts, tsx by default)'
     required: false

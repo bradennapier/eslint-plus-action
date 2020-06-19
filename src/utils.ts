@@ -90,18 +90,15 @@ export function processLintResults(
 
       const ruleUrl = engine.getRules().get(ruleId)?.meta?.docs?.url;
 
-      console.log('Rule: ', ruleUrl, suggestions);
+      console.log('Rule: ', ruleUrl);
 
       annotations.push({
         path: filePath.replace(`${GITHUB_WORKSPACE}/`, ''),
         start_line: line,
         end_line: line,
         annotation_level: severity === 2 ? 'failure' : 'warning',
-        message: `[${ruleUrl ? `[${ruleId}](${ruleUrl})` : ruleId}] ${message}${suggestions ? `
-
-         a` : ''
-        }`,
-      });`
+        message: `[${ruleUrl ? `[${ruleId}](${ruleUrl})` : ruleId}] ${message}`,
+      });
     }
   }
 
