@@ -8,7 +8,7 @@ import { ActionData } from './types';
 async function run(): Promise<void> {
   try {
     const { context } = github;
-
+    console.log(context);
     core.debug('👋 Hello! You are an amazing person! 🙌');
 
     const client = github.getOctokit(

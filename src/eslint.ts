@@ -81,6 +81,23 @@ export async function lintChangedFiles(
         : undefined,
   });
   if (data.prID) {
+    const annotations = await client.checks.listAnnotations({
+      check_run_id: checkResult.data.id,
+      owner: OWNER,
+      repo: REPO,
+    });
+
+    console.log('Annotations: ', JSON.stringify(annotations.data, null, 2));
+
+    const issues = await client.issues.listComments({
+      issue_number: data.prID,
+      owner: OWNER,
+      repo: REPO,
+    });
+
+    // const actionIssues = issues.data.filter(issue => issue.user.id)
+    console.log(issues);
+
     await client.issues.createComment({
       owner: OWNER,
       repo: REPO,
