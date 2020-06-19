@@ -30,14 +30,18 @@
 
 ## Features
 
-- Inline Annotations of ESLint Warnings & Errors
+- [Inline Annotations of ESLint Warnings & Errors](https://github.com/bradennapier/eslint-plus-action/pull/3/files)
 - Customizable ESLint options
-- Optional summary comments on each push to the PR 
-- Links to the rule documentation when available 
+- [Optional summary comments on each push to the PR](https://github.com/bradennapier/eslint-plus-action/pull/3)
+- [Links to the rule documentation when available](https://github.com/bradennapier/eslint-plus-action/pull/3#issuecomment-646635983)
+- [Annotation Summary Page](https://github.com/bradennapier/eslint-plus-action/pull/3/checks?check_run_id=788235048)
 - Suggestions are printed (not yet provided as change suggestions)
+- Button to run ESLint Fix [COMING SOON]
 - More...
 
 > This is fairly new some setup is coming but it should be straight forward by viewing the `action.yml`
+
+> The summary comments have some redundancy when there are suggestions available.  This will be improved.
 
 > The `fix` property is not yet setup but will come shortly. If fixes are available, it will render an action button to run the fix as well.
 
