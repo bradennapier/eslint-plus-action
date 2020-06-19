@@ -1,3 +1,4 @@
+import * as github from '@actions/github';
 import * as core from '@actions/core';
 
 import { PrResponse, Octokit, ActionData, ExpectedUpdateParams } from './types';
@@ -125,6 +126,8 @@ export async function fetchFilesBatchCommit(
     return [];
   }
 }
+
+const client = 1;
 
 export async function createCheck(
   client: Octokit,

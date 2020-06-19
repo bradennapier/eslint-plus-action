@@ -13,6 +13,7 @@ export type ActionData = {
   sha: string;
   prID: number | undefined;
   prHtmlUrl: string | undefined;
+  cam_case?: any;
   repoHtmlUrl: string | undefined;
 
   includeGlob: string[];

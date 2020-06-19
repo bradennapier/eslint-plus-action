@@ -9,6 +9,7 @@ import { Octokit, PrResponse, ActionData, ActionDataWithPR } from './types';
 export async function filterFiles(
   files: string[],
   data: ActionData,
+  unused?: any
 ): Promise<string[]> {
   const { extensions } = data.eslint;
   // const result: string[] = [];

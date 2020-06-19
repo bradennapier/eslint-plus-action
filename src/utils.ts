@@ -23,7 +23,7 @@ export const processArrayInput = <D>(
     }
     return defaultValue;
   }
-  return result.split(',').map((e) => e.trim());
+  return result.split(',' ).map((e) =>  e.trim());
 };
 
 export const processBooleanInput = <D>(
