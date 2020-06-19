@@ -1,101 +1,71 @@
-<p align="center">
-  <a href="https://github.com/actions/typescript-action/actions"><img alt="typescript-action status" src="https://github.com/actions/typescript-action/workflows/build-test/badge.svg"></a>
-</p>
+<div align="center">
+  <h1>
+    <br/>
+    <br/>
+    <p align="center">
+      <img src="docs/img/style.png" width="400" title="eslint-plus-action">
+    </p>
+    <br />
+    eslint-plus-action
+    <br />
+    <br />
+    <br />
+    <br />
+  </h1>
+  <sup>
+    <br />
+    <br />
+    <a href="https://www.npmjs.com/package/eslint-plus-action">
+       <img src="https://img.shields.io/npm/v/eslint-plus-action.svg" alt="npm package" />
+    </a>
+    <br />
+    A Github Action which runs ESLint against the changed files in a PR with customizable options and rich summaries.  ESLint issues are annotated inline on your PR diff.
+  </sup>
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+  <br />
+</div>
 
-# Create a JavaScript Action using TypeScript
+## Features
 
-Use this template to bootstrap the creation of a JavaScript action.:rocket:
+- Inline Annotations of ESLint Warnings & Errors
+- Customizable ESLint options
+- Optional summary comments on each push to the PR 
+- Links to the rule documentation when available 
+- Suggestions are printed (not yet provided as change suggestions)
+- More...
 
-This template includes compilication support, tests, a validation workflow, publishing, and versioning guidance.  
+> This is fairly new some setup is coming but it should be straight forward by viewing the `action.yml`
 
-If you are new, there's also a simpler introduction.  See the [Hello World JavaScript Action](https://github.com/actions/hello-world-javascript-action)
+> The `fix` property is not yet setup but will come shortly. If fixes are available, it will render an action button to run the fix as well.
 
-## Create an action from this template
+## Simple Workflow Example
 
-Click the `Use this Template` and provide the new repo details for your action
+Below is a basic example which should get you going.  You can view the action.yml to see what other properties are available for customization.
 
-## Code in Master
+```yml
+name: "my-workflow"
+on: [pull_request]
 
-Install the dependencies  
-```bash
-$ npm install
+jobs:
+  test: # make sure the action works on a clean machine without building
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: bradennapier/eslint-plus-action@v1
+      with: 
+        github-token: ${{secrets.GITHUB_TOKEN}}
 ```
 
-Build the typescript and package it for distribution
-```bash
-$ npm run build && npm run pack
+> At this time it will build your code with the `yarn` or `npm` script `build`.
+
 ```
-
-Run the tests :heavy_check_mark:  
-```bash
-$ npm test
-
- PASS  ./index.test.js
-  ✓ throws invalid number (3ms)
-  ✓ wait 500 ms (504ms)
-  ✓ test runs (95ms)
-
-...
+yarn && yarn build
+# or if you use npm it will run
+npm install && npm run build
 ```
-
-## Change action.yml
-
-The action.yml contains defines the inputs and output for your action.
-
-Update the action.yml with your name, description, inputs and outputs for your action.
-
-See the [documentation](https://help.github.com/en/articles/metadata-syntax-for-github-actions)
-
-## Change the Code
-
-Most toolkit and CI/CD operations involve async operations so the action is run in an async function.
-
-```javascript
-import * as core from '@actions/core';
-...
-
-async function run() {
-  try { 
-      ...
-  } 
-  catch (error) {
-    core.setFailed(error.message);
-  }
-}
-
-run()
-```
-
-See the [toolkit documentation](https://github.com/actions/toolkit/blob/master/README.md#packages) for the various packages.
-
-## Publish to a distribution branch
-
-Actions are run from GitHub repos so we will checkin the packed dist folder. 
-
-Then run [ncc](https://github.com/zeit/ncc) and push the results:
-```bash
-$ npm run pack
-$ git add dist
-$ git commit -a -m "prod dependencies"
-$ git push origin releases/v1
-```
-
-Your action is now published! :rocket: 
-
-See the [versioning documentation](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md)
-
-## Validate
-
-You can now validate the action by referencing `./` in a workflow in your repo (see [test.yml](.github/workflows/test.yml)])
-
-```yaml
-uses: ./
-with:
-  milliseconds: 1000
-```
-
-See the [actions tab](https://github.com/actions/javascript-action/actions) for runs of this action! :rocket:
-
-## Usage:
-
-After testing you can [create a v1 tag](https://github.com/actions/toolkit/blob/master/docs/action-versioning.md) to reference the stable and latest V1 action
