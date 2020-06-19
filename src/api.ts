@@ -48,9 +48,7 @@ export async function fetchFilesBatchPR(
   }
 
   core.info(
-    `PR with files detected: ${pr.files.edges.map(
-      (e: { node: { path: string } }) => e.node.path,
-    )}`,
+    `PR with files detected: ${pr.files.edges.map((e: any) => e.node.path)}`,
   );
 
   return {

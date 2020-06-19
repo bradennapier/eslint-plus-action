@@ -6,38 +6,24 @@ import micromatch from 'micromatch';
 import { fetchFilesBatchPR, fetchFilesBatchCommit } from './api';
 import { Octokit, PrResponse, ActionData, ActionDataWithPR } from './types';
 
-function isExpectedExtension(file: string, extensions: string[]) {
-  return extensions.some((ext) => file.endsWith(ext));
-}
-
 export async function filterFiles(
   files: string[],
   data: ActionData,
 ): Promise<string[]> {
+  const { extensions } = data.eslint;
   // const result: string[] = [];
+  const matches = micromatch(files, [`**{${extensions.join(',')}}`]);
   const include: string[] =
-    data.includeGlob.length > 0 ? micromatch(files, data.includeGlob) : files;
+    data.includeGlob.length > 0
+      ? micromatch(matches, data.includeGlob)
+      : matches;
   const ignore: string[] =
     data.ignoreGlob.length > 0 ? micromatch(include, data.ignoreGlob) : [];
-  return include.filter(
-    (file) =>
-      !ignore.includes(file) &&
-      isExpectedExtension(file, data.eslint.extensions),
-  );
-  // await Promise.all(
-  //   filtered.map((file) =>
-  //     fs
-  //       .stat(file)
-  //       .then(() => {
-  //         result.push(file);
-  //       })
-  //       .catch(() => {
-  //         // do nothing
-  //       }),
-  //   ),
-  // );
 
-  // return result;
+  if (ignore.length === 0) {
+    return include;
+  }
+  return include.filter((file) => !ignore.includes(file));
 }
 
 async function* getFilesFromPR(
