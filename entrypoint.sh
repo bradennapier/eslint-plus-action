@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "ENTRY"
+
 # Removes confusing pushd / popd logging to output
 pushd () {
     local CPWD;
