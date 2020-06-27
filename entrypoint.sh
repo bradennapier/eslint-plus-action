@@ -2,17 +2,26 @@
 
 # Removes confusing pushd / popd logging to output
 pushd () {
+    local CPWD;
+    CPWD="$(pwd)"
     command pushd "$@" > /dev/null
+    echo "[pushd] [${CPWD}] -> [$(pwd)]"
 }
 
 popd () {
+    local CPWD
+    CPWD="$(pwd)"
     command popd "$@" > /dev/null
+    echo "[popd] [${CPWD}] -> [$(pwd)]"
 }
 
 
 set -e
 
-cd "${2:-.}" || echo "source root not found"
+cd "${GITHUB_WORKSPACE}"
+
+ecoh "Workspace Directory"
+ls -alh
 
 [ -f yarn.lock ] && yarn install
 [ -f package-lock.json ] && npm install

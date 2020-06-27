@@ -5,6 +5,12 @@ FROM node:14-alpine
 # LABEL com.github.actions.icon="code"
 # LABEL com.github.actions.color="yellow"
 
-RUN apt install make gcc g++ python git
-COPY . /action
-ENTRYPOINT ["/action/entrypoint.sh"]
+# `node-gyp rebuild` (sometimes triggered by `yarn install`) fails whenever it's run. To fix, install "alpine-sdk"
+# package. See:
+# - https://github.com/nodejs/node-gyp/issues/809#issuecomment-465476598
+# - https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
+# RUN apk add --update alpine-sdk
+
+COPY entrypoint.sh /entrypoint.sh
+
+ENTRYPOINT ["/entrypoint.sh"]
