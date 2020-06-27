@@ -21,9 +21,7 @@ set -e
 echo "Current Directory: $(pwd)"
 echo "Github Workspace: ${GITHUB_WORKSPACE}"
 
-
-
-ecoh "Workspace Directory"
+echo "Workspace Directory"
 ls -alh
 
 [ -f yarn.lock ] && yarn install

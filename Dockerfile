@@ -11,6 +11,6 @@ FROM node:14-alpine
 # - https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
 # RUN apk add --update alpine-sdk
 
-COPY entrypoint.sh /entrypoint.sh
+COPY . /action
 
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/action/entrypoint.sh"]
