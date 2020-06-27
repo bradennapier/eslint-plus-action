@@ -16,4 +16,4 @@ RUN ls -alh
 
 COPY . ${GITHUB_WORKSPACE}/.githubaction
 
-ENTRYPOINT ["${GITHUB_WORKSPACE}/.githubaction/entrypoint.sh"]
+ENTRYPOINT ["sh", "-c", "echo ${GITHUB_WORKSPACE}/.githubaction/entrypoint.sh"]
