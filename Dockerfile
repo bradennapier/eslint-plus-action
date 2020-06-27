@@ -10,7 +10,10 @@ FROM node:14
 # - https://github.com/nodejs/node-gyp/issues/809#issuecomment-465476598
 # - https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
 # RUN apk add --update alpine-sdk
+RUN pwd
+
+RUN ls -alh
 
 COPY . ${GITHUB_WORKSPACE}/.githubaction
 
-ENTRYPOINT ["/action/entrypoint.sh"]
+ENTRYPOINT ["${GITHUB_WORKSPACE}/.githubaction/entrypoint.sh"]
