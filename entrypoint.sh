@@ -18,7 +18,10 @@ popd () {
 
 set -e
 
-cd "${GITHUB_WORKSPACE}"
+echo "Current Directory: $(pwd)"
+echo "Github Workspace: ${GITHUB_WORKSPACE}"
+
+
 
 ecoh "Workspace Directory"
 ls -alh

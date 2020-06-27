@@ -45,4 +45,4 @@ runs:
   using: docker
   image: Dockerfile
   args:
-  - "${{ inputs.github-token }}"
+    - "${{ inputs.github-token }}"
