@@ -11,6 +11,6 @@ FROM node:14
 # - https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
 # RUN apk add --update alpine-sdk
 
-COPY . /action
+COPY . ${GITHUB_WORKSPACE}/.githubaction
 
 ENTRYPOINT ["/action/entrypoint.sh"]
