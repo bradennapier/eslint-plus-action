@@ -10,13 +10,12 @@
     <br />
     <br />
     <br />
-    <br />
   </h1>
   <sup>
     <br />
-    <br />
-    <br />
+
     A flexible and dead simple Github Action which runs ESLint against the changed files in a PR with customizable options and rich summaries.  ESLint issues are annotated inline on your PR diff.
+
   </sup>
   <br />
   <br />
@@ -56,6 +55,7 @@ You provide configuration properties within your workflow by using the `with` pr
 | github-token | string | none | true | Your Github token.  This is provided by default and should be set to `${{secrets.GITHUB_TOKEN}} in most cases. |
 | issueSummary | boolean | true | false | Should the bot provide a summary of the results as a comment? |
 | issueSummaryType | string | compact | false | Changes the PR comment to be "full" (as shown on actions page) or "compact" |
+| issueSummaryOnlyOnEvent | boolean | false | false | Only provide the issue summary comment if there are warnings or errors present? |
 | annotateWarnings | boolean | true | false | By setting this to "false", only errors will be annotated |
 | reportSuggestions | boolean | true | false | Report suggestions when available within the annotations? |
 | reportIgnoredFiles | boolean | false | false | Report a list of any ignored files? |

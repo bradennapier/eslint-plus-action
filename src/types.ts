@@ -19,11 +19,13 @@ export type ActionData = {
   ignoreGlob: string[];
 
   annotateWarnings: boolean;
-  issueSummary: boolean;
+
   reportWarningsAsErrors: boolean;
   reportIgnoredFiles: boolean;
   reportSuggestions: boolean;
+  issueSummary: boolean;
   issueSummaryType: 'full' | 'compact';
+  issueSummaryOnlyOnEvent: boolean;
 
   eslint: {
     rulePaths: string[];

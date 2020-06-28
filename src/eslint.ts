@@ -100,6 +100,9 @@ ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
     //       ]
     //     : undefined,
   });
+
+  let commentResult;
+
   if (data.prID && data.issueSummary) {
     const { issueSummaryType } = data;
 
@@ -109,82 +112,102 @@ ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
       repo: REPO,
     });
 
-    const checkUrl = data.prHtmlUrl
-      ? `${data.prHtmlUrl}/checks?check_run_id=${checkResult.data.id}`
-      : checkResult.data.html_url;
+    if (
+      !data.issueSummaryOnlyOnEvent ||
+      state.errorCount > 0 ||
+      state.warningCount > 0 ||
+      state.fixableErrorCount > 0 ||
+      state.fixableWarningCount > 0
+    ) {
+      const checkUrl = data.prHtmlUrl
+        ? `${data.prHtmlUrl}/checks?check_run_id=${checkResult.data.id}`
+        : checkResult.data.html_url;
 
-    const commentResult = await client.issues.createComment({
-      owner: OWNER,
-      repo: REPO,
-      issue_number: data.prID,
-      body: `
-## ESLint Summary [View Full Report](${checkUrl})
+      commentResult = await client.issues.createComment({
+        owner: OWNER,
+        repo: REPO,
+        issue_number: data.prID,
+        body: `
+  ## ESLint Summary [View Full Report](${checkUrl})
+  
+  > Annotations are provided inline on the [Files Changed](${
+    data.prHtmlUrl
+  }/files) tab. You can also see all annotations that were generated on the [annotations page](${checkUrl}).
+  
+  ${summary}
+  
+  - **Result:**      ${checkResult.data.conclusion}
+  - **Annotations:** [${
+    checkResult.data.output.annotations_count
+  } total](${checkUrl})
+  
+  ${
+    issueSummaryType === 'full'
+      ? `
+  ---
+  
+  ${ignoredFilesMarkdown}
+  `
+      : ''
+  }
+  ---
+  
+  ${[...state.rulesSummaries]
+    .sort(([, a], [, b]) => a.level.localeCompare(b.level))
+    .map(
+      ([, summary]) =>
+        `## [${summary.level}] ${
+          summary.ruleUrl
+            ? `[${summary.ruleId}](${summary.ruleUrl})`
+            : summary.ruleId
+        } 
+  
+  > ${summary.message}
+  
+  ${summary.annotations
+    .map(
+      (annotation) =>
+        `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${
+          annotation.path
+        }#L${annotation.start_line}-L${annotation.end_line}) Line ${
+          annotation.start_line
+        } - ${annotation.message}${
+          issueSummaryType === 'full' ? annotation.suggestions : ''
+        }`,
+    )
+    .join('\n')}`,
+    )
+    .join('\n\n---\n\n')}
+        `,
+      });
+    } else if (data.issueSummaryOnlyOnEvent) {
+      // super hacky until find a way to figure out the bots user id in some other way
+      commentResult = await client.issues.createComment({
+        owner: OWNER,
+        repo: REPO,
+        issue_number: data.prID,
+        body: '-- Message Removed, Refresh to Update --',
+      });
+    }
 
-> Annotations are provided inline on the [Files Changed](${
-        data.prHtmlUrl
-      }/files) tab. You can also see all annotations that were generated on the [annotations page](${checkUrl}).
+    if (commentResult) {
+      const userId = commentResult.data.user.id;
 
-${summary}
-
-- **Result:**      ${checkResult.data.conclusion}
-- **Annotations:** [${
-        checkResult.data.output.annotations_count
-      } total](${checkUrl})
-
-${
-  issueSummaryType === 'full'
-    ? `
----
-
-${ignoredFilesMarkdown}
-`
-    : ''
-}
----
-
-${[...state.rulesSummaries]
-  .sort(([, a], [, b]) => a.level.localeCompare(b.level))
-  .map(
-    ([, summary]) =>
-      `## [${summary.level}] ${
-        summary.ruleUrl
-          ? `[${summary.ruleId}](${summary.ruleUrl})`
-          : summary.ruleId
-      } 
-
-> ${summary.message}
-
-${summary.annotations
-  .map(
-    (annotation) =>
-      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${
-        annotation.path
-      }#L${annotation.start_line}-L${annotation.end_line}) Line ${
-        annotation.start_line
-      } - ${annotation.message}${
-        issueSummaryType === 'full' ? annotation.suggestions : ''
-      }`,
-  )
-  .join('\n')}`,
-  )
-  .join('\n\n---\n\n')}
-      `,
-    });
-
-    const userId = commentResult.data.user.id;
-
-    const userIssues = issues.data.filter((issue) => issue.user.id === userId);
-
-    if (userIssues.length > 0) {
-      await Promise.all(
-        userIssues.map((issue) =>
-          client.issues.deleteComment({
-            owner: OWNER,
-            repo: REPO,
-            comment_id: issue.id,
-          }),
-        ),
+      const userIssues = issues.data.filter(
+        (issue) => issue.user.id === userId,
       );
+
+      if (userIssues.length > 0) {
+        await Promise.all(
+          userIssues.map((issue) =>
+            client.issues.deleteComment({
+              owner: OWNER,
+              repo: REPO,
+              comment_id: issue.id,
+            }),
+          ),
+        );
+      }
     }
   }
 

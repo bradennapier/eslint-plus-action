@@ -32,6 +32,10 @@ async function run(): Promise<void> {
         ['full', 'compact'],
         'compact',
       ),
+      issueSummaryOnlyOnEvent: processBooleanInput(
+        'issueSummaryOnlyOnEvent',
+        false,
+      ),
       reportWarningsAsErrors: processBooleanInput(
         'reportWarningsAsErrors',
         false,
