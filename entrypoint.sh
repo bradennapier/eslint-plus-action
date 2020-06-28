@@ -20,13 +20,20 @@ popd () {
 set -e
 
 {(
-    [ -f yarn.lock ] && yarn install --frozen-lockfile --prefer-offline
+    echo "First Install";
+    ls -alh
+    echo "Install Yarn"
+    [ -f yarn.lock ] && yarn install --frozen-lockfile
     [ -f package-lock.json ] && npm install
 )} &
 
 {(
+    
     pushd /action
-    [ -f yarn.lock ] && yarn install --frozen-lockfile --prefer-offline && yarn build
+    echo "Yarn Action Install"
+    ls -alh
+    
+    [ -f yarn.lock ] && yarn install --frozen-lockfile && yarn build
     [ -f package-lock.json ] && npm install && npm run build
     popd
 )} &
