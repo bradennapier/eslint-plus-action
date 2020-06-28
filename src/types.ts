@@ -23,6 +23,7 @@ export type ActionData = {
   reportWarningsAsErrors: boolean;
   reportIgnoredFiles: boolean;
   reportSuggestions: boolean;
+  issueSummaryType: 'full' | 'compact';
 
   eslint: {
     rulePaths: string[];
@@ -79,6 +80,7 @@ export type ChecksUpdateParamsOutputAnnotations = {
   message: string;
   title?: string;
   raw_details?: string;
+  suggestions: string;
 };
 
 export type ChecksUpdateParams = {

@@ -26,6 +26,38 @@ export const processArrayInput = <D>(
   return result.split(',').map((e) => e.trim());
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function resultIsInEnum<V>(result: any, values: V[]): result is V {
+  return values.includes(result);
+}
+
+export const processEnumInput = <D, V>(
+  key: string,
+  values: V[],
+
+  defaultValue?: D,
+): V | D => {
+  const result = core.getInput(key, {
+    required: typeof defaultValue === 'undefined',
+  });
+  if (!result) {
+    if (typeof defaultValue === 'undefined') {
+      throw new Error(
+        `No result for input '${key}' and no default value was provided`,
+      );
+    }
+    return defaultValue;
+  }
+  if (!resultIsInEnum(result, values)) {
+    throw new Error(
+      `Input of "${result}" for property "${key}" must be one of: "${values.join(
+        ', ',
+      )}"`,
+    );
+  }
+  return result;
+};
+
 export const processBooleanInput = <D>(
   key: string,
   defaultValue?: D,
@@ -119,16 +151,16 @@ export function processLintResults(
         end_line: line,
         annotation_level: level,
         title: ruleId,
-        message: `${message}${
-          suggestions && suggestions.length > 0 && data.reportSuggestions
+        message: `${message}`,
+        suggestions:
+          suggestions && suggestions.length > 0
             ? `
 
 ${suggestions
   .map((suggestion) => `    * [SUGGESTION] ${suggestion.desc}`)
   .join('\n')}
 `
-            : ''
-        }`,
+            : '',
       };
 
       const rule = state.rulesSummaries.get(ruleId);

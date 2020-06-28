@@ -56,30 +56,39 @@ export async function lintChangedFiles(
       output: {
         title: NAME,
         summary: `${state.errorCount} error(s) found so far`,
-        annotations: output.annotations,
+        annotations:
+          data.reportSuggestions && output.annotations
+            ? output.annotations.map((annotation) => {
+                return {
+                  ...annotation,
+                  message: annotation.message + annotation.suggestions,
+                };
+              })
+            : output.annotations,
       },
     });
   }
-  let summary = `
+  const summary = `
 |     Type     |       Occurrences       |            Fixable           |
 | ------------ | ----------------------- | ---------------------------- | 
 | **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
 | **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
 | **Ignored**  | ${state.ignoredCount}   | N/A                          |
   `;
-  if (data.reportIgnoredFiles) {
-    summary += `
+  const ignoredFilesMarkdown = data.reportIgnoredFiles
+    ? `
 ## Ignored Files:
 ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
-    `;
-  }
+    `
+    : '';
+
   const checkResult = await updateCheck({
     conclusion: state.errorCount > 0 ? 'failure' : 'success',
     status: 'completed',
     completed_at: new Date().toISOString(),
     output: {
       title: 'Checks Complete',
-      summary,
+      summary: summary + ignoredFilesMarkdown,
     },
     // actions:
     //   state.fixableErrorCount > 0 || state.fixableWarningCount > 0
@@ -96,6 +105,7 @@ ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
     //     : undefined,
   });
   if (data.prID && data.issueSummary) {
+    const { issueSummaryType } = data;
     // const annotations = await client.checks.listAnnotations({
     //   check_run_id: checkResult.data.id,
     //   owner: OWNER,
@@ -122,7 +132,7 @@ ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
       repo: REPO,
       issue_number: data.prID,
       body: `
-## [Eslint Summary](${checkUrl})
+## ESLint Summary [View Full Report](${checkUrl})
 
 > Annotations are provided inline on the [Files Changed](${
         data.prHtmlUrl
@@ -135,6 +145,15 @@ ${summary}
         checkResult.data.output.annotations_count
       } total](${checkUrl})
 
+${
+  issueSummaryType === 'full'
+    ? `
+---
+
+${ignoredFilesMarkdown}
+`
+    : ''
+}
 ---
 
 ${[...state.rulesSummaries]
@@ -152,7 +171,13 @@ ${[...state.rulesSummaries]
 ${summary.annotations
   .map(
     (annotation) =>
-      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${annotation.path}#L${annotation.start_line}-L${annotation.end_line}) Line ${annotation.start_line} - ${annotation.message}`,
+      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${
+        annotation.path
+      }#L${annotation.start_line}-L${annotation.end_line}) Line ${
+        annotation.start_line
+      } - ${annotation.message}${
+        issueSummaryType === 'full' ? annotation.suggestions : ''
+      }`,
   )
   .join('\n')}`,
   )

@@ -23,6 +23,9 @@ inputs:
   issueSummary:
     description: 'Should the bot provide a summary of the results as a comment? Defaults to true'
     required: false
+  issueSummaryType:
+    description: 'Changes the PR comment to be "full" (as shown on actions page) or "compact", defaults to compact'
+    required: false
   extensions:
     description: 'Optionally provide a comma-separated list of extensions (checks js, jsx, ts, tsx by default)'
     required: false

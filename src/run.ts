@@ -2,7 +2,12 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 
 import { lintChangedFiles } from './eslint';
-import { processArrayInput, processBooleanInput, processInput } from './utils';
+import {
+  processArrayInput,
+  processBooleanInput,
+  processInput,
+  processEnumInput,
+} from './utils';
 import { ActionData } from './types';
 
 async function run(): Promise<void> {
@@ -24,6 +29,11 @@ async function run(): Promise<void> {
       ignoreGlob: processArrayInput('ignoreGlob', []),
       annotateWarnings: processBooleanInput('annotateWarnings', true),
       issueSummary: processBooleanInput('issueSummary', true),
+      issueSummaryType: processEnumInput(
+        'issueSummaryType',
+        ['full', 'compact'],
+        'compact',
+      ),
       reportWarningsAsErrors: processBooleanInput(
         'reportWarningsAsErrors',
         false,
