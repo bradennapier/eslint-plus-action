@@ -1,16 +1,18 @@
-import * as core from '@actions/core';
+// import * as core from '@actions/core';
 import { CLIEngine } from 'eslint';
 import { getChangedFiles } from './fs';
 import { Octokit, ActionData, LintState } from './types';
 import { createCheck } from './api';
 import { processLintResults } from './utils';
 import { NAME, OWNER, REPO } from './constants';
-// import path from 'path';
+import path from 'path';
 
 export async function lintChangedFiles(
   client: Octokit,
   data: ActionData,
 ): Promise<void> {
+  console.log(__dirname);
+
   const eslintConfig = {
     extensions: data.eslint.extensions,
     ignorePath: data.eslint.useEslintIgnore ? '.gitignore' : undefined,
