@@ -32,13 +32,15 @@ set -e
     pushd /action
     echo "Yarn Action Install"
     ls -alh
-    
-    [ -f yarn.lock ] && yarn install --frozen-lockfile && yarn build
-    [ -f package-lock.json ] && npm install && npm run build
+
+    [ -f yarn.lock ] && yarn install --frozen-lockfile
+    [ -f package-lock.json ] && npm install 
     popd
 )} &
 
 wait
+
+echo "Execute From Directory: $(pwd)"
 
 NODE_PATH=node_modules GITHUB_TOKEN="${GITHUB_TOKEN:-${1:-.}}" SOURCE_ROOT=${2:-.} node /action/lib/run.js
 
