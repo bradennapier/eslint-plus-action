@@ -11,7 +11,7 @@ export async function lintChangedFiles(
   client: Octokit,
   data: ActionData,
 ): Promise<void> {
-  console.log(__dirname);
+  console.log('dir: ', __dirname);
 
   const eslintConfig = {
     extensions: data.eslint.extensions,
