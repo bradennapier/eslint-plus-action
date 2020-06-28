@@ -9,7 +9,7 @@ async function run(): Promise<void> {
   try {
     const { context } = github;
     // console.log(context, process.env);
-    core.debug('👋 Hello! You are an amazing person! 🙌');
+    // core.debug('👋 Hello! You are an amazing person! 🙌');
 
     const client = github.getOctokit(
       core.getInput('github-token', { required: true }),
