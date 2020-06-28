@@ -1,4 +1,4 @@
-// import * as core from '@actions/core';
+import * as core from '@actions/core';
 import { CLIEngine } from 'eslint';
 import { getChangedFiles } from './fs';
 import { Octokit, ActionData, LintState } from './types';
@@ -11,7 +11,7 @@ export async function lintChangedFiles(
   client: Octokit,
   data: ActionData,
 ): Promise<void> {
-  const eslint = new CLIEngine({
+  const eslintConfig = {
     extensions: data.eslint.extensions,
     ignorePath: data.eslint.useEslintIgnore ? '.gitignore' : undefined,
     ignore: data.eslint.useEslintIgnore,
@@ -20,7 +20,11 @@ export async function lintChangedFiles(
     errorOnUnmatchedPattern: data.eslint.errorOnUnmatchedPattern,
     fix: data.eslint.fix,
     configFile: data.eslint.configFile,
-  });
+  };
+
+  console.log('[ESLINT] Run With Configuration: ', eslintConfig);
+
+  const eslint = new CLIEngine(eslintConfig);
 
   const updateCheck = await createCheck(client, data);
 
