@@ -19,26 +19,19 @@ popd () {
 
 set -e
 
-{(
-    echo "First Install";
-    ls -alh
-    echo "Install Yarn"
-    [ -f yarn.lock ] && yarn install
-    [ -f package-lock.json ] && npm install
-)} &
+echo "First Install";
+ls -alh
+echo "Install Yarn"
+[ -f yarn.lock ] && yarn install
+[ -f package-lock.json ] && npm install
 
-{(
-    
-    pushd /action
-    echo "Yarn Action Install"
-    ls -alh
+pushd /action
+echo "Yarn Action Install"
 
-    [ -f yarn.lock ] && yarn install
-    [ -f package-lock.json ] && npm install 
-    popd
-)} &
+[ -f yarn.lock ] && yarn install
+[ -f package-lock.json ] && npm install 
+popd
 
-wait
 
 echo "Execute From Directory: $(pwd)"
 
