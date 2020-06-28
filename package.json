@@ -22,6 +22,11 @@
     "node",
     "setup"
   ],
+  "husky": {
+    "hooks": {
+      "pre-push": "yarn build"
+    }
+  },
   "author": "YourNameOrOrganization",
   "license": "MIT",
   "dependencies": {
@@ -46,6 +51,7 @@
     "eslint-plugin-github": "^4.0.1",
     "eslint-plugin-jest": "^23.13.2",
     "eslint-plugin-prettier": "^3.1.4",
+    "husky": "^4.2.5",
     "jest": "^26.0.1",
     "jest-circus": "^26.0.1",
     "js-yaml": "^3.14.0",
