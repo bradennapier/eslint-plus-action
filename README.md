@@ -86,14 +86,6 @@ jobs:
         github-token: ${{secrets.GITHUB_TOKEN}}
 ```
 
-> At this time it will build your code with the `yarn` or `npm` script `build`.
-
-```
-yarn && yarn build
-# or if you use npm it will run
-npm install && npm run build
-```
-
 ## Environment Variables
 
 There may be times that you need to provide a `NPM_TOKEN` so that the action can install your private repos.  You do this by adding the secret to your repo `Settings -> Secrets` then providing it as an environment variable to the action:

@@ -17,17 +17,16 @@ popd () {
     echo "[popd] [${CPWD}] -> [$(pwd)]"
 }
 
-
 set -e
 
 {(
-    [ -f yarn.lock ] && yarn install
+    [ -f yarn.lock ] && yarn install --frozen-lockfile --prefer-offline
     [ -f package-lock.json ] && npm install
 )} &
 
 {(
     pushd /action
-    [ -f yarn.lock ] && yarn install && yarn build
+    [ -f yarn.lock ] && yarn install --frozen-lockfile --prefer-offline && yarn build
     [ -f package-lock.json ] && npm install && npm run build
     popd
 )} &
