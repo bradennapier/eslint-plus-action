@@ -11,9 +11,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install Dependencies
-      run: yarn install --frozen-lockfile && yarn build
-
     - name: Get yarn cache directory path
       id: yarn-cache-dir-path
       run: echo "::set-output name=dir::$(yarn cache dir)"
@@ -25,6 +22,10 @@ jobs:
         key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
         restore-keys: |
           ${{ runner.os }}-yarn-
+      
+    - name: Install Dependencies
+      # if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
+      run: yarn install --frozen-lockfile --prefer-offline && yarn build
       
     - uses: ./
       with: 
