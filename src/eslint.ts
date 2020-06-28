@@ -35,6 +35,7 @@ export async function lintChangedFiles(
     fixableErrorCount: 0,
     fixableWarningCount: 0,
     ignoredCount: 0,
+    ignoredFiles: [],
     summary: '',
     rulesSummaries: new Map(),
   };
@@ -59,13 +60,19 @@ export async function lintChangedFiles(
       },
     });
   }
-  const summary = `
+  let summary = `
 |     Type     |       Occurrences       |            Fixable           |
 | ------------ | ----------------------- | ---------------------------- | 
 | **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
 | **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
 | **Ignored**  | ${state.ignoredCount}   | N/A                          |
   `;
+  if (data.reportIgnoredFiles) {
+    summary += `
+## Ignored Files:
+${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
+    `;
+  }
   const checkResult = await updateCheck({
     conclusion: state.errorCount > 0 ? 'failure' : 'success',
     status: 'completed',

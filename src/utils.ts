@@ -78,6 +78,8 @@ export function processLintResults(
   for (const result of results) {
     const { filePath, messages } = result;
 
+    core.debug(`----- Results for File: ${filePath} -----`);
+
     for (const lintMessage of messages) {
       const {
         line,
@@ -99,20 +101,18 @@ export function processLintResults(
         if (message.startsWith('File ignored')) {
           state.warningCount -= 1;
           state.ignoredCount += 1;
+          state.ignoredFiles.push(filePath);
         }
         continue;
       }
 
-      const level = severity === 2 ? 'failure' : 'warning';
+      const level =
+        severity === 2 || data.reportWarningsAsErrors ? 'failure' : 'warning';
 
       if (!data.annotateWarnings && level !== 'failure') {
         continue;
       }
 
-      // console.log(ruleId, result, lintMessage);
-      // if (suggestions) {
-      //   console.log(JSON.stringify(suggestions, null, 2));
-      // }
       const annotation: ChecksUpdateParamsOutputAnnotations = {
         path: filePath.replace(`${GITHUB_WORKSPACE}/`, ''),
         start_line: line,

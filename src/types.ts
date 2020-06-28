@@ -20,6 +20,8 @@ export type ActionData = {
 
   annotateWarnings: boolean;
   issueSummary: boolean;
+  reportWarningsAsErrors: boolean;
+  reportIgnoredFiles: boolean;
 
   eslint: {
     rulePaths: string[];
@@ -40,6 +42,7 @@ export type LintState = {
   fixableErrorCount: number;
   fixableWarningCount: number;
   ignoredCount: number;
+  ignoredFiles: string[];
   summary: string;
   rulesSummaries: Map<
     string,

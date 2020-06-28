@@ -24,6 +24,11 @@ async function run(): Promise<void> {
       ignoreGlob: processArrayInput('ignoreGlob', []),
       annotateWarnings: processBooleanInput('annotateWarnings', true),
       issueSummary: processBooleanInput('issueSummary', true),
+      reportWarningsAsErrors: processBooleanInput(
+        'reportWarningsAsErrors',
+        false,
+      ),
+      reportIgnoredFiles: processBooleanInput('reportIgnoredFiles', false),
       eslint: {
         errorOnUnmatchedPattern: processBooleanInput(
           'errorOnUnmatchedPattern',
