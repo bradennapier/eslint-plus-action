@@ -27,6 +27,10 @@ jobs:
       if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
       run: yarn install --frozen-lockfile --prefer-offline
 
+    - name: Install Cached Dependencies
+      if: steps.yarn-cache.outputs.cache-hit == 'true' # Over here!
+      run: yarn install --frozen-lockfile --offline
+
     - name: Build
       run: yarn build
       
