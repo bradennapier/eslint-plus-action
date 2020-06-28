@@ -5,14 +5,11 @@ import { Octokit, ActionData, LintState } from './types';
 import { createCheck } from './api';
 import { processLintResults } from './utils';
 import { NAME, OWNER, REPO } from './constants';
-import path from 'path';
 
 export async function lintChangedFiles(
   client: Octokit,
   data: ActionData,
 ): Promise<void> {
-  console.log('dirs: ', __dirname, process.cwd());
-
   const eslintConfig = {
     extensions: data.eslint.extensions,
     ignore: data.eslint.useEslintIgnore,
@@ -41,8 +38,6 @@ export async function lintChangedFiles(
   };
 
   for await (const changed of await getChangedFiles(client, data)) {
-    // console.log('[CHANGED BATCH] : Files : ', changed);
-
     if (changed.length === 0) {
       break;
     }
@@ -90,6 +85,7 @@ ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
       title: 'Checks Complete',
       summary: summary + ignoredFilesMarkdown,
     },
+    // TODO
     // actions:
     //   state.fixableErrorCount > 0 || state.fixableWarningCount > 0
     //     ? [
@@ -106,22 +102,12 @@ ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
   });
   if (data.prID && data.issueSummary) {
     const { issueSummaryType } = data;
-    // const annotations = await client.checks.listAnnotations({
-    //   check_run_id: checkResult.data.id,
-    //   owner: OWNER,
-    //   repo: REPO,
-    // });
-
-    // console.log('Annotations: ', JSON.stringify(annotations.data, null, 2));
 
     const issues = await client.issues.listComments({
       issue_number: data.prID,
       owner: OWNER,
       repo: REPO,
     });
-
-    // const actionIssues = issues.data.filter(issue => issue.user.id)
-    // console.log('Issues: ', JSON.stringify(issues.data, null, 2));
 
     const checkUrl = data.prHtmlUrl
       ? `${data.prHtmlUrl}/checks?check_run_id=${checkResult.data.id}`
@@ -189,8 +175,6 @@ ${summary.annotations
 
     const userIssues = issues.data.filter((issue) => issue.user.id === userId);
 
-    // console.log(userIssues);
-
     if (userIssues.length > 0) {
       await Promise.all(
         userIssues.map((issue) =>
@@ -204,6 +188,7 @@ ${summary.annotations
     }
   }
 
+  // TODO
   // await client.repos.createOrUpdateFileContents({
   //   owner: OWNER,
   //   repo: REPO,

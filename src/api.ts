@@ -57,41 +57,6 @@ export async function fetchFilesBatchPR(
   };
 }
 
-// export async function fetchFilesBatchPR(
-//   client: Octokit,
-//   prNumber: number,
-//   page?: number,
-//   owner: string = OWNER,
-//   repo: string = REPO,
-// ): Promise<PrResponse> {
-//   const result = await client.pulls.listFiles({
-//     owner,
-//     repo,
-//     pull_number: prNumber,
-//     per_page: 50,
-//     page: page || 1,
-//   });
-
-//   if (!result || !result.data) {
-//     core.info(`No PR or PR files detected`);
-//     return { files: [], data: [] };
-//   }
-
-//   console.log('Result: ', JSON.stringify(result, null, 2));
-
-//   core.info(
-//     `PR with files detected: ${result.data
-//       .map((file) => file.filename)
-//       .join(', ')}`,
-//   );
-
-//   return {
-//     nextPage: (page || 1) + 1,
-//     files: result.data.map((file) => file.filename),
-//     data: result.data,
-//   };
-// }
-
 /**
  * Gets a list of all the files modified in this commit
  *
@@ -142,7 +107,6 @@ export async function createCheck(
     owner,
     repo,
   });
-  // console.log('Check Created: ', result);
   return (params: Partial<ExpectedUpdateParams>) =>
     updateCheck(client, result.data.id, owner, repo, params);
 }
@@ -163,6 +127,5 @@ export async function updateCheck(
     repo,
     ...params,
   });
-  // console.log('Check Updated: ', JSON.stringify(result, null, 2));
   return result;
 }

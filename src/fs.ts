@@ -11,12 +11,14 @@ export async function filterFiles(
   data: ActionData,
 ): Promise<string[]> {
   const { extensions } = data.eslint;
-  // const result: string[] = [];
+
   const matches = micromatch(files, [`**{${extensions.join(',')}}`]);
+
   const include: string[] =
     data.includeGlob.length > 0
       ? micromatch(matches, data.includeGlob)
       : matches;
+
   const ignore: string[] =
     data.ignoreGlob.length > 0 ? micromatch(include, data.ignoreGlob) : [];
 
