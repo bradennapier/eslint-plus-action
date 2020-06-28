@@ -11,8 +11,20 @@ inputs:
   annotateWarnings:
     description: 'By setting this to "false", only errors will be annotated'
     required: false
+  reportWarningsAsErrors:
+    description: 'Report eslint warnings as errors? Defaults to false'
+    required: false
+  reportIgnoredFiles:
+    description: 'Report any file paths which were ignored? Defaults to false'
+    required: false
+  reportSuggestions:
+    description: 'Report suggestions with the rules? Defaults to true'
+    required: false
   issueSummary:
     description: 'Should the bot provide a summary of the results as a comment? Defaults to true'
+    required: false
+  issueSummaryType:
+    description: 'Changes the PR comment to be "full" (as shown on actions page) or "compact", defaults to compact'
     required: false
   extensions:
     description: 'Optionally provide a comma-separated list of extensions (checks js, jsx, ts, tsx by default)'
@@ -45,4 +57,4 @@ runs:
   using: docker
   image: Dockerfile
   args:
-  - "${{ inputs.github-token }}"
+    - "${{ inputs.github-token }}"

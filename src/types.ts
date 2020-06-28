@@ -20,6 +20,10 @@ export type ActionData = {
 
   annotateWarnings: boolean;
   issueSummary: boolean;
+  reportWarningsAsErrors: boolean;
+  reportIgnoredFiles: boolean;
+  reportSuggestions: boolean;
+  issueSummaryType: 'full' | 'compact';
 
   eslint: {
     rulePaths: string[];
@@ -39,6 +43,8 @@ export type LintState = {
   warningCount: number;
   fixableErrorCount: number;
   fixableWarningCount: number;
+  ignoredCount: number;
+  ignoredFiles: string[];
   summary: string;
   rulesSummaries: Map<
     string,
@@ -74,6 +80,7 @@ export type ChecksUpdateParamsOutputAnnotations = {
   message: string;
   title?: string;
   raw_details?: string;
+  suggestions: string;
 };
 
 export type ChecksUpdateParams = {

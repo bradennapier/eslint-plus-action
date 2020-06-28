@@ -26,6 +26,38 @@ export const processArrayInput = <D>(
   return result.split(',').map((e) => e.trim());
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function resultIsInEnum<V>(result: any, values: V[]): result is V {
+  return values.includes(result);
+}
+
+export const processEnumInput = <D, V>(
+  key: string,
+  values: V[],
+
+  defaultValue?: D,
+): V | D => {
+  const result = core.getInput(key, {
+    required: typeof defaultValue === 'undefined',
+  });
+  if (!result) {
+    if (typeof defaultValue === 'undefined') {
+      throw new Error(
+        `No result for input '${key}' and no default value was provided`,
+      );
+    }
+    return defaultValue;
+  }
+  if (!resultIsInEnum(result, values)) {
+    throw new Error(
+      `Input of "${result}" for property "${key}" must be one of: "${values.join(
+        ', ',
+      )}"`,
+    );
+  }
+  return result;
+};
+
 export const processBooleanInput = <D>(
   key: string,
   defaultValue?: D,
@@ -76,37 +108,51 @@ export function processLintResults(
   state.fixableWarningCount += report.fixableWarningCount;
 
   for (const result of results) {
-    const { filePath, messages } = result;
+    const { messages } = result;
+    const filePath = result.filePath.replace(`${GITHUB_WORKSPACE}/`, '');
+    core.debug(`----- Results for File: ${filePath} -----`);
 
     for (const lintMessage of messages) {
-      const { line, severity, ruleId, message, suggestions = [] } = lintMessage;
+      const {
+        line,
+        severity,
+        ruleId,
+        message,
+        messageId,
+        nodeType,
+        suggestions = [],
+      } = lintMessage;
 
       core.debug(
-        `Level ${severity} issue found on line ${line} [${ruleId}] ${message}`,
+        `Level ${severity} issue found on line ${line} [${ruleId}] | ${messageId} | ${nodeType} | ${message}`,
       );
 
       // if ruleId is null, it's likely a parsing error, so let's skip it
       if (!ruleId) {
+        // remove confusing warnings when skipping linting of files
+        if (message.startsWith('File ignored')) {
+          state.warningCount -= 1;
+          state.ignoredCount += 1;
+          state.ignoredFiles.push(filePath);
+        }
         continue;
       }
 
-      const level = severity === 2 ? 'failure' : 'warning';
+      const level =
+        severity === 2 || data.reportWarningsAsErrors ? 'failure' : 'warning';
 
       if (!data.annotateWarnings && level !== 'failure') {
         continue;
       }
 
-      // console.log(ruleId, result, lintMessage);
-      // if (suggestions) {
-      //   console.log(JSON.stringify(suggestions, null, 2));
-      // }
       const annotation: ChecksUpdateParamsOutputAnnotations = {
-        path: filePath.replace(`${GITHUB_WORKSPACE}/`, ''),
+        path: filePath,
         start_line: line,
         end_line: line,
         annotation_level: level,
         title: ruleId,
-        message: `${message}${
+        message: `${message}`,
+        suggestions:
           suggestions && suggestions.length > 0
             ? `
 
@@ -114,8 +160,7 @@ ${suggestions
   .map((suggestion) => `    * [SUGGESTION] ${suggestion.desc}`)
   .join('\n')}
 `
-            : ''
-        }`,
+            : '',
       };
 
       const rule = state.rulesSummaries.get(ruleId);

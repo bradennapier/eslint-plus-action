@@ -96,4 +96,5 @@ Thumbs.db
 
 # Ignore built ts files
 __tests__/runner/*
-lib/**/*
+# dont ignore lib files so we dont need to build in action
+# lib/**/*

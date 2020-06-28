@@ -2,14 +2,19 @@ import * as core from '@actions/core';
 import * as github from '@actions/github';
 
 import { lintChangedFiles } from './eslint';
-import { processArrayInput, processBooleanInput, processInput } from './utils';
+import {
+  processArrayInput,
+  processBooleanInput,
+  processInput,
+  processEnumInput,
+} from './utils';
 import { ActionData } from './types';
 
 async function run(): Promise<void> {
   try {
     const { context } = github;
     // console.log(context, process.env);
-    core.debug('👋 Hello! You are an amazing person! 🙌');
+    // core.debug('👋 Hello! You are an amazing person! 🙌');
 
     const client = github.getOctokit(
       core.getInput('github-token', { required: true }),
@@ -24,6 +29,17 @@ async function run(): Promise<void> {
       ignoreGlob: processArrayInput('ignoreGlob', []),
       annotateWarnings: processBooleanInput('annotateWarnings', true),
       issueSummary: processBooleanInput('issueSummary', true),
+      issueSummaryType: processEnumInput(
+        'issueSummaryType',
+        ['full', 'compact'],
+        'compact',
+      ),
+      reportWarningsAsErrors: processBooleanInput(
+        'reportWarningsAsErrors',
+        false,
+      ),
+      reportIgnoredFiles: processBooleanInput('reportIgnoredFiles', false),
+      reportSuggestions: processBooleanInput('reportSuggestions', true),
       eslint: {
         errorOnUnmatchedPattern: processBooleanInput(
           'errorOnUnmatchedPattern',
@@ -45,7 +61,7 @@ async function run(): Promise<void> {
       },
     };
 
-    // core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
+    core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
 
     await lintChangedFiles(client, data);
   } catch (err) {

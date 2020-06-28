@@ -5,22 +5,27 @@ import { Octokit, ActionData, LintState } from './types';
 import { createCheck } from './api';
 import { processLintResults } from './utils';
 import { NAME, OWNER, REPO } from './constants';
-// import path from 'path';
+import path from 'path';
 
 export async function lintChangedFiles(
   client: Octokit,
   data: ActionData,
 ): Promise<void> {
-  const eslint = new CLIEngine({
+  console.log('dirs: ', __dirname, process.cwd());
+
+  const eslintConfig = {
     extensions: data.eslint.extensions,
-    ignorePath: data.eslint.useEslintIgnore ? '.gitignore' : undefined,
     ignore: data.eslint.useEslintIgnore,
     useEslintrc: data.eslint.useEslintrc,
     rulePaths: data.eslint.rulePaths,
     errorOnUnmatchedPattern: data.eslint.errorOnUnmatchedPattern,
     fix: data.eslint.fix,
     configFile: data.eslint.configFile,
-  });
+  };
+
+  console.log('[ESLINT] Run With Configuration ', eslintConfig);
+
+  const eslint = new CLIEngine(eslintConfig);
 
   const updateCheck = await createCheck(client, data);
 
@@ -29,6 +34,8 @@ export async function lintChangedFiles(
     warningCount: 0,
     fixableErrorCount: 0,
     fixableWarningCount: 0,
+    ignoredCount: 0,
+    ignoredFiles: [],
     summary: '',
     rulesSummaries: new Map(),
   };
@@ -49,7 +56,15 @@ export async function lintChangedFiles(
       output: {
         title: NAME,
         summary: `${state.errorCount} error(s) found so far`,
-        annotations: output.annotations,
+        annotations:
+          data.reportSuggestions && output.annotations
+            ? output.annotations.map((annotation) => {
+                return {
+                  ...annotation,
+                  message: annotation.message + annotation.suggestions,
+                };
+              })
+            : output.annotations,
       },
     });
   }
@@ -58,14 +73,22 @@ export async function lintChangedFiles(
 | ------------ | ----------------------- | ---------------------------- | 
 | **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
 | **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
+| **Ignored**  | ${state.ignoredCount}   | N/A                          |
   `;
+  const ignoredFilesMarkdown = data.reportIgnoredFiles
+    ? `
+## Ignored Files:
+${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
+    `
+    : '';
+
   const checkResult = await updateCheck({
     conclusion: state.errorCount > 0 ? 'failure' : 'success',
     status: 'completed',
     completed_at: new Date().toISOString(),
     output: {
       title: 'Checks Complete',
-      summary,
+      summary: summary + ignoredFilesMarkdown,
     },
     // actions:
     //   state.fixableErrorCount > 0 || state.fixableWarningCount > 0
@@ -82,6 +105,7 @@ export async function lintChangedFiles(
     //     : undefined,
   });
   if (data.prID && data.issueSummary) {
+    const { issueSummaryType } = data;
     // const annotations = await client.checks.listAnnotations({
     //   check_run_id: checkResult.data.id,
     //   owner: OWNER,
@@ -108,7 +132,7 @@ export async function lintChangedFiles(
       repo: REPO,
       issue_number: data.prID,
       body: `
-## [Eslint Summary](${checkUrl})
+## ESLint Summary [View Full Report](${checkUrl})
 
 > Annotations are provided inline on the [Files Changed](${
         data.prHtmlUrl
@@ -121,6 +145,15 @@ ${summary}
         checkResult.data.output.annotations_count
       } total](${checkUrl})
 
+${
+  issueSummaryType === 'full'
+    ? `
+---
+
+${ignoredFilesMarkdown}
+`
+    : ''
+}
 ---
 
 ${[...state.rulesSummaries]
@@ -138,7 +171,13 @@ ${[...state.rulesSummaries]
 ${summary.annotations
   .map(
     (annotation) =>
-      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${annotation.path}#L${annotation.start_line}-L${annotation.end_line}) Line ${annotation.start_line} - ${annotation.message}`,
+      `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${
+        annotation.path
+      }#L${annotation.start_line}-L${annotation.end_line}) Line ${
+        annotation.start_line
+      } - ${annotation.message}${
+        issueSummaryType === 'full' ? annotation.suggestions : ''
+      }`,
   )
   .join('\n')}`,
   )
