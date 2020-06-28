@@ -24,8 +24,11 @@ jobs:
           ${{ runner.os }}-yarn-
       
     - name: Install Dependencies
-      # if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
-      run: yarn install --frozen-lockfile --prefer-offline && yarn build
+      if: steps.yarn-cache.outputs.cache-hit != 'true' # Over here!
+      run: yarn install --frozen-lockfile --prefer-offline
+
+    - name: Build
+      run: yarn build
       
     - uses: ./
       with: 
