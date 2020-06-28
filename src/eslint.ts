@@ -188,6 +188,11 @@ ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
         issue_number: data.prID,
         body: '-- Message Removed, Refresh to Update --',
       });
+      await client.issues.deleteComment({
+        owner: OWNER,
+        repo: REPO,
+        comment_id: commentResult.data.id,
+      });
     }
 
     if (commentResult) {
