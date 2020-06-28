@@ -42,7 +42,10 @@ inputs:
     description: 'Run with --fix? Defaults to false'
     required: false
 runs:
-  using: docker
-  image: Dockerfile
-  args:
-    - "${{ inputs.github-token }}"
+  using: 'node12'
+  main: 'dist/index.js'
+# runs:
+#   using: docker
+#   image: Dockerfile
+#   args:
+#     - "${{ inputs.github-token }}"

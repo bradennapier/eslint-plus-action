@@ -9,7 +9,7 @@
     "format": "prettier --write **/*.ts",
     "format-check": "prettier --check **/*.ts",
     "lint": "eslint src/**/*.ts",
-    "pack": "ncc build",
+    "pack": "ncc build src/run.ts -o dist",
     "test": "echo TODO",
     "all": "npm run build && npm run format && npm run lint && npm run pack && npm test"
   },
@@ -25,7 +25,7 @@
   "author": "YourNameOrOrganization",
   "license": "MIT",
   "dependencies": {
-    "@actions/core": "^1.2.0",
+    "@actions/core": "^1.2.4",
     "@actions/github": "^3.0.0",
     "@actions/glob": "^0.1.0",
     "eslint-rule-documentation": "^1.0.23",
@@ -34,13 +34,13 @@
   },
   "devDependencies": {
     "@types/eslint": "^7.2.0",
-    "@types/jest": "^26.0.0",
+    "@types/jest": "^26.0.3",
     "@types/micromatch": "^4.0.1",
-    "@types/node": "^14.0.13",
-    "@typescript-eslint/eslint-plugin": "^3.3.0",
-    "@typescript-eslint/parser": "^3.3.0",
+    "@types/node": "^14.0.14",
+    "@typescript-eslint/eslint-plugin": "^3.4.0",
+    "@typescript-eslint/parser": "^3.4.0",
     "@zeit/ncc": "^0.22.3",
-    "eslint": "^7.2.0",
+    "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-github": "^4.0.1",
     "eslint-plugin-jest": "^23.13.2",
@@ -49,7 +49,7 @@
     "jest-circus": "^26.0.1",
     "js-yaml": "^3.14.0",
     "prettier": "^2.0.5",
-    "ts-jest": "^26.1.0",
+    "ts-jest": "^26.1.1",
     "typescript": "^3.9.5"
   }
 }
