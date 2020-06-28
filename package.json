@@ -24,7 +24,7 @@
   ],
   "husky": {
     "hooks": {
-      "pre-commit": "yarn build"
+      "pre-commit": "scripts/precommit.sh"
     }
   },
   "author": "YourNameOrOrganization",
