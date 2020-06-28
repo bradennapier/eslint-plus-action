@@ -13,9 +13,7 @@
   </h1>
   <sup>
     <br />
-
     A flexible and dead simple Github Action which runs ESLint against the changed files in a PR with customizable options and rich summaries.  ESLint issues are annotated inline on your PR diff.
-
   </sup>
   <br />
   <br />
