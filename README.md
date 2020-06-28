@@ -35,7 +35,7 @@
 - [Optional summary comments on each push to the PR](https://github.com/bradennapier/eslint-plus-action/pull/3)
 - [Links to the rule documentation when available](https://github.com/bradennapier/eslint-plus-action/pull/3#issuecomment-646635983)
 - [Annotation Summary Page](https://github.com/bradennapier/eslint-plus-action/pull/3/checks?check_run_id=788235048)
-- Suggestions are printed (not yet provided as change suggestions)
+- Suggestions are printed when enabled (not yet provided as change suggestions)
 - Button to run ESLint Fix [COMING SOON]
 - More...
 
@@ -72,7 +72,9 @@ You provide configuration properties within your workflow by using the `with` pr
 
 > The official settings can always be seen by viewing the [`action.yml`](https://github.com/bradennapier/eslint-plus-action/blob/master/action.yml) schema for the action.
 
-## Simple Workflow Example
+## Examples
+
+### Simple Workflow Example
 
 Below is a basic example which should get you going.  You can view the action.yml to see what other properties are available for customization.
 
@@ -85,12 +87,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v1
+    - uses: bradennapier/eslint-plus-action@v2
       with: 
         github-token: ${{secrets.GITHUB_TOKEN}}
 ```
 
-## Environment Variables
+### Environment Variables
 
 There may be times that you need to provide a `NPM_TOKEN` so that the action can install your private repos.  You do this by adding the secret to your repo `Settings -> Secrets` then providing it as an environment variable to the action:
 
@@ -100,11 +102,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v1
+    - uses: bradennapier/eslint-plus-action@v2
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
       with: 
         github-token: ${{secrets.GITHUB_TOKEN}}
+```
+
+### Providing Parameters
+
+```yml
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: bradennapier/eslint-plus-action@v2
+      env:
+        NPM_TOKEN: ${{secrets.NPM_TOKEN}}
+      with: 
+        github-token: ${{secrets.GITHUB_TOKEN}}
+        issueSummaryType: full
+        reportIgnoredFiles: true
 ```
 
 ## More Previews
