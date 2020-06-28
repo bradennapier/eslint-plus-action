@@ -22,6 +22,7 @@ export type ActionData = {
   issueSummary: boolean;
   reportWarningsAsErrors: boolean;
   reportIgnoredFiles: boolean;
+  reportSuggestions: boolean;
 
   eslint: {
     rulePaths: string[];

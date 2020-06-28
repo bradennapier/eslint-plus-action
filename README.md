@@ -47,14 +47,11 @@
 
 You provide configuration properties within your workflow by using the `with` property.  See the `Simple Workflow Example` for an example of providing your github-token.  
 
-> `boolean` types are expected to be strings that equal either `true` or `false`.
-
 > `array` types are expected to be comma-separated values
 
 |    Property   | Type | Default | Required | Description |
 | ------------- | ---- | ------- | -------- | ----------- |
 | github-token | string | none | true | Your Github token.  This is provided by default and should be set to `${{secrets.GITHUB_TOKEN}} in most cases. |
-| annotateWarnings | boolean | true | false | By setting this to "false", only errors will be annotated |
 | issueSummary | boolean | true | false | Should the bot provide a summary of the results as a comment? |
 | extensions | array | .js,.jsx,.ts,.tsx | false | An array of extensions to lint |
 | includeGlob | array | \*\*/\* | false | Optional array of globs to include from the changed files list |
@@ -64,6 +61,10 @@ You provide configuration properties within your workflow by using the `with` pr
 | errorOnUnmatchedPattern | boolean | false | false | Throw error if unmatched pattern is seen? |
 | useEslintrc | boolean | true | false | Use eslintrc? |
 | useEslintIgnore | boolean | true | false | Use eslintignore? |
+| annotateWarnings | boolean | true | false | By setting this to "false", only errors will be annotated |
+| reportSuggestions | boolean | true | false | Report suggestions when available within the annotations? |
+| reportIgnoredFiles | boolean | false | false | Report a list of any ignored files? |
+| reportWarningsAsErrors | boolean | false | false | Report any eslint warnings as errors? |
 | fix | boolean | false | false | Commit fixes when possible (UNFINISHED) |
 
 > The official settings can always be seen by viewing the [`action.yml`](https://github.com/bradennapier/eslint-plus-action/blob/master/action.yml) schema for the action.

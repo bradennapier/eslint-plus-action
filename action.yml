@@ -17,6 +17,9 @@ inputs:
   reportIgnoredFiles:
     description: 'Report any file paths which were ignored? Defaults to false'
     required: false
+  reportSuggestions:
+    description: 'Report suggestions with the rules? Defaults to true'
+    required: false
   issueSummary:
     description: 'Should the bot provide a summary of the results as a comment? Defaults to true'
     required: false

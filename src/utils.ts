@@ -76,8 +76,8 @@ export function processLintResults(
   state.fixableWarningCount += report.fixableWarningCount;
 
   for (const result of results) {
-    const { filePath, messages } = result;
-
+    const { messages } = result;
+    const filePath = result.filePath.replace(`${GITHUB_WORKSPACE}/`, '');
     core.debug(`----- Results for File: ${filePath} -----`);
 
     for (const lintMessage of messages) {
@@ -114,13 +114,13 @@ export function processLintResults(
       }
 
       const annotation: ChecksUpdateParamsOutputAnnotations = {
-        path: filePath.replace(`${GITHUB_WORKSPACE}/`, ''),
+        path: filePath,
         start_line: line,
         end_line: line,
         annotation_level: level,
         title: ruleId,
         message: `${message}${
-          suggestions && suggestions.length > 0
+          suggestions && suggestions.length > 0 && data.reportSuggestions
             ? `
 
 ${suggestions

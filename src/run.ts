@@ -29,6 +29,7 @@ async function run(): Promise<void> {
         false,
       ),
       reportIgnoredFiles: processBooleanInput('reportIgnoredFiles', false),
+      reportSuggestions: processBooleanInput('reportSuggestions', true),
       eslint: {
         errorOnUnmatchedPattern: processBooleanInput(
           'errorOnUnmatchedPattern',
