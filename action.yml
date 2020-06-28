@@ -42,10 +42,7 @@ inputs:
     description: 'Run with --fix? Defaults to false'
     required: false
 runs:
-  using: 'node12'
-  main: 'lib/run.js'
-# runs:
-#   using: docker
-#   image: Dockerfile
-#   args:
-#     - "${{ inputs.github-token }}"
+  using: docker
+  image: Dockerfile
+  args:
+    - "${{ inputs.github-token }}"

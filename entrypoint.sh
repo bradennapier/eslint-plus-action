@@ -20,19 +20,19 @@ popd () {
 
 set -e
 
-echo "Current Directory: $(pwd)"
-echo "Github Workspace: ${GITHUB_WORKSPACE}"
+{(
+    [ -f yarn.lock ] && yarn install
+    [ -f package-lock.json ] && npm install
+)} &
 
-echo "Workspace Directory"
-ls -alh
+{(
+    pushd /action
+    [ -f yarn.lock ] && yarn install && yarn build
+    [ -f package-lock.json ] && npm install && npm run build
+    popd
+)} &
 
-[ -f yarn.lock ] && yarn install
-[ -f package-lock.json ] && npm install
-
-pushd /action
-[ -f yarn.lock ] && yarn install && yarn build
-[ -f package-lock.json ] && npm install && npm run build
-popd
+wait
 
 NODE_PATH=node_modules GITHUB_TOKEN="${GITHUB_TOKEN:-${1:-.}}" SOURCE_ROOT=${2:-.} node /action/lib/run.js
 
