@@ -23,7 +23,7 @@ export async function lintChangedFiles(
     configFile: data.eslint.configFile,
   };
 
-  console.log('[ESLINT] Run With Configuration: ', eslintConfig);
+  console.log('[ESLINT] Run With Configuration ', eslintConfig);
 
   const eslint = new CLIEngine(eslintConfig);
 
