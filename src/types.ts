@@ -39,6 +39,7 @@ export type LintState = {
   warningCount: number;
   fixableErrorCount: number;
   fixableWarningCount: number;
+  ignoredCount: number;
   summary: string;
   rulesSummaries: Map<
     string,

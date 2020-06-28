@@ -95,6 +95,11 @@ export function processLintResults(
 
       // if ruleId is null, it's likely a parsing error, so let's skip it
       if (!ruleId) {
+        // remove confusing warnings when skipping linting of files
+        if (message.startsWith('File ignored')) {
+          state.warningCount -= 1;
+          state.ignoredCount += 1;
+        }
         continue;
       }
 

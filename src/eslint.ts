@@ -34,6 +34,7 @@ export async function lintChangedFiles(
     warningCount: 0,
     fixableErrorCount: 0,
     fixableWarningCount: 0,
+    ignoredCount: 0,
     summary: '',
     rulesSummaries: new Map(),
   };
@@ -63,6 +64,7 @@ export async function lintChangedFiles(
 | ------------ | ----------------------- | ---------------------------- | 
 | **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
 | **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
+| **Ignored**  | ${state.ignoredCount}   | N/A                          |
   `;
   const checkResult = await updateCheck({
     conclusion: state.errorCount > 0 ? 'failure' : 'success',
