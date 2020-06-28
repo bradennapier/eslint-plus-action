@@ -43,7 +43,7 @@ inputs:
     required: false
 runs:
   using: 'node12'
-  main: 'lib/index.js'
+  main: 'lib/run.js'
 # runs:
 #   using: docker
 #   image: Dockerfile
