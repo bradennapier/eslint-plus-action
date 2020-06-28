@@ -50,7 +50,7 @@ async function run(): Promise<void> {
       },
     };
 
-    // core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
+    core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
 
     await lintChangedFiles(client, data);
   } catch (err) {
