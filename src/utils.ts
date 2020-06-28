@@ -79,10 +79,18 @@ export function processLintResults(
     const { filePath, messages } = result;
 
     for (const lintMessage of messages) {
-      const { line, severity, ruleId, message, suggestions = [] } = lintMessage;
+      const {
+        line,
+        severity,
+        ruleId,
+        message,
+        messageId,
+        nodeType,
+        suggestions = [],
+      } = lintMessage;
 
       core.debug(
-        `Level ${severity} issue found on line ${line} [${ruleId}] ${message}`,
+        `Level ${severity} issue found on line ${line} [${ruleId}] | ${messageId} | ${nodeType} | ${message}`,
       );
 
       // if ruleId is null, it's likely a parsing error, so let's skip it
