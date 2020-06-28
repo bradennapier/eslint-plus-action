@@ -23,7 +23,7 @@ set -e
     echo "First Install";
     ls -alh
     echo "Install Yarn"
-    [ -f yarn.lock ] && yarn install --frozen-lockfile
+    [ -f yarn.lock ] && yarn install
     [ -f package-lock.json ] && npm install
 )} &
 
@@ -33,7 +33,7 @@ set -e
     echo "Yarn Action Install"
     ls -alh
 
-    [ -f yarn.lock ] && yarn install --frozen-lockfile
+    [ -f yarn.lock ] && yarn install
     [ -f package-lock.json ] && npm install 
     popd
 )} &
