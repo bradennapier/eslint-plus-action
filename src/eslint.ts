@@ -15,7 +15,6 @@ export async function lintChangedFiles(
 
   const eslintConfig = {
     extensions: data.eslint.extensions,
-    ignorePath: data.eslint.useEslintIgnore ? '.gitignore' : undefined,
     ignore: data.eslint.useEslintIgnore,
     useEslintrc: data.eslint.useEslintrc,
     rulePaths: data.eslint.rulePaths,
