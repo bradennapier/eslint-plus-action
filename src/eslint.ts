@@ -6,6 +6,9 @@ import { createCheck } from './api';
 import { processLintResults } from './utils';
 import { NAME, OWNER, REPO } from './constants';
 
+// test eslint changed action from fork PR
+const TEST = 2;
+
 export async function lintChangedFiles(
   client: Octokit,
   data: ActionData,
