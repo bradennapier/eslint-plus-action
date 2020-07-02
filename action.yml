@@ -53,8 +53,13 @@ inputs:
   fix:
     description: 'Run with --fix? Defaults to false'
     required: false
+  npmInstall:
+    description: 'Run npm install (or yarn) for you. If you do not use this option, do the npm install step yourself, before running this action. Defaults to true'
+    required: false
+    default: true
 runs:
   using: docker
   image: Dockerfile
   args:
     - "${{ inputs.github-token }}"
+    - "${{ inputs.npmInstall }}"
