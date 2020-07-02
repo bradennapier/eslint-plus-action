@@ -69,6 +69,7 @@ You provide configuration properties within your workflow by using the `with` pr
 | useEslintrc | boolean | true | false | Use eslintrc? |
 | useEslintIgnore | boolean | true | false | Use eslintignore? |
 | fix | boolean | false | false | Commit fixes when possible (UNFINISHED) |
+| npmInstall | boolean | true | false | Runs `npm install` for you |
 
 > The official settings can always be seen by viewing the [`action.yml`](https://github.com/bradennapier/eslint-plus-action/blob/master/action.yml) schema for the action.
 
@@ -124,6 +125,24 @@ jobs:
         github-token: ${{secrets.GITHUB_TOKEN}}
         issueSummaryType: full
         reportIgnoredFiles: true
+```
+
+### With a manual `npm install` step
+
+```yml
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install dependencies
+        run: npm ci
+      - name: Run a build step
+        run: npm run build
+      - uses: bradennapier/eslint-plus-action@v2
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          npmInstall: false
 ```
 
 ## More Previews
