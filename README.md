@@ -72,32 +72,6 @@ You provide configuration properties within your workflow by using the `with` pr
 
 > The official settings can always be seen by viewing the [`action.yml`](https://github.com/bradennapier/eslint-plus-action/blob/master/action.yml) schema for the action.
 
-## PR from Forks
-
-There are some considerations when working with PR's that come from a fork.  This is due to the fact that the default `secrets.GITHUB_TOKEN` will only have [read access](https://docs.github.com/en/actions/configuring-and-managing-workflows/authenticating-with-the-github_token#permissions-for-the-github_token).
-
-### Run on internal and remote PR
-
-If you want the action to work regardless of the source, then you can setup a github token that will have the appropriate write permissions so that it can run.  This is safe for this action as we do not access or change anything that could potentially break anything in your repo based on the conditions the user sets.
-
-
-### Only run on internal PR
-
-If you don't care about the action running from remote PR's then you can just add an `if` condition to the action:
-
-```
-name: "my-workflow"
-on: [pull_request]
-
-jobs:
-  eslint:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v2
-      if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository }} 
-```
-
 ## Examples
 
 ### Simple Workflow Example
