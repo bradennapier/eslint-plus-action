@@ -88,8 +88,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - uses: bradennapier/eslint-plus-action@v2
-      with: 
-        github-token: ${{secrets.GITHUB_TOKEN}}
 ```
 
 ### Environment Variables
@@ -105,8 +103,6 @@ jobs:
     - uses: bradennapier/eslint-plus-action@v2
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
-      with: 
-        github-token: ${{secrets.GITHUB_TOKEN}}
 ```
 
 ### Providing Parameters
@@ -121,7 +117,6 @@ jobs:
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
       with: 
-        github-token: ${{secrets.GITHUB_TOKEN}}
         issueSummaryType: full
         reportIgnoredFiles: true
 ```

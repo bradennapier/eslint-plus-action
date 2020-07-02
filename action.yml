@@ -8,6 +8,7 @@ inputs:
   github-token:
     description: 'GitHub repository token for publishing inline lint annotations. Should be secrets.GITHUB_TOKEN.'
     required: true
+    default: ${{ github.token }}
   annotateWarnings:
     description: 'By setting this to "false", only errors will be annotated'
     required: false
