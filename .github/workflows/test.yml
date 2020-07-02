@@ -1,9 +1,5 @@
 name: "build-test"
-on: # rebuild any PRs and main branch changes
-  pull_request:
-  push:
-    branches:
-      - master
+on: [pull_request]
 jobs:
  
   lint: # make sure the action works on a clean machine without building
