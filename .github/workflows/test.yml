@@ -45,5 +45,5 @@ jobs:
       
     - uses: ./
       with: 
-        github-token: ${{secrets.GITHUB_TOKEN}}
+        github-token: ${{secrets.PR_GITHUB_TOKEN}}
         reportIgnoredFiles: true
