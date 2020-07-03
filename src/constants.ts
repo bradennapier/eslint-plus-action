@@ -12,7 +12,6 @@ declare global {
 
 export const NAME = 'Eslint Changed';
 
-export const OWNER = github.context.repo.owner;
+export const { owner: OWNER, repo: REPO } = github.context.repo;
 
-export const REPO = github.context.repo.repo;
 export const { GITHUB_WORKSPACE } = process.env;
