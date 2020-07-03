@@ -111,7 +111,7 @@ async function run(): Promise<void> {
     // 156673153
     if (data.eventName === 'schedule') {
       console.log('Download All Artifacts');
-      await downloadAllArtifacts();
+      await downloadAllArtifacts(client);
       // await client.deserializeArtifacts();
     } else {
       await lintChangedFiles(client, data);
