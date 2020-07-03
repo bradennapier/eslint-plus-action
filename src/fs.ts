@@ -7,6 +7,7 @@ import micromatch from 'micromatch';
 
 import { fetchFilesBatchPR, fetchFilesBatchCommit } from './api';
 import { Octokit, PrResponse, ActionData, ActionDataWithPR } from './types';
+import { REPO, OWNER } from './constants';
 
 export async function filterFiles(
   files: string[],
@@ -116,7 +117,10 @@ export async function downloadAllArtifacts(client: Octokit): Promise<void> {
   const results = await artifactClient.downloadAllArtifacts(
     '/action/.artifacts',
   );
-  const artifacts = await client.actions.listArtifactsForRepo();
+  const artifacts = await client.actions.listArtifactsForRepo({
+    owner: OWNER,
+    repo: REPO,
+  });
   console.log(
     'Artifact Download Results: ',
     results,
