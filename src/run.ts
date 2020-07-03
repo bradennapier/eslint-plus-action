@@ -55,6 +55,22 @@ async function run(): Promise<void> {
       reportSuggestions: processBooleanInput('reportSuggestions', true),
       reportWarnings: processBooleanInput('reportWarnings', true),
 
+      state: {
+        userId: 0,
+        lintCount: 0,
+        errorCount: 0,
+        warningCount: 0,
+        fixableErrorCount: 0,
+        fixableWarningCount: 0,
+        ignoredCount: 0,
+        ignoredFiles: [],
+        summary: '',
+        rulesSummaries: new Map(),
+        annotationCount: 0,
+        conclusion: 'pending',
+        checkId: 0,
+      },
+
       eslint: {
         errorOnUnmatchedPattern: processBooleanInput(
           'errorOnUnmatchedPattern',

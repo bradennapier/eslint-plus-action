@@ -87,6 +87,8 @@ export type ActionData = {
   runId: number;
   runNumber: number;
 
+  state: LintState;
+
   eslint: {
     rulePaths: string[];
     extensions: string[];
@@ -109,6 +111,7 @@ export type LintRuleSummary = {
 };
 
 export type LintState = {
+  userId: number;
   lintCount: number;
   errorCount: number;
   warningCount: number;
@@ -118,6 +121,17 @@ export type LintState = {
   ignoredFiles: string[];
   summary: string;
   rulesSummaries: Map<string, LintRuleSummary>;
+  annotationCount: number;
+  checkId: number;
+  conclusion:
+    | 'success'
+    | 'failure'
+    | 'neutral'
+    | 'cancelled'
+    | 'skipped'
+    | 'timed_out'
+    | 'action_required'
+    | 'pending';
 };
 
 export type ActionDataWithPR = Omit<ActionData, 'issueNumber'> & {

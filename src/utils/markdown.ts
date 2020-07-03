@@ -3,7 +3,6 @@ import {
   LintRuleSummary,
   ChecksAnnotations,
   ActionData,
-  OctokitUpdateChecksResponse,
 } from '../types';
 import dedent from 'dedent';
 
@@ -80,45 +79,38 @@ function getRuleSummary(summary: LintRuleSummary, data: ActionData): string {
   `;
 }
 
-export function getSortedRuleSummaries(
-  state: LintState,
-  data: ActionData,
-): string {
-  if (state.rulesSummaries.size === 0) {
+export function getSortedRuleSummaries(data: ActionData): string {
+  if (data.state.rulesSummaries.size === 0) {
     return '';
   }
   return dedent`
     ---
     
-    ${[...state.rulesSummaries]
+    ${[...data.state.rulesSummaries]
       .sort(([, a], [, b]) => a.level.localeCompare(b.level))
       .map(([, summary]) => getRuleSummary(summary, data))
       .join('\n\n---\n\n')}
   `;
 }
 
-export function getLintSummary(state: LintState): string {
+export function getLintSummary(data: ActionData): string {
   return dedent`
-    |     Type     |       Occurrences       |            Fixable           |
-    | ------------ | ----------------------- | ---------------------------- | 
-    | **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
-    | **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
-    | **Ignored**  | ${state.ignoredCount}   | N/A                          |
+    |     Type     |         Occurrences          |              Fixable              |
+    | ------------ | ---------------------------- | --------------------------------- | 
+    | **Errors**   | ${data.state.errorCount}     | ${data.state.fixableErrorCount}   |
+    | **Warnings** | ${data.state.warningCount}   | ${data.state.fixableWarningCount} |
+    | **Ignored**  | ${data.state.ignoredCount}   | N/A                               |
   `;
 }
 
-function getLintConclusions(
-  checkResult: OctokitUpdateChecksResponse,
-  checkUrl: string,
-): string {
+function getLintConclusions(data: ActionData, checkUrl: string): string {
   return dedent`
-    - **Result:**       ${checkResult.data.conclusion}
-    - **Annotations:** [${checkResult.data.output.annotations_count} total](${checkUrl})
+    - **Result:**       ${data.state.conclusion}
+    - **Annotations:** [${data.state.annotationCount} total](${checkUrl})
   `;
 }
 
 export function getIgnoredFilesSummary(
-  state: LintState,
   data: ActionData,
   force = false,
 ): string {
@@ -133,18 +125,12 @@ export function getIgnoredFilesSummary(
 
     ## Ignored Files:
 
-    ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
+    ${data.state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
   `;
 }
 
-export function getResultMarkdownBody(
-  checkResult: OctokitUpdateChecksResponse,
-  state: LintState,
-  data: ActionData,
-): string {
-  const checkUrl = data.prHtmlUrl
-    ? `${data.prHtmlUrl}/checks?check_run_id=${checkResult.data.id}`
-    : checkResult.data.html_url;
+export function getResultMarkdownBody(data: ActionData): string {
+  const checkUrl = `${data.prHtmlUrl}/checks?check_run_id=${data.state.checkId}`;
 
   return dedent`
     ## ESLint Summary [View Full Report](${checkUrl})
@@ -153,10 +139,10 @@ export function getResultMarkdownBody(
       data.prHtmlUrl
     }/files) tab. You can also see all annotations that were generated on the [annotations page](${checkUrl}).
   
-    ${getLintSummary(state)}
-    ${getLintConclusions(checkResult, checkUrl)}
-    ${getIgnoredFilesSummary(state, data)}
-    ${getSortedRuleSummaries(state, data)}
+    ${getLintSummary(data)}
+    ${getLintConclusions(data, checkUrl)}
+    ${getIgnoredFilesSummary(data)}
+    ${getSortedRuleSummaries(data)}
 
     ${REPORT_FOOTER}
   `;

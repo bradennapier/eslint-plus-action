@@ -94,11 +94,11 @@ export const processInput = <D>(key: string, defaultValue?: D): string | D => {
 export function processLintResults(
   engine: CLIEngine,
   report: CLIEngine.LintReport,
-  state: LintState,
   data: ActionData,
 ): {
   annotations: ChecksUpdateParamsOutput['annotations'];
 } {
+  const { state } = data;
   const { results } = report;
   const annotations: ChecksAnnotations[] = [];
 
@@ -171,6 +171,8 @@ export function processLintResults(
       annotations.push(annotation);
     }
   }
+
+  state.annotationCount += annotations.length;
 
   return {
     annotations,
