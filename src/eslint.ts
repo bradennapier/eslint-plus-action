@@ -12,9 +12,6 @@ import {
   getAnnotationSuggestions,
 } from './utils/markdown';
 
-// test eslint changed action from fork PR
-const TEST = 2;
-
 export async function lintChangedFiles(
   client: Octokit,
   data: ActionData,
