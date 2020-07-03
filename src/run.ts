@@ -9,6 +9,7 @@ import {
   processEnumInput,
 } from './utils';
 import { ActionData } from './types';
+import { IS_READ_ONLY, BASE_FULL_NAME, HEAD_FULL_NAME } from './constants';
 
 async function run(): Promise<void> {
   try {
@@ -21,6 +22,12 @@ async function run(): Promise<void> {
     console.log(JSON.stringify(context, null, 2));
     console.log(context.issue);
     console.log(context.repo);
+
+    console.log({
+      IS_READ_ONLY,
+      BASE_FULL_NAME,
+      HEAD_FULL_NAME,
+    });
 
     const data: ActionData = {
       prID: github.context.payload.pull_request?.number,

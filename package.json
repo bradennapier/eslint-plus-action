@@ -33,6 +33,7 @@
     "@actions/core": "^1.2.4",
     "@actions/github": "^4.0.0",
     "@actions/glob": "^0.1.0",
+    "@octokit/webhooks": "^7.6.4",
     "eslint-rule-documentation": "^1.0.23",
     "micromatch": "^4.0.2",
     "minimatch": "^3.0.4",
