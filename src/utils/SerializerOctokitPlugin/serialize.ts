@@ -32,6 +32,7 @@ export const Serializers = new Map<string, Serializer>([
         requestOptions: OctokitRequestOptions,
       ): Promise<RequestDescriptor> {
         CREATE_CHECK_ID += 1;
+
         const result = {
           data: {
             id: CREATE_CHECK_ID,
@@ -42,7 +43,9 @@ export const Serializers = new Map<string, Serializer>([
             },
           },
         };
+
         SERIALIZER_MAP.set(CREATE_CHECK_ID, result);
+
         return {
           request: {
             ...requestOptions,
@@ -82,8 +85,9 @@ export const Serializers = new Map<string, Serializer>([
           (requestOptions as any).output?.annotations?.length || 0;
 
         const result = {
+          ...createCheckResult,
           data: {
-            ...createCheckResult,
+            ...createCheckResult.data,
             id: requestOptions.check_run_id,
           },
         };
