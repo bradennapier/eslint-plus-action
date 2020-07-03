@@ -4,6 +4,7 @@ import { throttling } from '@octokit/plugin-throttling';
 
 import { ActionData, Octokit, OctokitOptions } from '../types';
 import { SerializerOctokitPlugin } from './SerializerOctokitPlugin';
+import { SERIALIZED_ROUTES } from '../constants';
 
 const Octokit = GitHub.plugin(SerializerOctokitPlugin, throttling);
 
@@ -39,7 +40,10 @@ export function getOctokitClient(data: ActionData): Octokit {
   return new Octokit(
     getOctokitOptions(core.getInput('github-token', { required: true }), {
       throttle: THROTTLE_OPTIONS,
-      serializer: data,
+      serializer: {
+        data,
+        routes: SERIALIZED_ROUTES,
+      },
     }),
   );
 }
