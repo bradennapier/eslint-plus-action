@@ -7,7 +7,7 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
   octokit: Parameters<OctokitPlugin>[0],
   clientOptions: Parameters<OctokitPlugin>[1],
 ) => {
-  console.log('[SERIALIZER] | Plugin Called: ', clientOptions);
+  console.log('[SerializerOctokitPlugin] | Plugin Called: ', clientOptions);
   if (clientOptions.serializer.enabled === false) {
     return;
   }
@@ -22,15 +22,16 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
       request,
       requestOptions: OctokitRequestOptions,
     ): Promise<unknown> => {
-      console.log('[SERIALIZER] | Request | ', requestOptions);
+      console.log('[SerializerOctokitPlugin] | Request | ', requestOptions);
       if (!match || match.test(requestOptions.url)) {
         const serializer = Serializers.get(requestOptions.url);
-        console.log(
-          'SERIALIZE BYPASS! ',
-          serializer,
-          JSON.stringify(requestOptions, null, 2),
-        );
-        return {};
+        if (!serializer) {
+          throw new Error(
+            '[SerializerOctokitPlugin] | Attempted to serialize a path that is not handled',
+          );
+        }
+        serializer(requestOptions);
+        // temp actually make requests
       }
       return request(requestOptions);
     },
