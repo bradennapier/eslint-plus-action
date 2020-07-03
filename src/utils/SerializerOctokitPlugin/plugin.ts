@@ -30,12 +30,14 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
           request: undefined,
         });
 
-        const deserialized = JSON.parse(serialized);
-        if (TempCache.has(deserialized)) {
+        if (TempCache.has(serialized)) {
+          console.log('Skip Serializer!');
           return request(requestOptions);
         }
 
-        TempCache.add(deserialized);
+        TempCache.add(serialized);
+
+        const deserialized = JSON.parse(serialized);
 
         console.log('[SerializerOctokitPlugin] | Request | ', requestOptions);
 
