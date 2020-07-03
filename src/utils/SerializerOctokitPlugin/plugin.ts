@@ -34,7 +34,13 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
             '[SerializerOctokitPlugin] | Attempted to serialize a path that is not handled',
           );
         }
-        serializer(requestOptions);
+        const serialized = JSON.stringify({
+          ...requestOptions,
+          request: undefined,
+        });
+        const result = await octokit.request(JSON.parse(serialized));
+        console.log('RESULT: ', result);
+        return result;
         // temp actually make requests
       }
       return request(requestOptions);
