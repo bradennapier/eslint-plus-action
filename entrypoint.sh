@@ -24,7 +24,7 @@ ls -alh
 if [ ! -d "./node_modules" ] || [ "$2" = true ] ; then
     echo "Install Yarn"
     [ -f yarn.lock ] && yarn install --frozen-lockfile --prefer-offline
-    [ -f package-lock.json ] && npm install
+    [ -f package-lock.json ] && npm ci
 fi
 
 pushd /action
