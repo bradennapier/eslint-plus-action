@@ -1,10 +1,23 @@
 // import * as core from '@actions/core';
 import { CLIEngine } from 'eslint';
+
 import { getChangedFiles } from './fs';
-import { Octokit, ActionData, LintState } from './types';
+import {
+  Octokit,
+  ActionData,
+  LintState,
+  OctokitCreateCommentResponse,
+  OctokitDeleteCommentResponse,
+} from './types';
 import { createCheck } from './api';
 import { processLintResults } from './utils';
 import { NAME, OWNER, REPO } from './constants';
+import {
+  getLintSummary,
+  getIgnoredFilesSummary,
+  getAnnotationSuggestions,
+  getResultMarkdownBody,
+} from './utils/markdown';
 
 // test eslint changed action from fork PR
 const TEST = 2;
@@ -27,9 +40,8 @@ export async function lintChangedFiles(
 
   const eslint = new CLIEngine(eslintConfig);
 
-  const updateCheck = await createCheck(client, data);
-
   const state: LintState = {
+    lintCount: 0,
     errorCount: 0,
     warningCount: 0,
     fixableErrorCount: 0,
@@ -40,7 +52,9 @@ export async function lintChangedFiles(
     rulesSummaries: new Map(),
   };
 
-  for await (const changed of await getChangedFiles(client, data)) {
+  const updateCheck = await createCheck(client, data);
+
+  for await (const changed of getChangedFiles(client, data)) {
     if (changed.length === 0) {
       break;
     }
@@ -59,26 +73,15 @@ export async function lintChangedFiles(
             ? output.annotations.map((annotation) => {
                 return {
                   ...annotation,
-                  message: annotation.message + annotation.suggestions,
+                  message: `${annotation.message}\n\n${getAnnotationSuggestions(
+                    annotation,
+                  )}`,
                 };
               })
             : output.annotations,
       },
     });
   }
-  const summary = `
-|     Type     |       Occurrences       |            Fixable           |
-| ------------ | ----------------------- | ---------------------------- | 
-| **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
-| **Warnings** | ${state.warningCount}   | ${state.fixableWarningCount} |
-| **Ignored**  | ${state.ignoredCount}   | N/A                          |
-  `;
-  const ignoredFilesMarkdown = data.reportIgnoredFiles
-    ? `
-## Ignored Files:
-${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
-    `
-    : '';
 
   const checkResult = await updateCheck({
     conclusion: state.errorCount > 0 ? 'failure' : 'success',
@@ -86,31 +89,16 @@ ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
     completed_at: new Date().toISOString(),
     output: {
       title: 'Checks Complete',
-      summary: summary + ignoredFilesMarkdown,
+      summary:
+        getLintSummary(state) + getIgnoredFilesSummary(state, data, true),
     },
-    // TODO
-    // actions:
-    //   state.fixableErrorCount > 0 || state.fixableWarningCount > 0
-    //     ? [
-    //         {
-    //           label: `Fix ${
-    //             state.fixableErrorCount + state.fixableWarningCount
-    //           } Issues`,
-    //           description:
-    //             '[UNFINISHED] Run eslint --fix',
-    //           identifier: 'fix',
-    //         },
-    //       ]
-    //     : undefined,
   });
 
-  let commentResult;
+  let commentResult: OctokitCreateCommentResponse | undefined;
 
-  if (data.prID && data.issueSummary) {
-    const { issueSummaryType } = data;
-
+  if (data.issueNumber && data.issueSummary) {
     const issues = await client.issues.listComments({
-      issue_number: data.prID,
+      issue_number: data.issueNumber,
       owner: OWNER,
       repo: REPO,
     });
@@ -122,78 +110,18 @@ ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
       state.fixableErrorCount > 0 ||
       state.fixableWarningCount > 0
     ) {
-      const checkUrl = data.prHtmlUrl
-        ? `${data.prHtmlUrl}/checks?check_run_id=${checkResult.data.id}`
-        : checkResult.data.html_url;
-
       commentResult = await client.issues.createComment({
         owner: OWNER,
         repo: REPO,
-        issue_number: data.prID,
-        body: `
-  ## ESLint Summary [View Full Report](${checkUrl})
-  
-  > Annotations are provided inline on the [Files Changed](${
-    data.prHtmlUrl
-  }/files) tab. You can also see all annotations that were generated on the [annotations page](${checkUrl}).
-  
-  ${summary}
-  
-  - **Result:**      ${checkResult.data.conclusion}
-  - **Annotations:** [${
-    checkResult.data.output.annotations_count
-  } total](${checkUrl})
-  
-  ${
-    issueSummaryType === 'full'
-      ? `
-  ---
-  
-  ${ignoredFilesMarkdown}
-  `
-      : ''
-  }
-  ---
-  
-  ${[...state.rulesSummaries]
-    .sort(([, a], [, b]) => a.level.localeCompare(b.level))
-    .map(
-      ([, summary]) =>
-        `## [${summary.level}] ${
-          summary.ruleUrl
-            ? `[${summary.ruleId}](${summary.ruleUrl})`
-            : summary.ruleId
-        } 
-  
-  > ${summary.message}
-  
-  ${summary.annotations
-    .map(
-      (annotation) =>
-        `- [${annotation.path}](${data.repoHtmlUrl}/blob/${data.sha}/${
-          annotation.path
-        }#L${annotation.start_line}-L${annotation.end_line}) Line ${
-          annotation.start_line
-        } - ${annotation.message}${
-          issueSummaryType === 'full' ? annotation.suggestions : ''
-        }`,
-    )
-    .join('\n')}`,
-    )
-    .join('\n\n---\n\n')}
-    
----
-
-<sup>
-Report generated by <b><a href="https://github.com/bradennapier/eslint-plus-action">eslint-plus-action</a></b>
-</sup>`,
+        issue_number: data.issueNumber,
+        body: getResultMarkdownBody(checkResult, state, data),
       });
     } else if (data.issueSummaryOnlyOnEvent) {
       // super hacky until find a way to figure out the bots user id in some other way
       commentResult = await client.issues.createComment({
         owner: OWNER,
         repo: REPO,
-        issue_number: data.prID,
+        issue_number: data.issueNumber,
         body: '-- Message Removed, Refresh to Update --',
       });
       await client.issues.deleteComment({
@@ -206,21 +134,20 @@ Report generated by <b><a href="https://github.com/bradennapier/eslint-plus-acti
     if (commentResult) {
       const userId = commentResult.data.user.id;
 
-      const userIssues = issues.data.filter(
-        (issue) => issue.user.id === userId,
+      await Promise.all(
+        issues.data.reduce((arr, issue) => {
+          if (issue.user.id === userId) {
+            arr.push(
+              client.issues.deleteComment({
+                owner: OWNER,
+                repo: REPO,
+                comment_id: issue.id,
+              }),
+            );
+          }
+          return arr;
+        }, [] as Promise<OctokitDeleteCommentResponse>[]),
       );
-
-      if (userIssues.length > 0) {
-        await Promise.all(
-          userIssues.map((issue) =>
-            client.issues.deleteComment({
-              owner: OWNER,
-              repo: REPO,
-              comment_id: issue.id,
-            }),
-          ),
-        );
-      }
     }
   }
 

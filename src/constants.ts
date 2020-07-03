@@ -13,7 +13,12 @@ declare global {
 
 const context = github.context;
 
-export const NAME = 'Eslint Changed';
+export const NAME = 'ESLint Results';
+
+export const SERIALIZED_ROUTES = [
+  '/repos/:owner/:repo/check-runs',
+  '/repos/:owner/:repo/check-runs/:check_run_id',
+];
 
 export const BASE_FULL_NAME = isPullRequestPayload(context.payload)
   ? context.payload.pull_request.base.repo.full_name
@@ -28,7 +33,5 @@ export const {
   repo: REPO,
   number: ISSUE_NUMBER,
 } = github.context.issue;
-
-export const IS_READ_ONLY = BASE_FULL_NAME !== HEAD_FULL_NAME;
 
 export const { GITHUB_WORKSPACE } = process.env;

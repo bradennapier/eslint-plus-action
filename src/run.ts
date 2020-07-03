@@ -1,5 +1,5 @@
 import * as core from '@actions/core';
-import * as github from '@actions/github';
+import { context } from '@actions/github';
 
 import { lintChangedFiles } from './eslint';
 import {
@@ -9,34 +9,28 @@ import {
   processEnumInput,
 } from './utils';
 import { ActionData } from './types';
-import { IS_READ_ONLY, BASE_FULL_NAME, HEAD_FULL_NAME } from './constants';
+import { BASE_FULL_NAME, HEAD_FULL_NAME, ISSUE_NUMBER } from './constants';
+import { getOctokitClient } from './utils/octokit';
 
 async function run(): Promise<void> {
   try {
-    const { context } = github;
-
-    const client = github.getOctokit(
-      core.getInput('github-token', { required: true }),
-    );
-    console.log('Repo ');
-    console.log(JSON.stringify(context, null, 2));
+    // console.log(JSON.stringify(context, null, 2));
     console.log(context.issue);
     console.log(context.repo);
 
-    console.log({
-      IS_READ_ONLY,
-      BASE_FULL_NAME,
-      HEAD_FULL_NAME,
-    });
+    const isReadOnly = BASE_FULL_NAME !== HEAD_FULL_NAME;
 
     const data: ActionData = {
-      prID: github.context.payload.pull_request?.number,
+      isReadOnly,
+      handleForks: true,
       sha: context.payload.pull_request?.head.sha || context.sha,
-      repoHtmlUrl: context.payload.repository?.html_url,
-      prHtmlUrl: context.payload.pull_request?.html_url,
-      includeGlob: processArrayInput('includeGlob', []),
-      ignoreGlob: processArrayInput('ignoreGlob', []),
-      annotateWarnings: processBooleanInput('annotateWarnings', true),
+      eventName: context.eventName,
+
+      runId: context.runId,
+      runNumber: context.runNumber,
+      ref: context.ref,
+
+      issueNumber: ISSUE_NUMBER,
       issueSummary: processBooleanInput('issueSummary', true),
       issueSummaryType: processEnumInput(
         'issueSummaryType',
@@ -47,12 +41,20 @@ async function run(): Promise<void> {
         'issueSummaryOnlyOnEvent',
         false,
       ),
+
+      repoHtmlUrl: context.payload.repository?.html_url,
+      prHtmlUrl: context.payload.pull_request?.html_url,
+      includeGlob: processArrayInput('includeGlob', []),
+      ignoreGlob: processArrayInput('ignoreGlob', []),
+
       reportWarningsAsErrors: processBooleanInput(
         'reportWarningsAsErrors',
         false,
       ),
       reportIgnoredFiles: processBooleanInput('reportIgnoredFiles', false),
       reportSuggestions: processBooleanInput('reportSuggestions', true),
+      reportWarnings: processBooleanInput('reportWarnings', true),
+
       eslint: {
         errorOnUnmatchedPattern: processBooleanInput(
           'errorOnUnmatchedPattern',
@@ -76,7 +78,31 @@ async function run(): Promise<void> {
 
     core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
 
-    await lintChangedFiles(client, data);
+    if (data.isReadOnly && data.handleForks !== true) {
+      /*
+        When an action is triggered by a pull request from a forked repo we will only have
+        read permissions available to us.  Our solution to this is to run this action on a schedule
+        which will check for artifacts, assuming it is running properly.
+
+        This process will only start running once it sees an artifact is available from the scheduling 
+        context.
+      */
+      return;
+    }
+
+    const client = getOctokitClient(data);
+
+    if (data.eventName === 'schedule') {
+      await client.deserializeArtifacts();
+    } else {
+      await lintChangedFiles(client, data);
+
+      if (data.isReadOnly && data.handleForks === true) {
+        const artifacts = await client.getSerializedArtifacts();
+
+        console.log('Artifacts: ', artifacts);
+      }
+    }
   } catch (err) {
     core.error(err);
     core.setFailed(err.message);
