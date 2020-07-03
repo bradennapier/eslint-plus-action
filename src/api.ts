@@ -1,6 +1,14 @@
 import * as core from '@actions/core';
 
-import { PrResponse, Octokit, ActionData, ExpectedUpdateParams } from './types';
+import {
+  PrResponse,
+  Octokit,
+  ActionData,
+  OctokitCreateCheckResponse,
+  OctokitCreateChecksParams,
+  OctokitUpdateChecksParams,
+  CheckUpdaterFn,
+} from './types';
 import { NAME, OWNER, REPO } from './constants';
 
 export async function fetchFilesBatchPR(
@@ -48,7 +56,9 @@ export async function fetchFilesBatchPR(
   }
 
   core.info(
-    `PR with files detected: ${pr.files.edges.map((e: any) => e.node.path)}`,
+    `PR with files detected: ${pr.files.edges.map(
+      (e: { node: { path: string } }) => e.node.path,
+    )}`,
   );
 
   return {
@@ -96,36 +106,43 @@ export async function createCheck(
   data: ActionData,
   owner: string = OWNER,
   repo: string = REPO,
-): Promise<
-  (params: Partial<ExpectedUpdateParams>) => ReturnType<typeof updateCheck>
-> {
-  const result = await client.checks.create({
+): Promise<CheckUpdaterFn> {
+  const params: OctokitCreateChecksParams = {
     name: NAME,
     head_sha: data.sha,
     status: 'in_progress',
     started_at: new Date().toISOString(),
     owner,
     repo,
-  });
-  return (params: Partial<ExpectedUpdateParams>) =>
-    updateCheck(client, result.data.id, owner, repo, params);
+  };
+
+  const createCheckResult = await client.checks.create(params);
+
+  data.state.checkId = createCheckResult.data.id;
+
+  return (nextParams: Partial<OctokitUpdateChecksParams>) =>
+    updateCheck(createCheckResult, data, client, owner, repo, nextParams);
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function updateCheck(
+  createCheckResult: OctokitCreateCheckResponse,
+  data: ActionData,
   client: Octokit,
-  checkID: number,
   owner: string,
   repo: string,
-  params: Partial<ExpectedUpdateParams>,
+  nextParams: Partial<OctokitUpdateChecksParams>,
 ) {
-  const result = await client.checks.update({
+  const params: OctokitUpdateChecksParams = {
     name: NAME,
-    check_run_id: checkID,
+    check_run_id: createCheckResult.data.id,
     status: 'in_progress',
     owner,
     repo,
-    ...params,
-  });
+    ...nextParams,
+  };
+
+  const result = await client.checks.update(params);
+
   return result;
 }

@@ -1,7 +1,7 @@
 import * as core from '@actions/core';
 import { CLIEngine } from 'eslint';
 import {
-  ChecksUpdateParamsOutputAnnotations,
+  ChecksAnnotations,
   ChecksUpdateParamsOutput,
   LintState,
   ActionData,
@@ -94,13 +94,13 @@ export const processInput = <D>(key: string, defaultValue?: D): string | D => {
 export function processLintResults(
   engine: CLIEngine,
   report: CLIEngine.LintReport,
-  state: LintState,
   data: ActionData,
 ): {
   annotations: ChecksUpdateParamsOutput['annotations'];
 } {
+  const { state } = data;
   const { results } = report;
-  const annotations: ChecksUpdateParamsOutputAnnotations[] = [];
+  const annotations: ChecksAnnotations[] = [];
 
   state.errorCount += report.errorCount;
   state.warningCount += report.warningCount;
@@ -127,7 +127,6 @@ export function processLintResults(
         `Level ${severity} issue found on line ${line} [${ruleId}] | ${messageId} | ${nodeType} | ${message}`,
       );
 
-      // if ruleId is null, it's likely a parsing error, so let's skip it
       if (!ruleId) {
         // remove confusing warnings when skipping linting of files
         if (message.startsWith('File ignored')) {
@@ -141,26 +140,18 @@ export function processLintResults(
       const level =
         severity === 2 || data.reportWarningsAsErrors ? 'failure' : 'warning';
 
-      if (!data.annotateWarnings && level !== 'failure') {
+      if (!data.reportWarnings && level !== 'failure') {
         continue;
       }
 
-      const annotation: ChecksUpdateParamsOutputAnnotations = {
+      const annotation: ChecksAnnotations = {
         path: filePath,
         start_line: line,
         end_line: line,
         annotation_level: level,
         title: ruleId,
         message: `${message}`,
-        suggestions:
-          suggestions && suggestions.length > 0
-            ? `
-
-${suggestions
-  .map((suggestion) => `    * [SUGGESTION] ${suggestion.desc}`)
-  .join('\n')}
-`
-            : '',
+        suggestions,
       };
 
       const rule = state.rulesSummaries.get(ruleId);
@@ -180,6 +171,8 @@ ${suggestions
       annotations.push(annotation);
     }
   }
+
+  state.annotationCount += annotations.length;
 
   return {
     annotations,
