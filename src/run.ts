@@ -18,6 +18,8 @@ async function run(): Promise<void> {
       core.getInput('github-token', { required: true }),
     );
 
+    console.log(JSON.stringify(context, null, 2));
+
     const data: ActionData = {
       prID: github.context.payload.pull_request?.number,
       sha: context.payload.pull_request?.head.sha || context.sha,
