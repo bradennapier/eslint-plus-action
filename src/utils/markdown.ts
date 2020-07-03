@@ -110,11 +110,9 @@ export function getLintSummary(state: LintState): string {
 function getLintConclusions(
   checkResult: OctokitUpdateChecksResponse,
   checkUrl: string,
-  state: LintState,
 ): string {
   return dedent`
     - **Result:**       ${checkResult.data.conclusion}
-    - **Linted Files:** ${state.lintCount}
     - **Annotations:** [${checkResult.data.output.annotations_count} total](${checkUrl})
   `;
 }
@@ -156,7 +154,7 @@ export function getResultMarkdownBody(
     }/files) tab. You can also see all annotations that were generated on the [annotations page](${checkUrl}).
   
     ${getLintSummary(state)}
-    ${getLintConclusions(checkResult, checkUrl, state)}
+    ${getLintConclusions(checkResult, checkUrl)}
     ${getIgnoredFilesSummary(state, data)}
     ${getSortedRuleSummaries(state, data)}
 

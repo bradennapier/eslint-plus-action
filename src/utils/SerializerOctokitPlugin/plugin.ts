@@ -1,7 +1,7 @@
 import { OctokitPlugin, OctokitRequestOptions } from '../../types';
 
 import { requestRouteMatcher } from './routeMatcher';
-import { Serializers } from '../serialize';
+import { Serializers } from './serialize';
 
 export const SerializerOctokitPlugin: OctokitPlugin = (
   octokit: Parameters<OctokitPlugin>[0],

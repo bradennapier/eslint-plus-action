@@ -3,7 +3,7 @@ import {
   OctokitCreateCheckResponse,
   OctokitUpdateChecksResponse,
   OctokitUpdateChecksParams,
-} from '../types';
+} from '../../types';
 
 // type Hook<O, R, E> = import('before-after-hook').HookSingular<O, R, E>;
 
