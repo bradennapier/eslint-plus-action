@@ -42,6 +42,7 @@ export type ActionData = {
 };
 
 export type LintState = {
+  lintCount: number;
   errorCount: number;
   warningCount: number;
   fixableErrorCount: number;

@@ -25,6 +25,7 @@ export async function lintChangedFiles(
   const eslint = new CLIEngine(eslintConfig);
 
   const state: LintState = {
+    lintCount: 0,
     errorCount: 0,
     warningCount: 0,
     fixableErrorCount: 0,
@@ -85,20 +86,6 @@ ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
       title: 'Checks Complete',
       summary: summary + ignoredFilesMarkdown,
     },
-    // TODO
-    // actions:
-    //   state.fixableErrorCount > 0 || state.fixableWarningCount > 0
-    //     ? [
-    //         {
-    //           label: `Fix ${
-    //             state.fixableErrorCount + state.fixableWarningCount
-    //           } Issues`,
-    //           description:
-    //             '[UNFINISHED] Run eslint --fix',
-    //           identifier: 'fix',
-    //         },
-    //       ]
-    //     : undefined,
   });
 
   let commentResult;
@@ -136,7 +123,8 @@ ${state.ignoredFiles.map((filePath) => `- ${filePath}`).join('\n')}
   
   ${summary}
   
-  - **Result:**      ${checkResult.data.conclusion}
+  - **Result:**       ${checkResult.data.conclusion}
+  - **Linted Files:** ${state.lintCount}
   - **Annotations:** [${
     checkResult.data.output.annotations_count
   } total](${checkUrl})
