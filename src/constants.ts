@@ -15,6 +15,8 @@ const context = github.context;
 
 export const NAME = 'ESLint Results';
 
+export const CACHE_KEY = 'eslint-cache-key';
+
 export const SERIALIZED_ROUTES = [
   '/repos/:owner/:repo/check-runs',
   '/repos/:owner/:repo/check-runs/:check_run_id',

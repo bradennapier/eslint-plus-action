@@ -1,12 +1,13 @@
 import { promises as fs } from 'fs';
 
 import * as core from '@actions/core';
-import * as artifact from '@actions/artifact';
+import * as cache from '@actions/cache';
 
 import micromatch from 'micromatch';
 
 import { fetchFilesBatchPR, fetchFilesBatchCommit } from './api';
 import { Octokit, PrResponse, ActionData, ActionDataWithPR } from './types';
+import { CACHE_KEY } from './constants';
 
 export async function filterFiles(
   files: string[],
@@ -100,19 +101,20 @@ export async function saveArtifacts(
   data: ActionData,
   contents: string,
 ): Promise<void> {
-  await fs.mkdir('/action/.artifacts', { recursive: true });
+  await downloadAllArtifacts();
   await fs.writeFile(`/action/.artifacts/${data.runId}`, contents);
-  const client = artifact.create();
-  await client.uploadArtifact(
-    String(data.runId),
-    [`/action/.artifacts/${data.runId}`],
-    '/action/.artifacts/',
-  );
+  await cache.saveCache([`/action/.artifacts`], CACHE_KEY);
 }
 
-export async function downloadAllArtifacts(data: ActionData): Promise<void> {
-  await fs.mkdir('/action/.artifacts', { recursive: true });
-  const client = artifact.create();
-  const results = await client.downloadAllArtifacts('/action/.artifacts');
-  console.log('Artifact Download Results: ', results);
+export async function downloadAllArtifacts(): Promise<void> {
+  const result = await cache.restoreCache(['/action/.artifacts'], CACHE_KEY);
+  if (!result) {
+    console.log('No Cache Found, Creating Now');
+    await fs.mkdir('/action/.artifacts', { recursive: true });
+    console.log(
+      'Cache Save Result: ',
+      await cache.saveCache([`/action/.artifacts`], CACHE_KEY),
+    );
+  }
+  console.log('Artifact Download Results: ', result);
 }

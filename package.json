@@ -31,7 +31,7 @@
   "author": "YourNameOrOrganization",
   "license": "MIT",
   "dependencies": {
-    "@actions/artifact": "^0.3.2",
+    "@actions/cache": "^0.2.1",
     "@actions/core": "^1.2.4",
     "@actions/github": "^4.0.0",
     "@actions/glob": "^0.1.0",
