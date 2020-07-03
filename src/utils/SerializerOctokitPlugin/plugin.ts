@@ -1,6 +1,7 @@
 import { OctokitPlugin, OctokitRequestOptions } from '../../types';
 
 import { requestRouteMatcher } from './routeMatcher';
+import { Serializers } from '../serialize';
 
 export const SerializerOctokitPlugin: OctokitPlugin = (
   octokit: Parameters<OctokitPlugin>[0],
@@ -23,8 +24,10 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
     ): Promise<unknown> => {
       console.log('[SERIALIZER] | Request | ', requestOptions);
       if (!match || match.test(requestOptions.url)) {
+        const serializer = Serializers.get(requestOptions.url);
         console.log(
           'SERIALIZE BYPASS! ',
+          serializer,
           JSON.stringify(requestOptions, null, 2),
         );
         return {};
