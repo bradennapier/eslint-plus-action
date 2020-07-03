@@ -19,7 +19,9 @@ async function run(): Promise<void> {
     );
     console.log('Repo ');
     console.log(JSON.stringify(context, null, 2));
-    console.log(context);
+    console.log(context.issue);
+    console.log(context.repo);
+
     const data: ActionData = {
       prID: github.context.payload.pull_request?.number,
       sha: context.payload.pull_request?.head.sha || context.sha,
