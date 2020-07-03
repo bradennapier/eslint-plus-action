@@ -1,4 +1,17 @@
 import * as github from '@actions/github';
+import { Linter } from 'eslint';
+import { ActionResultSerializer } from './utils/serialize';
+
+type OctokitResponse<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends (...args: any[]) => any,
+  R = ReturnType<T>
+> = R extends Promise<infer R> ? R : R;
+
+type OctokitParameters<
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  T extends (...args: any[]) => any
+> = NonNullable<Parameters<T>[0]>;
 
 export type PrResponse = {
   endCursor?: string;
@@ -7,26 +20,66 @@ export type PrResponse = {
 };
 
 export type Octokit = ReturnType<typeof github['getOctokit']>;
+export type OctokitPlugin = import('@octokit/core/dist-types/types').OctokitPlugin;
+
+export type OctokitRequestOptions = import('@octokit/types/dist-types/RequestOptions').RequestOptions;
+export type OctokitOptions = import('@octokit/core/dist-types/types').OctokitOptions;
+
+export type OctokitUpdateChecksResponse = OctokitResponse<
+  Octokit['checks']['update']
+>;
+
+export type OctokitCreateChecksParams = OctokitParameters<
+  Octokit['checks']['create']
+>;
+
+export type OctokitUpdateChecksParams = OctokitParameters<
+  Octokit['checks']['update']
+>;
+
+export type OctokitCreateCheckResponse = OctokitResponse<
+  Octokit['checks']['create']
+>;
+export type OctokitCreateCommentResponse = OctokitResponse<
+  Octokit['issues']['createComment']
+>;
+export type OctokitDeleteCommentResponse = OctokitResponse<
+  Octokit['issues']['deleteComment']
+>;
+
 export type GithubContext = typeof github['context'];
+
+export type GithubActionSchedulePayload = {
+  /** The cron schedule the report runs on */
+  schedule: string;
+};
+
+export type CheckUpdaterFn = (
+  params: Partial<OctokitUpdateChecksParams>,
+) => Promise<OctokitUpdateChecksResponse>;
 
 export type ActionData = {
   handleForks: boolean;
+  isReadOnly: boolean;
   sha: string;
-  prID: number | undefined;
+
   prHtmlUrl: string | undefined;
   repoHtmlUrl: string | undefined;
+  serializer: ActionResultSerializer | undefined;
+
+  issueNumber: number | undefined;
+  issueSummary: boolean;
+  issueSummaryType: 'full' | 'compact';
+  issueSummaryOnlyOnEvent: boolean;
 
   includeGlob: string[];
   ignoreGlob: string[];
 
-  annotateWarnings: boolean;
+  reportWarnings: boolean;
 
   reportWarningsAsErrors: boolean;
   reportIgnoredFiles: boolean;
   reportSuggestions: boolean;
-  issueSummary: boolean;
-  issueSummaryType: 'full' | 'compact';
-  issueSummaryOnlyOnEvent: boolean;
 
   eslint: {
     rulePaths: string[];
@@ -41,6 +94,14 @@ export type ActionData = {
   };
 };
 
+export type LintRuleSummary = {
+  ruleUrl?: string;
+  ruleId: string;
+  message: string;
+  level: 'failure' | 'warning';
+  annotations: ChecksAnnotations[];
+};
+
 export type LintState = {
   lintCount: number;
   errorCount: number;
@@ -50,31 +111,14 @@ export type LintState = {
   ignoredCount: number;
   ignoredFiles: string[];
   summary: string;
-  rulesSummaries: Map<
-    string,
-    {
-      ruleUrl?: string;
-      ruleId: string;
-      message: string;
-      level: 'failure' | 'warning';
-      annotations: ChecksUpdateParamsOutputAnnotations[];
-    }
-  >;
-};
-
-type NotUndefined<T> = T extends undefined ? never : T;
-
-type UpdateParams = NotUndefined<Parameters<Octokit['checks']['update']>[0]>;
-
-export type ExpectedUpdateParams = {
-  [K in keyof UpdateParams]: UpdateParams[K];
+  rulesSummaries: Map<string, LintRuleSummary>;
 };
 
 export type ActionDataWithPR = Omit<ActionData, 'prID'> & { prID: number };
 
 /* They make it impossible to get these types by import so... */
 
-export type ChecksUpdateParamsOutputAnnotations = {
+export type ChecksAnnotations = {
   path: string;
   start_line: number;
   end_line: number;
@@ -84,7 +128,7 @@ export type ChecksUpdateParamsOutputAnnotations = {
   message: string;
   title?: string;
   raw_details?: string;
-  suggestions: string;
+  suggestions: Linter.LintSuggestion[];
 };
 
 export type ChecksUpdateParams = {
@@ -146,7 +190,7 @@ export type ChecksUpdateParamsOutput = {
   title?: string;
   summary: string;
   text?: string;
-  annotations?: ChecksUpdateParamsOutputAnnotations[];
+  annotations?: ChecksAnnotations[];
   images?: ChecksUpdateParamsOutputImages[];
 };
 

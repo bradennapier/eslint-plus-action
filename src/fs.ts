@@ -78,7 +78,7 @@ async function* getFilesFromCommit(
 }
 
 function hasPR(data: ActionData | ActionDataWithPR): data is ActionDataWithPR {
-  if (data.prID) {
+  if (data.issueNumber) {
     return true;
   }
   return false;
