@@ -60,15 +60,16 @@ function getLintAnnotation(
   annotation: ChecksAnnotations,
   data: ActionData,
 ): string {
-  return `- ${getAnnotationFileLink(annotation, data)} ${getAnnotationFileLine(
+  return dedent`- ${getAnnotationFileLink(
     annotation,
-  )} - ${annotation.message}${
+    data,
+  )} ${getAnnotationFileLine(annotation)} - ${annotation.message}${
     data.issueSummaryType === 'full' ? getAnnotationSuggestions(annotation) : ''
   }`;
 }
 
 function getRuleSummary(summary: LintRuleSummary, data: ActionData): string {
-  return `
+  return dedent`
     ${getRuleSummaryTitle(summary)} 
 
     > ${summary.message}
@@ -86,7 +87,7 @@ export function getSortedRuleSummaries(
   if (state.rulesSummaries.size === 0) {
     return '';
   }
-  return `
+  return dedent`
     ---
     
     ${[...state.rulesSummaries]
@@ -111,7 +112,7 @@ function getLintConclusions(
   checkUrl: string,
   state: LintState,
 ): string {
-  return `
+  return dedent`
     - **Result:**       ${checkResult.data.conclusion}
     - **Linted Files:** ${state.lintCount}
     - **Annotations:** [${checkResult.data.output.annotations_count} total](${checkUrl})
@@ -129,7 +130,7 @@ export function getIgnoredFilesSummary(
   ) {
     return '';
   }
-  return `
+  return dedent`
     ---
 
     ## Ignored Files:
