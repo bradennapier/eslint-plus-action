@@ -1,6 +1,5 @@
 import * as github from '@actions/github';
 import { Linter } from 'eslint';
-import { ActionResultSerializer } from './utils/serialize';
 
 type OctokitResponse<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,7 +67,6 @@ export type ActionData = {
 
   prHtmlUrl: string | undefined;
   repoHtmlUrl: string | undefined;
-  serializer: ActionResultSerializer | undefined;
 
   issueNumber: number | undefined;
   issueSummary: boolean;

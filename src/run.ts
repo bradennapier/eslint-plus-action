@@ -23,7 +23,6 @@ async function run(): Promise<void> {
     const data: ActionData = {
       isReadOnly,
       handleForks: true,
-      serializer: undefined,
       sha: context.payload.pull_request?.head.sha || context.sha,
 
       issueNumber: ISSUE_NUMBER,
