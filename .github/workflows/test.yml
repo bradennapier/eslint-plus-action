@@ -1,7 +1,6 @@
 name: "build-test"
-on: [pull_request]
+on: [pull_request, issue_comment]
 jobs:
- 
   lint: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
     steps:

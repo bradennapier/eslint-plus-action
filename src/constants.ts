@@ -12,18 +12,28 @@ declare global {
 
 export const NAME = 'Eslint Changed';
 
-export const {
-  eventName: EVENT,
-  issue: { owner: OWNER, repo: REPO, number: ISSUE_NUMBER },
+const C = {
+  event: '',
+};
+
+({
+  eventName: C.event,
+  issue: ,
   payload: {
-    base: {
-      repo: { full_name: BASE_FULL_NAME },
-    },
-    head: {
-      repo: { full_name: HEAD_FULL_NAME },
+    pull_request: {
+      base: {
+        repo: { full_name:  },
+      },
+      head: {
+        repo: { full_name: HEAD_FULL_NAME },
+      },
     },
   },
-} = github.context;
+} = github.context);
+
+export const BASE_FULL_NAME = github.context.payload.pull_request?.additions
+
+export const { owner: OWNER, repo: REPO, number: ISSUE_NUMBER } = github.context.issue
 
 export const IS_READ_ONLY = BASE_FULL_NAME !== HEAD_FULL_NAME;
 
