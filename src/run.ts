@@ -17,9 +17,9 @@ async function run(): Promise<void> {
     const client = github.getOctokit(
       core.getInput('github-token', { required: true }),
     );
-
+    console.log('Repo ');
     console.log(JSON.stringify(context, null, 2));
-
+    console.log(context);
     const data: ActionData = {
       prID: github.context.payload.pull_request?.number,
       sha: context.payload.pull_request?.head.sha || context.sha,
