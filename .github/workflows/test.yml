@@ -1,7 +1,7 @@
 name: "build-test"
 on: 
   pull_request:
-      types: [opened, synchronize, reopened, labeled]
+      types: [opened, synchronize, reopened, labeled, review_requested]
 jobs:
   lint: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
