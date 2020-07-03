@@ -3,7 +3,7 @@ import { GitHub, getOctokitOptions } from '@actions/github/lib/utils';
 import { throttling } from '@octokit/plugin-throttling';
 
 import { ActionData, Octokit, OctokitOptions } from '../types';
-import { SerializerOctokitPlugin } from './serialize';
+import { SerializerOctokitPlugin } from './SerializerOctokitPlugin';
 
 const Octokit = GitHub.plugin(SerializerOctokitPlugin, throttling);
 

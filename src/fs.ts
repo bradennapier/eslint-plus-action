@@ -30,7 +30,7 @@ export async function filterFiles(
 
 async function* getFilesFromPR(
   client: Octokit,
-  data: Omit<ActionData, 'prID'> & { prID: number },
+  data: Omit<ActionData, 'issueNumber'> & { issueNumber: number },
 ): AsyncGenerator<string[]> {
   let cursor: string | undefined = undefined;
 
@@ -38,7 +38,7 @@ async function* getFilesFromPR(
     try {
       const result: PrResponse = await fetchFilesBatchPR(
         client,
-        data.prID,
+        data.issueNumber,
         cursor,
       );
 

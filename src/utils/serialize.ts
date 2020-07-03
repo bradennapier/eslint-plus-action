@@ -27,20 +27,3 @@ export class ActionResultSerializer {
     },
   };
 }
-
-export const SerializerOctokitPlugin: OctokitPlugin = (
-  octokit: Parameters<OctokitPlugin>[0],
-  clientOptions: Parameters<OctokitPlugin>[1],
-) => {
-  console.log('[SERIALIZER] | Plugin Called: ', clientOptions);
-  octokit.hook.wrap(
-    'request',
-    async (
-      request,
-      requestOptions: OctokitRequestOptions,
-    ): Promise<unknown> => {
-      console.log('[SERIALIZER] | Request | ', requestOptions);
-      return {};
-    },
-  );
-};

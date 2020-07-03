@@ -22,7 +22,10 @@ export type PrResponse = {
 export type Octokit = ReturnType<typeof github['getOctokit']>;
 export type OctokitPlugin = import('@octokit/core/dist-types/types').OctokitPlugin;
 
-export type OctokitRequestOptions = import('@octokit/types/dist-types/RequestOptions').RequestOptions;
+export type OctokitRequestOptions = import('@octokit/types/dist-types/EndpointDefaults').EndpointDefaults & {
+  url: string;
+};
+
 export type OctokitOptions = import('@octokit/core/dist-types/types').OctokitOptions;
 
 export type OctokitUpdateChecksResponse = OctokitResponse<
@@ -114,7 +117,9 @@ export type LintState = {
   rulesSummaries: Map<string, LintRuleSummary>;
 };
 
-export type ActionDataWithPR = Omit<ActionData, 'prID'> & { prID: number };
+export type ActionDataWithPR = Omit<ActionData, 'issueNumber'> & {
+  issueNumber: number;
+};
 
 /* They make it impossible to get these types by import so... */
 
