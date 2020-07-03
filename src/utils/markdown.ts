@@ -97,7 +97,7 @@ export function getSortedRuleSummaries(
 }
 
 export function getLintSummary(state: LintState): string {
-  return `
+  return dedent`
     |     Type     |       Occurrences       |            Fixable           |
     | ------------ | ----------------------- | ---------------------------- | 
     | **Errors**   | ${state.errorCount}     | ${state.fixableErrorCount}   |
