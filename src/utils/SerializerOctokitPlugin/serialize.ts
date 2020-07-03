@@ -120,4 +120,59 @@ export const Serializers = new Map<string, Serializer>([
       },
     },
   ],
+  [
+    '/repos/{owner}/{repo}/issues/{issue_number}/comments',
+    {
+      async serialize(
+        requestOptions: OctokitRequestOptions,
+      ): Promise<RequestDescriptor> {
+        const createCheckResult = SERIALIZER_MAP.get(
+          requestOptions.check_run_id,
+        );
+
+        if (!createCheckResult) {
+          throw new Error(
+            `[SerializerOctokitPlugin] | Failed to Serialize a check update request, no id "${requestOptions.check_run_id}" was found`,
+          );
+        }
+
+        createCheckResult.data.output.annotation_count +=
+          (requestOptions as any).output?.annotations?.length || 0;
+
+        const result = {
+          ...createCheckResult,
+          data: {
+            ...createCheckResult.data,
+            id: requestOptions.check_run_id,
+          },
+        };
+
+        return {
+          request: {
+            ...requestOptions,
+            request: undefined,
+          },
+          result,
+        };
+      },
+      async deserialize(
+        { request }: RequestDescriptor,
+        octokit: Parameters<OctokitPlugin>[0],
+      ): Promise<OctokitCreateCheckResponse> {
+        const createCheckResult = SERIALIZER_MAP.get(request.check_run_id);
+
+        if (!createCheckResult) {
+          throw new Error(
+            `[SerializerOctokitPlugin] | Failed to Deserialize a check update request, no id "${request.check_run_id}" was found`,
+          );
+        }
+
+        request.check_run_id = createCheckResult.data.id;
+
+        const result = await octokit.request(request);
+
+        return result;
+      },
+    },
+  ],
 ]);

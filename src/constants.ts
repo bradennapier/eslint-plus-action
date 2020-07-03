@@ -18,6 +18,7 @@ export const NAME = 'ESLint Results';
 export const SERIALIZED_ROUTES = [
   '/repos/:owner/:repo/check-runs',
   '/repos/:owner/:repo/check-runs/:check_run_id',
+  '/repos/:owner/:repo/issues/:issue_number/comments',
 ];
 
 export const BASE_FULL_NAME = isPullRequestPayload(context.payload)

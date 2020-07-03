@@ -62,6 +62,8 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
 
           const data = await serializer.serialize(requestOptions);
 
+          console.log('Serialize Result: ', JSON.stringify(data, null, 2));
+
           artifact.requests.add([requestOptions.url, data]);
 
           return data.result;
