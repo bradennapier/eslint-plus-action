@@ -76,6 +76,9 @@ async function run(): Promise<void> {
 
     core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
 
+    if (context.eventName !== 'pull_request') {
+      return;
+    }
     await lintChangedFiles(client, data);
   } catch (err) {
     core.error(err);

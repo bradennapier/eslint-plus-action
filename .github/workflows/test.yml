@@ -1,7 +1,12 @@
 name: "build-test"
 on: 
+  schedule:
+    - cron: '*/5 * * * *'
   pull_request:
-      types: [opened, synchronize, reopened, labeled, review_requested]
+    branches:
+      - master
+  
+
 jobs:
   lint: # make sure the action works on a clean machine without building
     runs-on: ubuntu-latest
