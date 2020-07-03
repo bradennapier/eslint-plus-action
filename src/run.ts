@@ -14,7 +14,7 @@ import { getOctokitClient } from './utils/octokit';
 
 async function run(): Promise<void> {
   try {
-    console.log(JSON.stringify(context, null, 2));
+    // console.log(JSON.stringify(context, null, 2));
     console.log(context.issue);
     console.log(context.repo);
 
