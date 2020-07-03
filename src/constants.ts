@@ -12,6 +12,19 @@ declare global {
 
 export const NAME = 'Eslint Changed';
 
-export const { owner: OWNER, repo: REPO } = github.context.repo;
+export const {
+  eventName: EVENT,
+  issue: { owner: OWNER, repo: REPO, number: ISSUE_NUMBER },
+  payload: {
+    base: {
+      repo: { full_name: BASE_FULL_NAME },
+    },
+    head: {
+      repo: { full_name: HEAD_FULL_NAME },
+    },
+  },
+} = github.context;
+
+export const IS_READ_ONLY = BASE_FULL_NAME !== HEAD_FULL_NAME;
 
 export const { GITHUB_WORKSPACE } = process.env;
