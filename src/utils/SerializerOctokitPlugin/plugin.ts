@@ -22,8 +22,12 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
       request,
       requestOptions: OctokitRequestOptions,
     ): Promise<unknown> => {
-      console.log('[SerializerOctokitPlugin] | Request | ', requestOptions);
       if (!match || match.test(requestOptions.url)) {
+        console.log(
+          '[SerializerOctokitPlugin] | Request | ',
+          requestOptions,
+          JSON.stringify(requestOptions, null, 2),
+        );
         const serializer = Serializers.get(requestOptions.url);
         if (!serializer) {
           throw new Error(
