@@ -38,6 +38,7 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
           ...requestOptions,
           request: undefined,
         });
+        console.log('Getting Result');
         const result = await octokit.request(JSON.parse(serialized));
         console.log('RESULT: ', result);
         return result;
