@@ -11,6 +11,7 @@ import {
 import { ActionData } from './types';
 import { BASE_FULL_NAME, HEAD_FULL_NAME, ISSUE_NUMBER } from './constants';
 import { getOctokitClient } from './utils/octokit';
+import { saveArtifacts, downloadAllArtifacts } from './fs';
 
 async function run(): Promise<void> {
   try {
@@ -107,16 +108,18 @@ async function run(): Promise<void> {
     }
 
     const client = getOctokitClient(data);
-
+    // 156673153
     if (data.eventName === 'schedule') {
-      await client.deserializeArtifacts();
+      console.log('Download All Artifacts');
+      await downloadAllArtifacts(data);
+      // await client.deserializeArtifacts();
     } else {
       await lintChangedFiles(client, data);
 
       if (data.isReadOnly && data.handleForks === true) {
-        const artifacts = await client.getSerializedArtifacts();
-
-        console.log('Artifacts: ', artifacts);
+        const artifacts: string = await client.getSerializedArtifacts();
+        // save artifacts by the sha so that
+        await saveArtifacts(data, artifacts);
       }
     }
   } catch (err) {

@@ -1,6 +1,8 @@
-// import { promises as fs } from 'fs';
+import { promises as fs } from 'fs';
 
 import * as core from '@actions/core';
+import * as artifact from '@actions/artifact';
+
 import micromatch from 'micromatch';
 
 import { fetchFilesBatchPR, fetchFilesBatchCommit } from './api';
@@ -92,4 +94,25 @@ export function getChangedFiles(
     return getFilesFromPR(client, data);
   }
   return getFilesFromCommit(client, data);
+}
+
+export async function saveArtifacts(
+  data: ActionData,
+  contents: string,
+): Promise<void> {
+  await fs.mkdir('/action/.artifacts', { recursive: true });
+  await fs.writeFile(`/action/.artifacts/${data.runId}`, contents);
+  const client = artifact.create();
+  await client.uploadArtifact(
+    String(data.runId),
+    [`/action/.artifacts/${data.runId}`],
+    '/action/.artifacts/',
+  );
+}
+
+export async function downloadAllArtifacts(data: ActionData): Promise<void> {
+  await fs.mkdir('/action/.artifacts', { recursive: true });
+  const client = artifact.create();
+  const results = await client.downloadAllArtifacts('/action/.artifacts');
+  console.log('Artifact Download Results: ', results);
 }

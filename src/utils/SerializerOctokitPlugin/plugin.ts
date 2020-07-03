@@ -87,12 +87,14 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
     /**
      * Returns the serialized artifacts that can be uploaded to github artifacts
      */
-    getSerializedArtifacts(): string[] {
-      return [...ARTIFACTS].map((artifact) =>
-        JSON.stringify({
-          data: artifact.data,
-          requests: Array.from(artifact.requests),
-        }),
+    getSerializedArtifacts(): string {
+      return JSON.stringify(
+        [...ARTIFACTS].map((artifact) =>
+          JSON.stringify({
+            data: artifact.data,
+            requests: Array.from(artifact.requests),
+          }),
+        ),
       );
     },
     async deserializeArtifact(artifacts: string[]) {
