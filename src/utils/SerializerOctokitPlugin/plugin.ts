@@ -1,60 +1,96 @@
-import { OctokitPlugin, OctokitRequestOptions } from '../../types';
+import {
+  OctokitPlugin,
+  OctokitRequestOptions,
+  RequestDescriptor,
+} from '../../types';
 
 import { requestRouteMatcher } from './routeMatcher';
 import { Serializers } from './serialize';
 
-const TempCache = new Set();
+type RunArtifact = { data: any; requests: Set<[string, RequestDescriptor]> };
+
+const ARTIFACTS = new Set<RunArtifact>();
 
 export const SerializerOctokitPlugin: OctokitPlugin = (
   octokit: Parameters<OctokitPlugin>[0],
   clientOptions: Parameters<OctokitPlugin>[1],
 ) => {
   console.log('[SerializerOctokitPlugin] | Plugin Called: ', clientOptions);
-  if (clientOptions.serializer.enabled === false) {
-    return;
-  }
 
   const match = clientOptions.serializer.routes
     ? requestRouteMatcher(clientOptions.serializer.routes)
     : undefined;
 
-  octokit.hook.wrap(
-    'request',
-    async (
-      request,
-      requestOptions: OctokitRequestOptions,
-    ): Promise<unknown> => {
-      if (!match || match.test(requestOptions.url)) {
-        const serialized = JSON.stringify({
-          ...requestOptions,
-          request: undefined,
-        });
+  if (
+    clientOptions.serializer.enabled !== false &&
+    clientOptions.serializer.deserialize !== true
+  ) {
+    const artifact: RunArtifact = {
+      data: clientOptions.serializer,
+      requests: new Set(),
+    };
 
-        if (TempCache.has(serialized)) {
-          console.log('Skip Serializer!');
-          return request(requestOptions);
+    ARTIFACTS.add(artifact);
+
+    octokit.hook.wrap(
+      'request',
+      async (
+        request,
+        requestOptions: OctokitRequestOptions,
+      ): Promise<unknown> => {
+        if (!match || match.test(requestOptions.url)) {
+          console.log('[SerializerOctokitPlugin] | Request | ', requestOptions);
+
+          const serializer = Serializers.get(requestOptions.url);
+
+          if (!serializer) {
+            throw new Error(
+              '[SerializerOctokitPlugin] | Attempted to serialize a path that is not handled',
+            );
+          }
+
+          const data = await serializer.serialize(requestOptions);
+
+          artifact.requests.add([requestOptions.url, data]);
+
+          return data.result;
+          // temp actually make requests
         }
+        return request(requestOptions);
+      },
+    );
+  }
 
-        TempCache.add(serialized);
-
-        const deserialized = JSON.parse(serialized);
-
-        console.log('[SerializerOctokitPlugin] | Request | ', requestOptions);
-
-        const serializer = Serializers.get(requestOptions.url);
-        if (!serializer) {
-          throw new Error(
-            '[SerializerOctokitPlugin] | Attempted to serialize a path that is not handled',
-          );
-        }
-
-        console.log('Getting Result: ', deserialized);
-        const result = await octokit.request(JSON.parse(serialized));
-        console.log('RESULT: ', result);
-        return result;
-        // temp actually make requests
-      }
-      return request(requestOptions);
+  return {
+    /**
+     * Returns the serialized artifacts that can be uploaded to github artifacts
+     */
+    getSerializedArtifacts(): string[] {
+      return [...ARTIFACTS].map((artifact) =>
+        JSON.stringify({
+          data: artifact.data,
+          requests: Array.from(artifact.requests),
+        }),
+      );
     },
-  );
+    async deserializeArtifact(artifacts: string[]) {
+      for (const serializedArtifact of artifacts) {
+        const { requests }: RunArtifact = JSON.parse(serializedArtifact);
+        for (const [route, descriptor] of requests) {
+          console.log(
+            '[SerializerOctokitPlugin] | Deserializing A Route: ',
+            route,
+            descriptor,
+          );
+          const serializer = Serializers.get(route);
+          if (!serializer) {
+            throw new Error(
+              `[SerializerOctokitPlugin] | Attempted to deserialize a path "${route}" which is not handled`,
+            );
+          }
+          await serializer.deserialize(descriptor, octokit);
+        }
+      }
+    },
+  };
 };

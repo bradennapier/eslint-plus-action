@@ -64,6 +64,8 @@ export type ActionData = {
   handleForks: boolean;
   isReadOnly: boolean;
   sha: string;
+  ref: string;
+  eventName: string;
 
   prHtmlUrl: string | undefined;
   repoHtmlUrl: string | undefined;
@@ -81,6 +83,9 @@ export type ActionData = {
   reportWarningsAsErrors: boolean;
   reportIgnoredFiles: boolean;
   reportSuggestions: boolean;
+
+  runId: number;
+  runNumber: number;
 
   eslint: {
     rulePaths: string[];
@@ -207,4 +212,9 @@ export type ChecksUpdateParamsActions = {
   label: string;
   description: string;
   identifier: string;
+};
+
+export type RequestDescriptor = {
+  request: OctokitRequestOptions;
+  result: { [key: string]: any };
 };

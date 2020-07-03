@@ -24,6 +24,11 @@ async function run(): Promise<void> {
       isReadOnly,
       handleForks: true,
       sha: context.payload.pull_request?.head.sha || context.sha,
+      eventName: context.eventName,
+
+      runId: context.runId,
+      runNumber: context.runNumber,
+      ref: context.ref,
 
       issueNumber: ISSUE_NUMBER,
       issueSummary: processBooleanInput('issueSummary', true),
@@ -85,7 +90,19 @@ async function run(): Promise<void> {
       return;
     }
 
-    await lintChangedFiles(getOctokitClient(data), data);
+    const client = getOctokitClient(data);
+
+    if (data.eventName === 'schedule') {
+      await client.deserializeArtifacts();
+    } else {
+      await lintChangedFiles(client, data);
+
+      if (data.isReadOnly && data.handleForks === true) {
+        const artifacts = await client.getSerializedArtifacts();
+
+        console.log('Artifacts: ', artifacts);
+      }
+    }
   } catch (err) {
     core.error(err);
     core.setFailed(err.message);
