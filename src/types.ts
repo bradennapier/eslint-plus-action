@@ -10,6 +10,7 @@ export type Octokit = ReturnType<typeof github['getOctokit']>;
 export type GithubContext = typeof github['context'];
 
 export type ActionData = {
+  handleForks: boolean;
   sha: string;
   prID: number | undefined;
   prHtmlUrl: string | undefined;

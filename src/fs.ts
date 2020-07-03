@@ -84,10 +84,10 @@ function hasPR(data: ActionData | ActionDataWithPR): data is ActionDataWithPR {
   return false;
 }
 
-export async function getChangedFiles(
+export function getChangedFiles(
   client: Octokit,
   data: ActionData,
-): Promise<AsyncGenerator<string[]>> {
+): AsyncGenerator<string[]> {
   if (hasPR(data)) {
     return getFilesFromPR(client, data);
   }

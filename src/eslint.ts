@@ -24,8 +24,6 @@ export async function lintChangedFiles(
 
   const eslint = new CLIEngine(eslintConfig);
 
-  const updateCheck = await createCheck(client, data);
-
   const state: LintState = {
     errorCount: 0,
     warningCount: 0,
@@ -37,7 +35,9 @@ export async function lintChangedFiles(
     rulesSummaries: new Map(),
   };
 
-  for await (const changed of await getChangedFiles(client, data)) {
+  const updateCheck = await createCheck(client, data);
+
+  for await (const changed of getChangedFiles(client, data)) {
     if (changed.length === 0) {
       break;
     }
