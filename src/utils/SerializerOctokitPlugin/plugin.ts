@@ -2,6 +2,7 @@ import {
   OctokitPlugin,
   OctokitRequestOptions,
   RequestDescriptor,
+  ActionData,
 } from '../../types';
 
 import { requestRouteMatcher } from './routeMatcher';
@@ -16,6 +17,8 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
   clientOptions: Parameters<OctokitPlugin>[1],
 ) => {
   console.log('[SerializerOctokitPlugin] | Plugin Called: ', clientOptions);
+
+  const { data }: { data: ActionData } = clientOptions.serializer;
 
   const match = clientOptions.serializer.routes
     ? requestRouteMatcher(clientOptions.serializer.routes)
@@ -60,11 +63,19 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
             );
           }
 
-          const data = await serializer.serialize(requestOptions);
+          const serializeResult = await serializer.serialize(
+            data,
+            requestOptions,
+          );
 
-          artifact.requests.add([requestOptions.url, data]);
+          console.log(
+            'Serialize Result: ',
+            JSON.stringify(serializeResult, null, 2),
+          );
 
-          return data.result;
+          artifact.requests.add([requestOptions.url, serializeResult]);
+
+          return serializeResult.result;
           // temp actually make requests
         }
         return request(requestOptions);
@@ -99,7 +110,7 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
               `[SerializerOctokitPlugin] | Attempted to deserialize a path "${route}" which is not handled`,
             );
           }
-          await serializer.deserialize(descriptor, octokit);
+          await serializer.deserialize(data, descriptor, octokit);
         }
       }
     },
