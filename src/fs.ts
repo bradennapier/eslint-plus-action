@@ -110,9 +110,16 @@ export async function saveArtifacts(
   );
 }
 
-export async function downloadAllArtifacts(): Promise<void> {
+export async function downloadAllArtifacts(client: Octokit): Promise<void> {
   await fs.mkdir('/action/.artifacts', { recursive: true });
-  const client = artifact.create();
-  const results = await client.downloadAllArtifacts('/action/.artifacts');
-  console.log('Artifact Download Results: ', results);
+  const artifactClient = artifact.create();
+  const results = await artifactClient.downloadAllArtifacts(
+    '/action/.artifacts',
+  );
+  const artifacts = await client.actions.listArtifactsForRepo();
+  console.log(
+    'Artifact Download Results: ',
+    results,
+    JSON.stringify(artifacts || {}, null, 2),
+  );
 }
