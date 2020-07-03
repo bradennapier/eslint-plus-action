@@ -9,6 +9,7 @@ import {
   processEnumInput,
 } from './utils';
 import { ActionData } from './types';
+import { IS_READ_ONLY, BASE_FULL_NAME, HEAD_FULL_NAME } from './constants';
 
 async function run(): Promise<void> {
   try {
@@ -17,6 +18,16 @@ async function run(): Promise<void> {
     const client = github.getOctokit(
       core.getInput('github-token', { required: true }),
     );
+    console.log('Repo ');
+    console.log(JSON.stringify(context, null, 2));
+    console.log(context.issue);
+    console.log(context.repo);
+
+    console.log({
+      IS_READ_ONLY,
+      BASE_FULL_NAME,
+      HEAD_FULL_NAME,
+    });
 
     const data: ActionData = {
       prID: github.context.payload.pull_request?.number,
@@ -65,6 +76,9 @@ async function run(): Promise<void> {
 
     core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
 
+    if (context.eventName !== 'pull_request') {
+      return;
+    }
     await lintChangedFiles(client, data);
   } catch (err) {
     core.error(err);
