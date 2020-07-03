@@ -11,7 +11,7 @@ import {
 import { ActionData } from './types';
 import { BASE_FULL_NAME, HEAD_FULL_NAME, ISSUE_NUMBER } from './constants';
 import { getOctokitClient } from './utils/octokit';
-import { saveArtifacts, downloadAllArtifacts } from './fs';
+import { saveArtifacts, downloadAllArtifacts } from './artifacts';
 
 async function run(): Promise<void> {
   try {

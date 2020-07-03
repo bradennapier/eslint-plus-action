@@ -134,6 +134,18 @@ export type LintState = {
     | 'pending';
 };
 
+export type GitHubArtifact = {
+  id: number;
+  node_id: string;
+  name: string;
+  size_in_bytes: number;
+  url: string;
+  archive_download_url: string;
+  expired: boolean;
+  created_at: string;
+  expires_at: string;
+};
+
 export type ActionDataWithPR = Omit<ActionData, 'issueNumber'> & {
   issueNumber: number;
 };
