@@ -52,7 +52,7 @@ You provide configuration properties within your workflow by using the `with` pr
 
 |    Property   | Type | Default | Required | Description |
 | ------------- | ---- | ------- | -------- | ----------- |
-| github-token | string | none | true | Your Github token.  This is provided by default and should be set to `${{secrets.GITHUB_TOKEN}} in most cases. |
+| github-token | string | secrets.GITHUB_TOKEN | false | Your Github token. You only need to provide this if you want to use something other than `secrets.GITHUB_TOKEN` |
 | issueSummary | boolean | true | false | Should the bot provide a summary of the results as a comment? |
 | issueSummaryType | string | compact | false | Changes the PR comment to be "full" (as shown on actions page) or "compact" |
 | issueSummaryOnlyOnEvent | boolean | false | false | Only provide the issue summary comment if there are warnings or errors present? |
@@ -69,6 +69,7 @@ You provide configuration properties within your workflow by using the `with` pr
 | useEslintrc | boolean | true | false | Use eslintrc? |
 | useEslintIgnore | boolean | true | false | Use eslintignore? |
 | fix | boolean | false | false | Commit fixes when possible (UNFINISHED) |
+| npmInstall | boolean | false | false | Force run npm ci (or yarn) for you. If you do not use this option, be sure to install the project dependencies before running this action.  By default it will run if a node_modules directory is not found or this is set to true |
 
 > The official settings can always be seen by viewing the [`action.yml`](https://github.com/bradennapier/eslint-plus-action/blob/master/action.yml) schema for the action.
 
