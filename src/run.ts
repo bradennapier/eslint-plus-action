@@ -9,7 +9,13 @@ import {
   processEnumInput,
 } from './utils';
 import { ActionData } from './types';
-import { BASE_FULL_NAME, HEAD_FULL_NAME, ISSUE_NUMBER } from './constants';
+import {
+  BASE_FULL_NAME,
+  HEAD_FULL_NAME,
+  ISSUE_NUMBER,
+  OWNER,
+  REPO,
+} from './constants';
 import { getOctokitClient } from './utils/octokit';
 import { saveArtifacts, downloadAllArtifacts } from './artifacts';
 
@@ -98,7 +104,8 @@ async function run(): Promise<void> {
       },
     };
 
-    core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
+    core.info(`Github Action Data:\n ${JSON.stringify(data, null, 2)}`);
+    core.info(`Context:\n ${JSON.stringify(context, null, 2)}`);
 
     if (data.isReadOnly && data.handleForks !== true) {
       /*
@@ -114,16 +121,17 @@ async function run(): Promise<void> {
 
     const client = getOctokitClient(data);
 
-    const currentUser = await client.users.getAuthenticated().catch((err) => {
-      console.error('Error Current User: ', err);
-      return null;
-    });
-    const currentApp = await client.apps.getAuthenticated().catch((err) => {
-      console.error('Error Current App: ', err);
-      return null;
-    });
+    const workflow = await client.actions
+      .getWorkflow({
+        owner: OWNER,
+        repo: REPO,
+        workflow_id: (context.workflow as any) as number,
+      })
+      .catch(() => {
+        return null;
+      });
 
-    console.log({ currentApp, currentUser });
+    console.log(workflow);
 
     // 156673153
     if (data.eventName === 'schedule') {
