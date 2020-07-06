@@ -125,7 +125,9 @@ async function run(): Promise<void> {
       .getWorkflow({
         owner: OWNER,
         repo: REPO,
-        workflow_id: (context.workflow as any) as number,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        workflow_id: 'test.yml',
       })
       .catch(() => {
         return null;
