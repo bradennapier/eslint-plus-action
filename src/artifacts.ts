@@ -73,6 +73,15 @@ export async function downloadArtifact(
 
   console.log('Download Data: ', downloadData);
 
+  const downloadData = await client.actions.downloadArtifact({
+    owner: OWNER,
+    repo: REPO,
+    artifact_id: target.id,
+    archive_format: 'zip',
+  });
+
+  console.log('Download Data: ', downloadData);
+
   await pipeline(
     got.stream(target.archive_download_url),
     fs.createWriteStream(`/action/.artifacts/${target.name}.zip`),
