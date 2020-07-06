@@ -9,13 +9,7 @@ import {
   processEnumInput,
 } from './utils';
 import { ActionData } from './types';
-import {
-  BASE_FULL_NAME,
-  HEAD_FULL_NAME,
-  ISSUE_NUMBER,
-  OWNER,
-  REPO,
-} from './constants';
+import { BASE_FULL_NAME, HEAD_FULL_NAME, ISSUE_NUMBER } from './constants';
 import { getOctokitClient } from './utils/octokit';
 import { saveArtifacts, downloadAllArtifacts } from './artifacts';
 
@@ -105,7 +99,7 @@ async function run(): Promise<void> {
     };
 
     core.info(`Github Action Data:\n ${JSON.stringify(data, null, 2)}`);
-    core.info(`Context:\n ${JSON.stringify(context, null, 2)}`);
+    // core.info(`Context:\n ${JSON.stringify(context, null, 2)}`);
 
     if (data.isReadOnly && data.handleForks !== true) {
       /*
@@ -121,21 +115,6 @@ async function run(): Promise<void> {
 
     const client = getOctokitClient(data);
 
-    const workflow = await client.actions
-      .getWorkflow({
-        owner: OWNER,
-        repo: REPO,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        workflow_id: 'test.yml',
-      })
-      .catch(() => {
-        return null;
-      });
-
-    console.log(workflow);
-
-    // 156673153
     if (data.eventName === 'schedule') {
       console.log('Download All Artifacts');
       await downloadAllArtifacts(client);
