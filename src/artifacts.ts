@@ -64,6 +64,14 @@ export async function downloadArtifact(
   // if (!result.headers.location) {
   //   throw new Error('No URL found for artifact');
   // }
+  const downloadData = client.actions.downloadArtifact({
+    owner: OWNER,
+    repo: REPO,
+    artifact_id: target.id,
+    archive_format: 'zip',
+  });
+
+  console.log('Download Data: ', downloadData);
 
   await pipeline(
     got.stream(target.archive_download_url),

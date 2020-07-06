@@ -114,10 +114,12 @@ async function run(): Promise<void> {
 
     const client = getOctokitClient(data);
 
-    const currentUser = await client.users.getAuthenticated().catch(() => {
+    const currentUser = await client.users.getAuthenticated().catch((err) => {
+      console.error('Error Current User: ', err);
       return null;
     });
-    const currentApp = await client.apps.getAuthenticated().catch(() => {
+    const currentApp = await client.apps.getAuthenticated().catch((err) => {
+      console.error('Error Current App: ', err);
       return null;
     });
 
