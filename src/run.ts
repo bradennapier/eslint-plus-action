@@ -113,6 +113,16 @@ async function run(): Promise<void> {
     }
 
     const client = getOctokitClient(data);
+
+    const currentUser = await client.users.getAuthenticated().catch(() => {
+      return null;
+    });
+    const currentApp = await client.apps.getAuthenticated().catch(() => {
+      return null;
+    });
+
+    console.log({ currentApp, currentUser });
+
     // 156673153
     if (data.eventName === 'schedule') {
       console.log('Download All Artifacts');
