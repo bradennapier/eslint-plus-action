@@ -73,6 +73,7 @@ export type ActionData = {
   issueNumber: number | undefined;
   issueSummary: boolean;
   issueSummaryType: 'full' | 'compact';
+  issueSummaryMethod: 'edit' | 'refresh';
   issueSummaryOnlyOnEvent: boolean;
 
   includeGlob: string[];

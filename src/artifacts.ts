@@ -64,9 +64,10 @@ export async function downloadArtifact(
   // if (!result.headers.location) {
   //   throw new Error('No URL found for artifact');
   // }
+
   await pipeline(
     got.stream(target.archive_download_url),
-    fs.createWriteStream(`/actions/.artifacts/${target.name}.zip`),
+    fs.createWriteStream(`/action/.artifacts/${target.name}.zip`),
   );
 
   console.log('File Downloaded');

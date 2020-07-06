@@ -33,6 +33,11 @@ async function run(): Promise<void> {
 
       issueNumber: ISSUE_NUMBER,
       issueSummary: processBooleanInput('issueSummary', true),
+      issueSummaryMethod: processEnumInput(
+        'issueSummaryMethod',
+        ['edit', 'refresh'],
+        'edit',
+      ),
       issueSummaryType: processEnumInput(
         'issueSummaryType',
         ['full', 'compact'],

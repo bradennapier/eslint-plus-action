@@ -7,6 +7,7 @@ import {
 import { OWNER, REPO } from './constants';
 import { getResultMarkdownBody } from './utils/markdown';
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function handleIssueComment(client: Octokit, data: ActionData) {
   const { state } = data;
 
