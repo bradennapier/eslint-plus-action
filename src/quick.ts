@@ -1,11 +1,11 @@
 // import { promisify } from 'util';
 // import zlib from 'zlib';
 // import fs, { promises as fsp } from 'fs';
-import Zip from 'adm-zip';
+// import Zip from 'adm-zip';
 import { Octokit } from '@octokit/rest';
 
 // import { requestRouteMatcher } from './utils/SerializerOctokitPlugin/routeMatcher';
-import { GitHubArtifact } from './types';
+// import { GitHubArtifact } from './types';
 
 // const SERIALIZED_ROUTES = [
 //   '/repos/:owner/:repo/check-runs',

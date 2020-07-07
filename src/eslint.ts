@@ -63,7 +63,7 @@ export async function lintChangedFiles(
 
   data.state.conclusion = data.state.errorCount > 0 ? 'failure' : 'success';
 
-  const checkResult = await updateCheck({
+  await updateCheck({
     conclusion: data.state.conclusion,
     status: 'completed',
     completed_at: new Date().toISOString(),

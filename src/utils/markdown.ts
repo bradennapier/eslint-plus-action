@@ -1,9 +1,4 @@
-import {
-  LintState,
-  LintRuleSummary,
-  ChecksAnnotations,
-  ActionData,
-} from '../types';
+import { LintRuleSummary, ChecksAnnotations, ActionData } from '../types';
 import dedent from 'dedent';
 
 const CREDIT_TAG = `
