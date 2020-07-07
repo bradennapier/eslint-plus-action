@@ -9,6 +9,7 @@ import * as artifact from '@actions/artifact';
 
 import { ActionData, Octokit, GitHubArtifact } from './types';
 import { REPO, OWNER, CACHE_KEY } from './constants';
+import { unzipData } from './fs';
 
 const pipeline = promisify(stream.pipeline);
 
@@ -72,12 +73,14 @@ export async function downloadArtifact(
     archive_format: 'zip',
   });
 
-  console.log('Download Data: ', downloadData);
+  const data = await unzipData(downloadData.data as ArrayBuffer);
 
-  await pipeline(
-    got.stream(target.archive_download_url),
-    fs.createWriteStream(`/action/.artifacts/${target.name}.zip`),
-  );
+  console.log('Download Data: ', data);
+
+  // await pipeline(
+  //   got.stream(target.archive_download_url),
+  //   fs.createWriteStream(`/action/.artifacts/${target.name}.zip`),
+  // );
 
   console.log('File Downloaded');
 }

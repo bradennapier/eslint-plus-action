@@ -1,9 +1,13 @@
+import zlib from 'zlib';
+import { promisify } from 'util';
 import * as core from '@actions/core';
 
 import micromatch from 'micromatch';
 
 import { fetchFilesBatchPR, fetchFilesBatchCommit } from './api';
 import { Octokit, PrResponse, ActionData, ActionDataWithPR } from './types';
+
+const unzip = promisify(zlib.unzip);
 
 export async function filterFiles(
   files: string[],
@@ -91,4 +95,10 @@ export function getChangedFiles(
     return getFilesFromPR(client, data);
   }
   return getFilesFromCommit(client, data);
+}
+
+export async function unzipData(data: Parameters<typeof unzip>[0]) {
+  console.log('unzipping data');
+  const result = await unzip(data);
+  console.log('unzip result: ', result);
 }
