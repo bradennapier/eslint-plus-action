@@ -103,9 +103,18 @@ export function getLintSummary(data: ActionData): string {
   `;
 }
 
+const emojis: { [key: string]: string } = {
+  success: ':white_check_mark: ',
+  failure: ':x: ',
+  skipped: ':white_circle: ',
+  timed_out: ':watch: ',
+};
+
 function getLintConclusions(data: ActionData, checkUrl: string): string {
   return dedent`
-    - **Result:**       ${data.state.conclusion}
+    - **Result:**       ${emojis[data.state.conclusion] || ''}${
+    data.state.conclusion
+  }
     - **Annotations:** [${data.state.annotationCount} total](${checkUrl})
   `;
 }
