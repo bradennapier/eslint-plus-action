@@ -29,7 +29,7 @@
 
 ## Features
 
-- :tada: **Works on Forked PR's Securely!** :tada:
+- :tada: [**Works on Forked PR's Securely!**](https://github.com/bradennapier/eslint-plus-action#handle-forked-prs) :tada:
 - [Inline Annotations of ESLint Warnings & Errors](https://github.com/bradennapier/eslint-plus-action/pull/3/files)
 - Customizable ESLint options
 - [Optional summary comments on each push to the PR](https://github.com/bradennapier/eslint-plus-action/pull/3)
