@@ -17,6 +17,8 @@ export const NAME = 'ESLint Results';
 
 export const CACHE_KEY = 'eslint-cache-key';
 
+export const ARTIFACTS_BASE_DIR = '/action/.artifacts';
+
 export const SERIALIZED_ROUTES = [
   '/repos/:owner/:repo/check-runs',
   '/repos/:owner/:repo/check-runs/:check_run_id',

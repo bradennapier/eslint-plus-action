@@ -1,25 +1,22 @@
 import { promises as file } from 'fs';
+import path from 'path';
 import * as artifact from '@actions/artifact';
 
-import { ActionData, Octokit, GitHubArtifact } from './types';
-import { REPO, OWNER, CACHE_KEY } from './constants';
+import { Octokit, GitHubArtifact } from './types';
+import { REPO, OWNER, CACHE_KEY, ARTIFACTS_BASE_DIR } from './constants';
 import { unzipEntry } from './fs';
 
-export async function saveArtifacts(
-  data: ActionData,
+export async function saveArtifact(
+  filename: string,
   contents: string,
 ): Promise<void> {
-  await file.mkdir('/action/.artifacts', { recursive: true });
-  await file.writeFile(
-    `/action/.artifacts/${CACHE_KEY}-${data.issueNumber}-${data.runId}`,
-    contents,
-  );
+  const filePath = path.join(ARTIFACTS_BASE_DIR, filename);
+
+  await file.mkdir(ARTIFACTS_BASE_DIR, { recursive: true });
+  await file.writeFile(filePath, contents);
+
   const client = artifact.create();
-  await client.uploadArtifact(
-    `${CACHE_KEY}-${data.issueNumber}-${data.runId}`,
-    [`/action/.artifacts/${CACHE_KEY}-${data.issueNumber}-${data.runId}`],
-    '/action/.artifacts/',
-  );
+  await client.uploadArtifact(filename, [filePath], ARTIFACTS_BASE_DIR);
 }
 
 export async function downloadAllCachedArtifacts(

@@ -9,9 +9,14 @@ import {
   processEnumInput,
 } from './utils';
 import { ActionData } from './types';
-import { BASE_FULL_NAME, HEAD_FULL_NAME, ISSUE_NUMBER } from './constants';
+import {
+  BASE_FULL_NAME,
+  HEAD_FULL_NAME,
+  ISSUE_NUMBER,
+  CACHE_KEY,
+} from './constants';
 import { getOctokitClient } from './utils/octokit';
-import { saveArtifacts, downloadAllCachedArtifacts } from './artifacts';
+import { saveArtifact, downloadAllCachedArtifacts } from './artifacts';
 
 async function run(): Promise<void> {
   try {
@@ -124,8 +129,8 @@ async function run(): Promise<void> {
 
       if (data.isReadOnly && data.handleForks === true) {
         const artifacts: string = await client.getSerializedArtifacts();
-        // save artifacts by the sha so that
-        await saveArtifacts(data, artifacts);
+        // save artifacts by issue number so we only run on latest for that PR
+        await saveArtifact(`${CACHE_KEY}-${data.issueNumber}`, artifacts);
       }
     }
   } catch (err) {
