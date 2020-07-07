@@ -73,12 +73,13 @@ export async function downloadArtifact(
     archive_format: 'zip',
   });
 
-  const data = await unzipData(downloadData.data as ArrayBuffer);
+  console.log('Download Data: ', downloadData, downloadData.data.toString());
 
-  console.log('Download Data: ', data);
+  // const data = await unzipData(downloadData);
 
   // await pipeline(
   //   got.stream(target.archive_download_url),
+
   //   fs.createWriteStream(`/action/.artifacts/${target.name}.zip`),
   // );
 
