@@ -3,19 +3,24 @@ import {
   OctokitRequestOptions,
   RequestDescriptor,
   ActionData,
+  Octokit,
 } from '../../types';
 
 import { requestRouteMatcher } from './routeMatcher';
 import { Serializers } from './serialize';
+import { handleIssueComment } from '../../issues';
+import { updateIssueState } from '../../artifacts';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RunArtifact = { data: any; requests: Set<[string, RequestDescriptor]> };
 
 const ARTIFACTS = new Set<RunArtifact>();
 
-export const SerializerOctokitPlugin: OctokitPlugin = (
-  octokit: Parameters<OctokitPlugin>[0],
+export const SerializerOctokitPlugin = (
+  octokit: Octokit,
   clientOptions: Parameters<OctokitPlugin>[1],
-) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+): { [key: string]: (...args: any[]) => any } => {
   console.log('[SerializerOctokitPlugin] | Plugin Called: ', clientOptions);
 
   const { data }: { data: ActionData } = clientOptions.serializer;
@@ -109,27 +114,37 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
           }: Omit<RunArtifact, 'data'> & {
             data: { data: ActionData };
           } = JSON.parse(artifact);
+          try {
+            console.group(`Handling Issue ${data.issueNumber}`);
 
-          console.group(`Handling Issue ${data.issueNumber}`);
-
-          for (const [route, descriptor] of requests) {
-            console.log(
-              '[SerializerOctokitPlugin] | Deserializing A Route: ',
-              route,
-              descriptor,
-            );
-
-            const serializer = Serializers.get(route);
-
-            if (!serializer) {
-              throw new Error(
-                `[SerializerOctokitPlugin] | Attempted to deserialize a path "${route}" which is not handled`,
+            for (const [route, descriptor] of requests) {
+              console.log(
+                '[SerializerOctokitPlugin] | Deserializing A Route: ',
+                route,
+                descriptor,
               );
+
+              const serializer = Serializers.get(route);
+
+              if (!serializer) {
+                throw new Error(
+                  `[SerializerOctokitPlugin] | Attempted to deserialize a path "${route}" which is not handled`,
+                );
+              }
+
+              await serializer.deserialize(data, descriptor, octokit);
+              await handleIssueComment(octokit, data);
+              await updateIssueState(octokit, data);
+
+              console.log('Success!');
             }
-
-            await serializer.deserialize(data, descriptor, octokit);
-
-            console.log('Success!');
+          } catch (err) {
+            console.error(
+              '[ERROR] | Failed to Run on Artifact: ',
+              data.issueNumber,
+              err,
+            );
+          } finally {
             console.groupEnd();
           }
         }
