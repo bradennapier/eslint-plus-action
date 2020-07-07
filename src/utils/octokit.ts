@@ -41,9 +41,7 @@ export function getOctokitClient(data: ActionData): Octokit {
     getOctokitOptions(core.getInput('github-token', { required: true }), {
       throttle: THROTTLE_OPTIONS,
       serializer: {
-        enabled:
-          data.eventName === 'schedule' ||
-          (data.isReadOnly && data.handleForks),
+        enabled: data.eventName === 'schedule' || data.isReadOnly,
         deserialize: data.eventName === 'schedule',
         data,
         routes: SERIALIZED_ROUTES,
