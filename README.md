@@ -104,7 +104,7 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: bradennapier/eslint-plus-action@v3
 ```
 
@@ -122,8 +122,8 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v2
+    - uses: actions/checkout@v3
+    - uses: bradennapier/eslint-plus-action@v3
 ```
 
 ### Environment Variables
@@ -135,8 +135,8 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v2
+    - uses: actions/checkout@v3
+    - uses: bradennapier/eslint-plus-action@v3
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
 ```
@@ -148,8 +148,8 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v2
+    - uses: actions/checkout@v3
+    - uses: bradennapier/eslint-plus-action@v3
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
       with: 
