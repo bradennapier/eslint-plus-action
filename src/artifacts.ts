@@ -183,7 +183,12 @@ export async function getIssueState(
     return state as IssuePersistentState;
   }
 
-  return JSON.parse(artifact);
+  const state = JSON.parse(artifact);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (state as any).workflow = Object.freeze(workflowState);
+
+  return state as IssuePersistentState;
 }
 
 export async function getWorkflowState(
@@ -199,6 +204,7 @@ export async function getWorkflowState(
   );
 
   if (!artifact) {
+    console.warn('No Workflow State Found, Using Default');
     return cloneDeep(DEFAULT_WORKFLOW_STATE);
   }
 
