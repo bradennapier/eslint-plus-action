@@ -19,8 +19,6 @@ popd () {
 
 set -e
 
-echo "First Install";
-ls -alh
 if [ ! -d "./node_modules" ] || [ "$2" = 'true' ] ; then
     echo "Install Yarn"
     [ -f yarn.lock ] && yarn install --frozen-lockfile --prefer-offline

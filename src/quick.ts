@@ -65,15 +65,15 @@ async function run() {
   });
   console.log(JSON.stringify(artifacts.data, null, 2));
 
-  await Promise.all(
-    artifacts.data.artifacts.map((artifact) => {
-      return client.actions.deleteArtifact({
-        owner: 'bradennapier',
-        repo: 'eslint-plus-action',
-        artifact_id: artifact.id,
-      });
-    }),
-  );
+  // await Promise.all(
+  //   artifacts.data.artifacts.map((artifact) => {
+  //     return client.actions.deleteArtifact({
+  //       owner: 'bradennapier',
+  //       repo: 'eslint-plus-action',
+  //       artifact_id: artifact.id,
+  //     });
+  //   }),
+  // );
   // const lastArtifact: GitHubArtifact = artifacts.data.artifacts[0];
 
   // console.log(await downloadArtifact(client, lastArtifact));

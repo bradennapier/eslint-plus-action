@@ -9,7 +9,8 @@ import {
 import { requestRouteMatcher } from './routeMatcher';
 import { Serializers } from './serialize';
 import { handleIssueComment } from '../../issues';
-import { updateIssueState } from '../../artifacts';
+import { updateIssueState, deleteArtifactByName } from '../../artifacts';
+import { getIssueLintResultsName } from '../../utils';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type RunArtifact = { data: any; requests: Set<[string, RequestDescriptor]> };
@@ -143,6 +144,12 @@ export const SerializerOctokitPlugin = (
               await updateIssueState(octokit, data);
 
               console.log('Success!');
+
+              // the result artifact can now be removed
+              await deleteArtifactByName(
+                octokit,
+                getIssueLintResultsName(data),
+              );
             }
           } catch (err) {
             console.error(
