@@ -109,20 +109,26 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
           }: Omit<RunArtifact, 'data'> & {
             data: { data: ActionData };
           } = JSON.parse(artifact);
+
           console.group(`Handling Issue ${data.issueNumber}`);
+
           for (const [route, descriptor] of requests) {
             console.log(
               '[SerializerOctokitPlugin] | Deserializing A Route: ',
               route,
               descriptor,
             );
+
             const serializer = Serializers.get(route);
+
             if (!serializer) {
               throw new Error(
                 `[SerializerOctokitPlugin] | Attempted to deserialize a path "${route}" which is not handled`,
               );
             }
+
             await serializer.deserialize(data, descriptor, octokit);
+
             console.log('Success!');
             console.groupEnd();
           }
