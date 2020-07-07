@@ -7,30 +7,40 @@ import {
   processBooleanInput,
   processInput,
   processEnumInput,
+  getIssueLintResultsName,
+  isSchedulerActive,
 } from './utils';
-import { ActionData } from './types';
+import { ActionData, IssuePersistentState } from './types';
 import {
   BASE_FULL_NAME,
   HEAD_FULL_NAME,
   ISSUE_NUMBER,
-  CACHE_KEY,
+  ARTIFACT_KEY_LINT_RESULTS,
 } from './constants';
 import { getOctokitClient } from './utils/octokit';
-import { saveArtifact, downloadAllCachedArtifacts } from './artifacts';
+import {
+  saveArtifact,
+  downloadArtifacts,
+  getWorkflowState,
+  cleanupArtifactsForIssue,
+  updateWorkflowState,
+  getIssueState,
+  updateIssueState,
+} from './artifacts';
 
 async function run(): Promise<void> {
   try {
     // console.log(JSON.stringify(context, null, 2));
-    console.log(context.issue);
-    console.log(context.repo);
+    // console.log(context.issue);
+    // console.log(context.repo);
 
     const isReadOnly = BASE_FULL_NAME !== HEAD_FULL_NAME;
 
     const data: ActionData = {
       isReadOnly,
-      handleForks: true,
       sha: context.payload.pull_request?.head.sha || context.sha,
       eventName: context.eventName,
+      name: context.workflow,
 
       runId: context.runId,
       runNumber: context.runNumber,
@@ -82,6 +92,9 @@ async function run(): Promise<void> {
         checkId: 0,
       },
 
+      // we will add this in after we create the client
+      persist: {} as IssuePersistentState,
+
       eslint: {
         errorOnUnmatchedPattern: processBooleanInput(
           'errorOnUnmatchedPattern',
@@ -103,34 +116,79 @@ async function run(): Promise<void> {
       },
     };
 
-    core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
-
-    if (data.isReadOnly && data.handleForks !== true) {
-      /*
-        When an action is triggered by a pull request from a forked repo we will only have
-        read permissions available to us.  Our solution to this is to run this action on a schedule
-        which will check for artifacts, assuming it is running properly.
-
-        This process will only start running once it sees an artifact is available from the scheduling 
-        context.
-      */
-      return;
-    }
-
     const client = getOctokitClient(data);
-    // 156673153
-    if (data.eventName === 'schedule') {
-      console.log('Download All Artifacts');
-      const artifacts = await downloadAllCachedArtifacts(client);
-      console.log('Artifacts: ', artifacts);
-      await client.deserializeArtifacts(artifacts);
-    } else {
-      await lintChangedFiles(client, data);
 
-      if (data.isReadOnly && data.handleForks === true) {
-        const artifacts: string = await client.getSerializedArtifacts();
-        // save artifacts by issue number so we only run on latest for that PR
-        await saveArtifact(`${CACHE_KEY}-${data.issueNumber}`, artifacts);
+    switch (data.eventName) {
+      /*
+        When the task runs on a schedule, it is assumed that it is to parse and lint any forked PR's 
+        that have been saved to artifacts.  This will run on master and will update multiple on the
+        same run.
+      */
+      case 'schedule': {
+        const workflowState = await getWorkflowState(client, data);
+
+        const artifacts = await downloadArtifacts(client, (artifacts) =>
+          artifacts.filter((artifact) =>
+            artifact.name.startsWith(ARTIFACT_KEY_LINT_RESULTS),
+          ),
+        );
+        await client.deserializeArtifacts(artifacts);
+
+        workflowState.scheduler.lastRunAt = new Date().toISOString();
+        await updateWorkflowState(client, data, workflowState);
+
+        break;
+      }
+      /*
+        When the closed event is setup for a pr we will run cleanup tasks on the artifacts that may exist
+        for this issue.
+      */
+      case 'closed': {
+        const workflowState = await getWorkflowState(client, data);
+        if (workflowState.scheduler.lastRunAt) {
+          await cleanupArtifactsForIssue(client, data);
+        } else {
+          console.log(
+            'No Workflow Schedule Detected, This event will do nothing',
+          );
+        }
+        break;
+      }
+
+      case 'opened':
+      case 'synchronize':
+      default: {
+        data.persist = await getIssueState(client, data);
+
+        core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
+
+        /*
+          When an action is triggered by a pull request from a forked repo we will only have
+          read permissions available to us.  Our solution to this is to run this action on a schedule
+          which will check for artifacts, assuming it is running properly.
+
+          This process will only run if it has detected a scheduled task has run within the previous
+          24 hours.
+        */
+        if (data.isReadOnly && !isSchedulerActive(data)) {
+          console.warn(
+            `[WARN] | Read Only & schedule not found, we will not run on this PR.`,
+          );
+          return;
+        }
+
+        await lintChangedFiles(client, data);
+
+        if (data.isReadOnly) {
+          const artifacts: string = await client.getSerializedArtifacts();
+          await saveArtifact(getIssueLintResultsName(data), artifacts);
+        } else {
+          // we dont update state on read only changes as we do not get any
+          // data from these runs
+          await updateIssueState(data);
+        }
+
+        break;
       }
     }
   } catch (err) {

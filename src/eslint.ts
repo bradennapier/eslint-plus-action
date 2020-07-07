@@ -2,7 +2,7 @@
 import { CLIEngine } from 'eslint';
 
 import { getChangedFiles } from './fs';
-import { Octokit, ActionData, LintState } from './types';
+import { Octokit, ActionData } from './types';
 import { createCheck } from './api';
 import { processLintResults } from './utils';
 import { NAME } from './constants';

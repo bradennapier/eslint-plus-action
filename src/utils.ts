@@ -1,12 +1,38 @@
+import day from 'dayjs';
 import * as core from '@actions/core';
 import { CLIEngine } from 'eslint';
+
 import {
   ChecksAnnotations,
   ChecksUpdateParamsOutput,
-  LintState,
   ActionData,
 } from './types';
-import { GITHUB_WORKSPACE } from './constants';
+
+import {
+  GITHUB_WORKSPACE,
+  ARTIFACT_KEY_ISSUE_STATE,
+  ARTIFACT_KEY_LINT_RESULTS,
+} from './constants';
+
+export const getWorkflowStateName = (data: ActionData): string =>
+  `${ARTIFACT_KEY_ISSUE_STATE}-${data.name}`;
+
+export const getIssueStateName = (data: ActionData): string =>
+  `${ARTIFACT_KEY_ISSUE_STATE}-${data.name}-${data.issueNumber}`;
+
+export const getIssueLintResultsName = (data: ActionData): string =>
+  `${ARTIFACT_KEY_LINT_RESULTS}-${data.name}-${data.issueNumber}`;
+
+function oneDayAgo() {
+  return day().subtract(24, 'hour');
+}
+
+export function isSchedulerActive(data: ActionData): boolean {
+  return (
+    !data.persist.workflow.scheduler.lastRunAt ||
+    day(data.persist.workflow.scheduler.lastRunAt).isBefore(oneDayAgo())
+  );
+}
 
 export const processArrayInput = <D>(
   key: string,
