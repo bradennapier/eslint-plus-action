@@ -2,11 +2,15 @@ import * as core from '@actions/core';
 import { GitHub, getOctokitOptions } from '@actions/github/lib/utils';
 import { throttling } from '@octokit/plugin-throttling';
 
-import { ActionData, Octokit, OctokitOptions } from '../types';
+import { ActionData, Octokit, OctokitOptions, OctokitPlugin } from '../types';
 import { SerializerOctokitPlugin } from './SerializerOctokitPlugin';
 import { SERIALIZED_ROUTES } from '../constants';
 
-const Octokit = GitHub.plugin(SerializerOctokitPlugin, throttling);
+const Octokit = GitHub.plugin(
+  // octokit client type doesnt match up but is valid
+  (SerializerOctokitPlugin as any) as OctokitPlugin,
+  throttling,
+);
 
 const THROTTLE_OPTIONS = {
   onRateLimit: (

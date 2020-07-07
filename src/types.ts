@@ -280,5 +280,6 @@ export type ChecksUpdateParamsActions = {
 
 export type RequestDescriptor = {
   request: OctokitRequestOptions;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   result: { [key: string]: any };
 };

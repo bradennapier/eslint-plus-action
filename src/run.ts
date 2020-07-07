@@ -27,6 +27,7 @@ import {
   getIssueState,
   updateIssueState,
 } from './artifacts';
+import { handleIssueComment } from './issues';
 
 async function run(): Promise<void> {
   try {
@@ -183,9 +184,10 @@ async function run(): Promise<void> {
           const artifacts: string = await client.getSerializedArtifacts();
           await saveArtifact(getIssueLintResultsName(data), artifacts);
         } else {
+          await handleIssueComment(client, data);
           // we dont update state on read only changes as we do not get any
           // data from these runs
-          await updateIssueState(data);
+          await updateIssueState(client, data);
         }
 
         break;

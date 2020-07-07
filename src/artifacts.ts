@@ -209,15 +209,24 @@ export async function getWorkflowState(
  * Uploads the workflow state from `data.workflow` so it can be retrieved in future runs for this
  * issue.
  */
-export async function updateIssueState(data: ActionData): Promise<void> {
-  await saveArtifact(
-    getIssueStateName(data),
-    JSON.stringify({
-      ...data.persist,
-      // we dont want to include the workflow state on the issue level state
-      workflow: undefined,
-    }),
-  );
+export async function updateIssueState(
+  client: Octokit,
+  data: ActionData,
+): Promise<void> {
+  const artifacts = await getArtifactsForRepo(client);
+  const name = getIssueStateName(data);
+
+  await Promise.all([
+    deleteArtifactByName(client, name, artifacts),
+    saveArtifact(
+      getIssueStateName(data),
+      JSON.stringify({
+        ...data.persist,
+        // we dont want to include the workflow state on the issue level state
+        workflow: undefined,
+      }),
+    ),
+  ]);
 }
 
 /**

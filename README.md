@@ -97,7 +97,7 @@ on:
     - cron: '*/15 * * * *'
   pull_request:
     types:
-      - created
+      - opened
       - synchronize
       - closed
 jobs:
