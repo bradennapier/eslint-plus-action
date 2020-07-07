@@ -75,7 +75,7 @@ function getRuleSummary(summary: LintRuleSummary, data: ActionData): string {
 }
 
 export function getSortedRuleSummaries(data: ActionData): string {
-  if (data.state.rulesSummaries.size === 0) {
+  if ([...data.state.rulesSummaries].length === 0) {
     return '';
   }
   return dedent`
