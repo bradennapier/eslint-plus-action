@@ -28,10 +28,10 @@ function oneDayAgo() {
 }
 
 export function isSchedulerActive(data: ActionData): boolean {
-  return (
-    !data.persist.workflow.scheduler.lastRunAt ||
-    day(data.persist.workflow.scheduler.lastRunAt).isBefore(oneDayAgo())
-  );
+  const active = data.persist.workflow.scheduler.lastRunAt
+    ? day(data.persist.workflow.scheduler.lastRunAt).isAfter(oneDayAgo())
+    : false;
+  return active;
 }
 
 export const processArrayInput = <D>(

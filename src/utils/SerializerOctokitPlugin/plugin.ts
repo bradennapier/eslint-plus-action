@@ -47,18 +47,18 @@ export const SerializerOctokitPlugin = (
         requestOptions: OctokitRequestOptions,
       ): Promise<unknown> => {
         const isMatched = !match || match.test(requestOptions.url);
-        console.log(
-          '[SerializerOctokitPlugin] | Request | ',
-          JSON.stringify(
-            {
-              ...requestOptions,
-              request: undefined,
-              isMatched,
-            },
-            null,
-            2,
-          ),
-        );
+        // console.log(
+        //   '[SerializerOctokitPlugin] | Request | ',
+        //   JSON.stringify(
+        //     {
+        //       ...requestOptions,
+        //       request: undefined,
+        //       isMatched,
+        //     },
+        //     null,
+        //     2,
+        //   ),
+        // );
         if (isMatched) {
           const serializer = Serializers.get(requestOptions.url);
 
@@ -67,6 +67,12 @@ export const SerializerOctokitPlugin = (
               '[SerializerOctokitPlugin] | Attempted to serialize a path that is not handled',
             );
           }
+
+          // TODO - should probably serialize a small amount of data and recapture
+          // TODO - this data when needed on scheduler.
+          // we need to convert these for them to be usable
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (data.state as any).rulesSummaries = [...data.state.rulesSummaries];
 
           const serializeResult = await serializer.serialize(
             data,
