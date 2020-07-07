@@ -8,6 +8,7 @@ import { SERIALIZED_ROUTES } from '../constants';
 
 const Octokit = GitHub.plugin(
   // octokit client type doesnt match up but is valid
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (SerializerOctokitPlugin as any) as OctokitPlugin,
   throttling,
 );
