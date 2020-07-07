@@ -55,6 +55,7 @@ You provide configuration properties within your workflow by using the `with` pr
 | github-token | string | secrets.GITHUB_TOKEN | false | Your Github token. You only need to provide this if you want to use something other than `secrets.GITHUB_TOKEN` |
 | issueSummary | boolean | true | false | Should the bot provide a summary of the results as a comment? |
 | issueSummaryType | string | compact | false | Changes the PR comment to be "full" (as shown on actions page) or "compact" |
+| issueSummaryMethod | string | edit | false | When issueSummary is enabled, allows having the bot edit or refresh the comment on each new push, can be 'edit' or 'refresh' |
 | issueSummaryOnlyOnEvent | boolean | false | false | Only provide the issue summary comment if there are warnings or errors present? |
 | annotateWarnings | boolean | true | false | By setting this to "false", only errors will be annotated |
 | reportSuggestions | boolean | true | false | Report suggestions when available within the annotations? |

@@ -37,13 +37,17 @@
     "@actions/glob": "^0.1.0",
     "@octokit/plugin-throttling": "^3.3.0",
     "@octokit/webhooks": "^7.6.4",
+    "adm-zip": "^0.4.16",
     "dedent": "^0.7.0",
     "eslint-rule-documentation": "^1.0.23",
+    "got": "^11.3.0",
     "micromatch": "^4.0.2",
     "minimatch": "^3.0.4",
     "tslib": "^2.0.0"
   },
   "devDependencies": {
+    "@octokit/rest": "^18.0.0",
+    "@types/adm-zip": "^0.4.33",
     "@types/dedent": "^0.7.0",
     "@types/eslint": "^7.2.0",
     "@types/jest": "^26.0.3",

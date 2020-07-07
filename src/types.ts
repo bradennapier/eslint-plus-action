@@ -73,6 +73,7 @@ export type ActionData = {
   issueNumber: number | undefined;
   issueSummary: boolean;
   issueSummaryType: 'full' | 'compact';
+  issueSummaryMethod: 'edit' | 'refresh';
   issueSummaryOnlyOnEvent: boolean;
 
   includeGlob: string[];
@@ -132,6 +133,18 @@ export type LintState = {
     | 'timed_out'
     | 'action_required'
     | 'pending';
+};
+
+export type GitHubArtifact = {
+  id: number;
+  node_id: string;
+  name: string;
+  size_in_bytes: number;
+  url: string;
+  archive_download_url: string;
+  expired: boolean;
+  created_at: string;
+  expires_at: string;
 };
 
 export type ActionDataWithPR = Omit<ActionData, 'issueNumber'> & {

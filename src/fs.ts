@@ -1,13 +1,9 @@
-import { promises as fs } from 'fs';
-
 import * as core from '@actions/core';
-import * as artifact from '@actions/artifact';
-
+import Zip from 'adm-zip';
 import micromatch from 'micromatch';
 
 import { fetchFilesBatchPR, fetchFilesBatchCommit } from './api';
 import { Octokit, PrResponse, ActionData, ActionDataWithPR } from './types';
-import { REPO, OWNER } from './constants';
 
 export async function filterFiles(
   files: string[],
@@ -97,33 +93,12 @@ export function getChangedFiles(
   return getFilesFromCommit(client, data);
 }
 
-export async function saveArtifacts(
-  data: ActionData,
-  contents: string,
-): Promise<void> {
-  await fs.mkdir('/action/.artifacts', { recursive: true });
-  await fs.writeFile(`/action/.artifacts/${data.runId}`, contents);
-  const client = artifact.create();
-  await client.uploadArtifact(
-    String(data.runId),
-    [`/action/.artifacts/${data.runId}`],
-    '/action/.artifacts/',
-  );
-}
-
-export async function downloadAllArtifacts(client: Octokit): Promise<void> {
-  await fs.mkdir('/action/.artifacts', { recursive: true });
-  const artifactClient = artifact.create();
-  const results = await artifactClient.downloadAllArtifacts(
-    '/action/.artifacts',
-  );
-  const artifacts = await client.actions.listArtifactsForRepo({
-    owner: OWNER,
-    repo: REPO,
+/**
+ * unzip for handling artifact downloadsm, expects the name of the file to get
+ * from the zip archive
+ */
+export const unzipEntry = (entryName: string, buf: Buffer): Promise<string> =>
+  new Promise((resolve) => {
+    const zip = new Zip(buf);
+    zip.readAsTextAsync(zip.getEntry(entryName), resolve);
   });
-  console.log(
-    'Artifact Download Results: ',
-    results,
-    JSON.stringify(artifacts || {}, null, 2),
-  );
-}

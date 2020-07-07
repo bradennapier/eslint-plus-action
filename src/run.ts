@@ -11,7 +11,7 @@ import {
 import { ActionData } from './types';
 import { BASE_FULL_NAME, HEAD_FULL_NAME, ISSUE_NUMBER } from './constants';
 import { getOctokitClient } from './utils/octokit';
-import { saveArtifacts, downloadAllArtifacts } from './fs';
+import { saveArtifacts, downloadAllCachedArtifacts } from './artifacts';
 
 async function run(): Promise<void> {
   try {
@@ -33,6 +33,11 @@ async function run(): Promise<void> {
 
       issueNumber: ISSUE_NUMBER,
       issueSummary: processBooleanInput('issueSummary', true),
+      issueSummaryMethod: processEnumInput(
+        'issueSummaryMethod',
+        ['edit', 'refresh'],
+        'edit',
+      ),
       issueSummaryType: processEnumInput(
         'issueSummaryType',
         ['full', 'compact'],
@@ -111,8 +116,9 @@ async function run(): Promise<void> {
     // 156673153
     if (data.eventName === 'schedule') {
       console.log('Download All Artifacts');
-      await downloadAllArtifacts(client);
-      // await client.deserializeArtifacts();
+      const artifacts = await downloadAllCachedArtifacts(client);
+      console.log('Artifacts: ', artifacts);
+      await client.deserializeArtifacts(artifacts);
     } else {
       await lintChangedFiles(client, data);
 

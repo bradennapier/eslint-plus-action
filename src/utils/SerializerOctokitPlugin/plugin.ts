@@ -97,7 +97,7 @@ export const SerializerOctokitPlugin: OctokitPlugin = (
         ),
       );
     },
-    async deserializeArtifact(artifacts: string[]) {
+    async deserializeArtifacts(artifacts: string[]) {
       for (const serializedArtifact of artifacts) {
         const { requests }: RunArtifact = JSON.parse(serializedArtifact);
         for (const [route, descriptor] of requests) {
