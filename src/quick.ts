@@ -1,11 +1,11 @@
 // import { promisify } from 'util';
 // import zlib from 'zlib';
 // import fs, { promises as fsp } from 'fs';
-import Zip from 'adm-zip';
+// import Zip from 'adm-zip';
 import { Octokit } from '@octokit/rest';
 
 // import { requestRouteMatcher } from './utils/SerializerOctokitPlugin/routeMatcher';
-import { GitHubArtifact } from './types';
+// import { GitHubArtifact } from './types';
 
 // const SERIALIZED_ROUTES = [
 //   '/repos/:owner/:repo/check-runs',
@@ -65,15 +65,15 @@ async function run() {
   });
   console.log(JSON.stringify(artifacts.data, null, 2));
 
-  // await Promise.all(
-  //   artifacts.data.artifacts.map((artifact) => {
-  //     return client.actions.deleteArtifact({
-  //       owner: 'bradennapier',
-  //       repo: 'eslint-plus-action',
-  //       artifact_id: artifact.id,
-  //     });
-  //   }),
-  // );
+  await Promise.all(
+    artifacts.data.artifacts.map((artifact) => {
+      return client.actions.deleteArtifact({
+        owner: 'bradennapier',
+        repo: 'eslint-plus-action',
+        artifact_id: artifact.id,
+      });
+    }),
+  );
   // const lastArtifact: GitHubArtifact = artifacts.data.artifacts[0];
 
   // console.log(await downloadArtifact(client, lastArtifact));

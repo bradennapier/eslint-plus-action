@@ -1,6 +1,38 @@
 import * as github from '@actions/github';
 import { Linter } from 'eslint';
 
+export type IssuePersistentState = {
+  readonly action: {
+    /**
+     * We currently can't get this in any way but actually making a comment so we save it
+     * for future use.  This is the user that will take action when api calls are made.
+     */
+    userId: undefined | number;
+  };
+
+  readonly issue: {
+    /**
+     * The issueNumber (pr id)
+     */
+    id: undefined | number;
+    /**
+     * The issue summary id that can be used to edit or remove the issue summary
+     */
+    summaryId: undefined | number;
+  };
+
+  readonly workflow: Readonly<WorkflowPersistentState>;
+};
+
+export type WorkflowPersistentState = {
+  readonly scheduler: {
+    /**
+     * Date that the schedule was last ran, if ever.
+     */
+    lastRunAt: undefined | string;
+  };
+};
+
 type OctokitResponse<
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   T extends (...args: any[]) => any,
@@ -49,6 +81,10 @@ export type OctokitDeleteCommentResponse = OctokitResponse<
   Octokit['issues']['deleteComment']
 >;
 
+export type OctokitListArtifactsResponse = OctokitResponse<
+  Octokit['actions']['listArtifactsForRepo']
+>;
+
 export type GithubContext = typeof github['context'];
 
 export type GithubActionSchedulePayload = {
@@ -61,7 +97,7 @@ export type CheckUpdaterFn = (
 ) => Promise<OctokitUpdateChecksResponse>;
 
 export type ActionData = {
-  handleForks: boolean;
+  name: string;
   isReadOnly: boolean;
   sha: string;
   ref: string;
@@ -89,6 +125,7 @@ export type ActionData = {
   runNumber: number;
 
   state: LintState;
+  persist: IssuePersistentState;
 
   eslint: {
     rulePaths: string[];
@@ -243,5 +280,6 @@ export type ChecksUpdateParamsActions = {
 
 export type RequestDescriptor = {
   request: OctokitRequestOptions;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   result: { [key: string]: any };
 };

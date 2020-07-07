@@ -111,8 +111,6 @@ export const Serializers = new Map<string, Serializer>([
 
         request.check_run_id = createCheckResult.data.id;
 
-        console.log('Request: ', request);
-
         const result = await octokit.request(request);
 
         return result;

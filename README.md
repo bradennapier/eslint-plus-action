@@ -29,6 +29,7 @@
 
 ## Features
 
+- :tada: [**Works on Forked PR's Securely!**](https://github.com/bradennapier/eslint-plus-action#handle-forked-prs) :tada:
 - [Inline Annotations of ESLint Warnings & Errors](https://github.com/bradennapier/eslint-plus-action/pull/3/files)
 - Customizable ESLint options
 - [Optional summary comments on each push to the PR](https://github.com/bradennapier/eslint-plus-action/pull/3)
@@ -74,6 +75,40 @@ You provide configuration properties within your workflow by using the `with` pr
 
 > The official settings can always be seen by viewing the [`action.yml`](https://github.com/bradennapier/eslint-plus-action/blob/master/action.yml) schema for the action.
 
+## Handle Forked PRs
+
+GitHub Actions only have read permissions when a forked PR is opened.  However, we can work around this by setting up a scheduled job in our workflow.  This runs at your given interval and will automatically enable serialization of results as workflow artifacts when required.  Since these will **always run against our master branch**, we can safely run our results without concern that the fork has modified the workflow in any way which may be malicious.
+
+Each time the schedule job runs it will run through any new artifacts and update the PR with the results like normal.  *If a job hasn't been detected in the last 24 hours then the action will no longer save artifacts.*  This is so you do not needlessly use up your data storage.
+
+> Note that we delete the artifacts as soon as they have been processed so they will not use up your storage for very long. 
+
+> You can optionally add additional optimization by also making sure to run this action on the `[closed]` event so that we can cleanup all the artifacts when this occurs.
+
+> The scheduler will not start running until you have pushed the workflow to your main branch (`master`).  If it still does not run you can try pushing an empty commit, it seems that is sometimes required `git commit --allow-empty -m 'redeploy schedule action'`
+
+```yml
+name: "lint"
+on: 
+  # by adding a schedule task to this workflow we will automatically
+  # begin serializing read-only runs and handling them. The cron job
+  # below is set to run every 15 minutes, GitHub will ignore anything
+  # under 10 minutes and run every 10 minutes anyway.
+  schedule:
+    - cron: '*/15 * * * *'
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - closed
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: bradennapier/eslint-plus-action@v3
+```
+
 ## Examples
 
 ### Simple Workflow Example
@@ -88,8 +123,8 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v2
+    - uses: actions/checkout@v3
+    - uses: bradennapier/eslint-plus-action@v3
 ```
 
 ### Environment Variables
@@ -101,8 +136,8 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v2
+    - uses: actions/checkout@v3
+    - uses: bradennapier/eslint-plus-action@v3
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
 ```
@@ -114,8 +149,8 @@ jobs:
   eslint:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v2
+    - uses: actions/checkout@v3
+    - uses: bradennapier/eslint-plus-action@v3
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
       with: 

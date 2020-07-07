@@ -2,7 +2,7 @@
 import { CLIEngine } from 'eslint';
 
 import { getChangedFiles } from './fs';
-import { Octokit, ActionData, LintState } from './types';
+import { Octokit, ActionData } from './types';
 import { createCheck } from './api';
 import { processLintResults } from './utils';
 import { NAME } from './constants';
@@ -63,7 +63,7 @@ export async function lintChangedFiles(
 
   data.state.conclusion = data.state.errorCount > 0 ? 'failure' : 'success';
 
-  const checkResult = await updateCheck({
+  await updateCheck({
     conclusion: data.state.conclusion,
     status: 'completed',
     completed_at: new Date().toISOString(),
