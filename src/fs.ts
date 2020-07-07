@@ -1,13 +1,9 @@
-import zlib from 'zlib';
-import { promisify } from 'util';
 import * as core from '@actions/core';
-
+import Zip from 'adm-zip';
 import micromatch from 'micromatch';
 
 import { fetchFilesBatchPR, fetchFilesBatchCommit } from './api';
 import { Octokit, PrResponse, ActionData, ActionDataWithPR } from './types';
-
-const unzip = promisify(zlib.unzip);
 
 export async function filterFiles(
   files: string[],
@@ -97,8 +93,12 @@ export function getChangedFiles(
   return getFilesFromCommit(client, data);
 }
 
-export async function unzipData(data: Parameters<typeof unzip>[0]) {
-  console.log('unzipping data');
-  const result = await unzip(data);
-  console.log('unzip result: ', result);
-}
+/**
+ * unzip for handling artifact downloadsm, expects the name of the file to get
+ * from the zip archive
+ */
+export const unzipEntry = (entryName: string, buf: Buffer): Promise<string> =>
+  new Promise((resolve) => {
+    const zip = new Zip(buf);
+    zip.readAsTextAsync(zip.getEntry(entryName), resolve);
+  });

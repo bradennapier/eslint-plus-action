@@ -1,71 +1,48 @@
 import { promises as file } from 'fs';
-import fs from 'fs';
-import got from 'got';
-
-import { promisify } from 'util';
-import stream from 'stream';
-
 import * as artifact from '@actions/artifact';
 
 import { ActionData, Octokit, GitHubArtifact } from './types';
 import { REPO, OWNER, CACHE_KEY } from './constants';
-import { unzipData } from './fs';
-
-const pipeline = promisify(stream.pipeline);
+import { unzipEntry } from './fs';
 
 export async function saveArtifacts(
   data: ActionData,
   contents: string,
 ): Promise<void> {
   await file.mkdir('/action/.artifacts', { recursive: true });
-  await file.writeFile(`/action/.artifacts/${data.runId}`, contents);
+  await file.writeFile(
+    `/action/.artifacts/${CACHE_KEY}-${data.issueNumber}-${data.runId}`,
+    contents,
+  );
   const client = artifact.create();
   await client.uploadArtifact(
-    String(data.runId),
+    `${CACHE_KEY}-${data.issueNumber}-${data.runId}`,
     [`/action/.artifacts/${CACHE_KEY}-${data.issueNumber}-${data.runId}`],
     '/action/.artifacts/',
   );
 }
 
-export async function downloadAllArtifacts(client: Octokit): Promise<void> {
-  await file.mkdir('/action/.artifacts', { recursive: true });
-
-  const artifactClient = artifact.create();
-  const results = await artifactClient.downloadAllArtifacts(
-    '/action/.artifacts',
-  );
+export async function downloadAllCachedArtifacts(
+  client: Octokit,
+): Promise<string[]> {
   const artifacts = await client.actions.listArtifactsForRepo({
     owner: OWNER,
     repo: REPO,
   });
-  console.log(
-    'Artifact Download Results: ',
-    results,
-    JSON.stringify(artifacts || {}, null, 2),
-  );
-  const lastArtifact: GitHubArtifact = artifacts.data.artifacts[0];
 
-  if (lastArtifact) {
-    await downloadArtifact(client, lastArtifact);
-  }
+  const filtered = artifacts.data.artifacts.filter((artifact) =>
+    artifact.name.startsWith(CACHE_KEY),
+  );
+
+  return Promise.all(
+    filtered.map((artifact) => downloadArtifact(client, artifact)),
+  );
 }
 
 export async function downloadArtifact(
   client: Octokit,
   target: GitHubArtifact,
-): Promise<void> {
-  // const result = await client.actions.downloadArtifact({
-  //   owner: OWNER,
-  //   repo: REPO,
-  //   artifact_id: artifactId,
-  //   archive_format: 'zip',
-  // });
-  // console.log(result.headers?.location, result);
-
-  // if (!result.headers.location) {
-  //   throw new Error('No URL found for artifact');
-  // }
-
+): Promise<string> {
   const downloadData = await client.actions.downloadArtifact({
     owner: OWNER,
     repo: REPO,
@@ -73,15 +50,5 @@ export async function downloadArtifact(
     archive_format: 'zip',
   });
 
-  console.log('Download Data: ', downloadData, downloadData.data.toString());
-
-  // const data = await unzipData(downloadData);
-
-  // await pipeline(
-  //   got.stream(target.archive_download_url),
-
-  //   fs.createWriteStream(`/action/.artifacts/${target.name}.zip`),
-  // );
-
-  console.log('File Downloaded');
+  return unzipEntry(target.name, Buffer.from(downloadData.data));
 }
