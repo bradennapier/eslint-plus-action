@@ -128,6 +128,8 @@ async function run(): Promise<void> {
       case 'schedule': {
         const workflowState = await getWorkflowState(client, data);
 
+        console.log('Workflow State: ', workflowState);
+
         const artifacts = await downloadArtifacts(client, (artifacts) =>
           artifacts.filter((artifact) =>
             artifact.name.startsWith(ARTIFACT_KEY_LINT_RESULTS),
