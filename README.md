@@ -27,6 +27,22 @@
   <br />
 </div>
 
+## Dead Simple
+
+As easy as the following, and even the more advanced features are just a few extra lines.
+
+```yml
+name: "my-workflow"
+on: [pull_request]
+
+jobs:
+  eslint:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: bradennapier/eslint-plus-action@v3
+```
+
 ## Features
 
 - :tada: [**Works on Forked PR's Securely!**](https://github.com/bradennapier/eslint-plus-action#handle-forked-prs) :tada:
