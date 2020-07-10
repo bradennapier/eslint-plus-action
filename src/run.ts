@@ -130,7 +130,7 @@ async function run(): Promise<void> {
       case 'schedule': {
         const workflowState = await getWorkflowState(client, data);
 
-        console.log('Workflow State: ', workflowState);
+        // console.log('Workflow State: ', workflowState);
 
         const artifacts = await downloadArtifacts(client, (artifacts) =>
           artifacts.filter((artifact) =>
@@ -149,14 +149,7 @@ async function run(): Promise<void> {
         for this issue.
       */
       case 'closed': {
-        const workflowState = await getWorkflowState(client, data);
-        if (workflowState.scheduler.lastRunAt) {
-          await cleanupArtifactsForIssue(client, data);
-        } else {
-          console.log(
-            'No Workflow Schedule Detected, This event will do nothing',
-          );
-        }
+        await cleanupArtifactsForIssue(client, data);
         break;
       }
 
@@ -167,7 +160,7 @@ async function run(): Promise<void> {
 
         const startState = cloneDeep(data.persist);
 
-        core.info(`Data:\n ${JSON.stringify(data, null, 2)}`);
+        // core.info(`Data:\n ${JSON.stringify(data, null, 2)}`);
         // core.info(`Context:\n ${JSON.stringify(context, null, 2)}`);
         // core.info(`ENV: \n${JSON.stringify(process.env, null, 2)}`);
         /*
