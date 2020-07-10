@@ -1,4 +1,7 @@
+import { isDeepStrictEqual } from 'util';
+
 import day from 'dayjs';
+
 import * as core from '@actions/core';
 import { CLIEngine } from 'eslint';
 
@@ -6,6 +9,8 @@ import {
   ChecksAnnotations,
   ChecksUpdateParamsOutput,
   ActionData,
+  Octokit,
+  IssuePersistentState,
 } from './types';
 
 import {
@@ -13,6 +18,7 @@ import {
   ARTIFACT_KEY_ISSUE_STATE,
   ARTIFACT_KEY_LINT_RESULTS,
 } from './constants';
+import { updateIssueState, updateWorkflowState } from './artifacts';
 
 export const getWorkflowStateName = (data: ActionData): string =>
   `${ARTIFACT_KEY_ISSUE_STATE}-${data.name}`;
@@ -203,4 +209,33 @@ export function processLintResults(
   return {
     annotations,
   };
+}
+
+export async function updatePersistentStateIfNeeded(
+  client: Octokit,
+  prevState: IssuePersistentState,
+  data: ActionData,
+): Promise<void> {
+  const promises: Array<Promise<unknown>> = [];
+  if (
+    !isDeepStrictEqual(
+      {
+        ...prevState,
+        workflow: undefined,
+      },
+      {
+        ...data.persist,
+        workflow: undefined,
+      },
+    )
+  ) {
+    console.log('Issue State Updating');
+    // issue state updated
+    promises.push(updateIssueState(client, data));
+  }
+  if (!isDeepStrictEqual(prevState.workflow, data.persist.workflow)) {
+    console.log('Workflow State Updating');
+    promises.push(updateWorkflowState(client, data, data.persist.workflow));
+  }
+  await Promise.all(promises);
 }

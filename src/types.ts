@@ -21,10 +21,14 @@ export type IssuePersistentState = {
     summaryId: undefined | number;
   };
 
-  readonly workflow: Readonly<WorkflowPersistentState>;
+  readonly workflow: WorkflowPersistentState;
 };
 
 export type WorkflowPersistentState = {
+  /** 1581373 */
+  id?: number;
+  /** ".github/workflows/test.yml"  */
+  path?: string;
   readonly scheduler: {
     /**
      * Date that the schedule was last ran, if ever.
@@ -182,6 +186,19 @@ export type GitHubArtifact = {
   expired: boolean;
   created_at: string;
   expires_at: string;
+};
+
+export type GitHubWorkflow = {
+  id: number;
+  node_id: string;
+  name: string;
+  path: string;
+  state: string;
+  created_at: string;
+  updated_at: string;
+  url: string;
+  html_url: string;
+  badge_url: string;
 };
 
 export type ActionDataWithPR = Omit<ActionData, 'issueNumber'> & {

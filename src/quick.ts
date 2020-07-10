@@ -59,16 +59,25 @@ async function run() {
   //   'https://api.github.com/repos/bradennapier/eslint-plus-action/actions/artifacts',
   // );
   // console.log(JSON.parse(body));
-  const artifacts = await client.actions.listWorkflowRuns({
+  const workflows = await client.actions.listRepoWorkflows({
     owner: 'bradennapier',
     repo: 'eslint-plus-action',
-    workflow_id: 160264279,
-    // workflow_id: 1581373 as any,
-    per_page: 100,
-    // per_page: 3,
   });
 
-  console.log(JSON.stringify(artifacts.data), null, 2);
+  const currentWorkflow = workflows.data.workflows.find(
+    (workflow) => workflow.name === 'lint',
+  );
+
+  // const artifacts = await client.actions.listWorkflowRuns({
+  //   owner: 'bradennapier',
+  //   repo: 'eslint-plus-action',
+  //   workflow_id: 160264279,
+  //   // workflow_id: 1581373 as any,
+  //   per_page: 100,
+  //   // per_page: 3,
+  // });
+
+  console.log(JSON.stringify(currentWorkflow, null, 2));
 
   // const running = artifacts.data.workflow_runs.reduce((arr, workflowRun) => {
   //   if (workflowRun.status !== 'completed') {

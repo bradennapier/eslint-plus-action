@@ -8,6 +8,7 @@ import {
   OctokitCreateChecksParams,
   OctokitUpdateChecksParams,
   CheckUpdaterFn,
+  GitHubWorkflow,
 } from './types';
 import { NAME, OWNER, REPO } from './constants';
 
@@ -145,4 +146,27 @@ export async function updateCheck(
   const result = await client.checks.update(params);
 
   return result;
+}
+
+/**
+ * Since the github action context does not provide the necessary information
+ * to know what our workflow id is, we will capture it and save to our workflow level
+ * state.
+ */
+export async function getCurrentWorkflow(
+  client: Octokit,
+  data: ActionData,
+  owner: string = OWNER,
+  repo: string = REPO,
+): Promise<GitHubWorkflow | undefined> {
+  const workflows = await client.actions.listRepoWorkflows({
+    owner,
+    repo,
+  });
+
+  const currentWorkflow = workflows.data.workflows.find(
+    (workflow) => workflow.name === data.name,
+  );
+
+  return currentWorkflow;
 }
