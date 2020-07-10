@@ -164,7 +164,8 @@ async function run(): Promise<void> {
         data.persist = await getIssueState(client, data);
 
         // core.info(`Data:\n ${JSON.stringify(data, null, 2)}`);
-        core.info(`Context:\n ${JSON.stringify(context, null, 2)}`);
+        // core.info(`Context:\n ${JSON.stringify(context, null, 2)}`);
+        core.info(`ENV: \n${JSON.stringify(process.env, null, 2)}`);
         /*
           When an action is triggered by a pull request from a forked repo we will only have
           read permissions available to us.  Our solution to this is to run this action on a schedule
