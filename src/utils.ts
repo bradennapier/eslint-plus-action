@@ -217,19 +217,20 @@ export async function updatePersistentStateIfNeeded(
   data: ActionData,
 ): Promise<void> {
   const promises: Array<Promise<unknown>> = [];
-  if (
-    !isDeepStrictEqual(
-      {
-        ...prevState,
-        workflow: undefined,
-      },
-      {
-        ...data.persist,
-        workflow: undefined,
-      },
-    )
-  ) {
+  const prevIssueState = {
+    ...prevState,
+    workflow: undefined,
+  };
+  const nextIssueState = {
+    ...data.persist,
+    workflow: undefined,
+  };
+  if (!isDeepStrictEqual(prevIssueState, nextIssueState)) {
     console.log('Issue State Updating');
+    console.log(
+      JSON.stringify(prevIssueState, null, 2),
+      JSON.stringify(nextIssueState, null, 2),
+    );
     // issue state updated
     promises.push(updateIssueState(client, data));
   }
