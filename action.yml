@@ -30,6 +30,9 @@ inputs:
   issueSummaryMethod:
     description: 'When issueSummary is enabled, allows having the bot edit or refresh the comment on each new push'
     required: false
+  issueSummaryOnlyOnEvent:
+    description: 'Should an issue comment only occur when there are warnings or errors?'
+    required: false
   extensions:
     description: 'Optionally provide a comma-separated list of extensions (checks js, jsx, ts, tsx by default)'
     required: false

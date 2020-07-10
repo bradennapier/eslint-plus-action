@@ -245,6 +245,10 @@ export async function updateWorkflowStateIfNeeded(
 ): Promise<void> {
   if (!isDeepStrictEqual(prevState.workflow, data.persist.workflow)) {
     console.log('Workflow State Updating');
+    console.log(
+      JSON.stringify(prevState.workflow, null, 2),
+      JSON.stringify(data.persist.workflow, null, 2),
+    );
     await updateWorkflowState(client, data, data.persist.workflow);
   }
 }
