@@ -193,7 +193,7 @@ export function processLintResults(
           ruleUrl: ruleDocs?.url,
           ruleId,
           message: ruleDocs?.description || '',
-          level: severity === 2 ? 'failure' : 'warning',
+          level,
           annotations: [annotation],
         });
       } else {
