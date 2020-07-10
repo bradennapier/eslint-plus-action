@@ -3,6 +3,12 @@ import { OWNER, REPO } from './constants';
 import { getResultMarkdownBody } from './utils/markdown';
 
 async function removeIssueSummary(client: Octokit, data: ActionData) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  if ((data.persist as any).action?.userId) {
+    // legacy conversion
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    data.persist.workflow.userId = (data.persist as any).action?.userId;
+  }
   if (data.issueNumber && data.persist.workflow.userId) {
     const comments = await client.issues.listComments({
       owner: OWNER,
@@ -24,14 +30,34 @@ async function removeIssueSummary(client: Octokit, data: ActionData) {
       }, [] as Array<Promise<unknown>>),
     );
   } else if (data.persist.issue.summaryId) {
-    // delete previous and add new
-    await client.issues.deleteComment({
-      owner: OWNER,
-      repo: REPO,
-      comment_id: data.persist.issue.summaryId,
-    });
+    try {
+      // delete previous and add new
+      await client.issues.deleteComment({
+        owner: OWNER,
+        repo: REPO,
+        comment_id: data.persist.issue.summaryId,
+      });
+    } catch (error) {
+      // if user deleted the comment manually it will no longer exist, we dont need to report further
+    }
   }
   data.persist.issue.summaryId = undefined;
+}
+
+async function createIssueComment(
+  client: Octokit,
+  issueNumber: number,
+  data: ActionData,
+) {
+  const commentResult = await client.issues.createComment({
+    owner: OWNER,
+    repo: REPO,
+    issue_number: issueNumber,
+    body: getResultMarkdownBody(data),
+  });
+  // persist the comments id so we can edit or remove it in future
+  data.persist.issue.summaryId = commentResult.data.id;
+  data.persist.workflow.userId = commentResult.data.user.id;
 }
 
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
@@ -47,14 +73,19 @@ export async function handleIssueComment(client: Octokit, data: ActionData) {
     ) {
       if (data.persist.issue.summaryId && data.issueSummaryMethod === 'edit') {
         // delete previous and add new
-        const result = await client.issues.updateComment({
-          owner: OWNER,
-          repo: REPO,
-          comment_id: data.persist.issue.summaryId,
-          body: getResultMarkdownBody(data),
-        });
-        if (!data.persist.workflow.userId) {
-          data.persist.workflow.userId = result.data.user.id;
+        try {
+          const result = await client.issues.updateComment({
+            owner: OWNER,
+            repo: REPO,
+            comment_id: data.persist.issue.summaryId,
+            body: getResultMarkdownBody(data),
+          });
+          if (!data.persist.workflow.userId) {
+            data.persist.workflow.userId = result.data.user.id;
+          }
+        } catch (error) {
+          // if user deleted the comment manually it wont exist
+          data.persist.issue.summaryId = undefined;
         }
       } else if (
         data.persist.issue.summaryId &&
@@ -62,16 +93,9 @@ export async function handleIssueComment(client: Octokit, data: ActionData) {
       ) {
         await removeIssueSummary(client, data);
       }
+
       if (!data.persist.issue.summaryId) {
-        const commentResult = await client.issues.createComment({
-          owner: OWNER,
-          repo: REPO,
-          issue_number: data.issueNumber,
-          body: getResultMarkdownBody(data),
-        });
-        // persist the comments id so we can edit or remove it in future
-        data.persist.issue.summaryId = commentResult.data.id;
-        data.persist.workflow.userId = commentResult.data.user.id;
+        await createIssueComment(client, data.issueNumber, data);
       }
     } else if (data.issueSummaryOnlyOnEvent && data.persist.issue.summaryId) {
       await removeIssueSummary(client, data);
