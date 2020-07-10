@@ -2,6 +2,18 @@ import { Octokit, ActionData } from './types';
 import { OWNER, REPO } from './constants';
 import { getResultMarkdownBody } from './utils/markdown';
 
+async function removeIssueSummary(client: Octokit, data: ActionData) {
+  if (data.persist.issue.summaryId) {
+    // delete previous and add new
+    await client.issues.deleteComment({
+      owner: OWNER,
+      repo: REPO,
+      comment_id: data.persist.issue.summaryId,
+    });
+    data.persist.issue.summaryId = undefined;
+  }
+}
+
 // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 export async function handleIssueComment(client: Octokit, data: ActionData) {
   const { state } = data;
@@ -25,13 +37,7 @@ export async function handleIssueComment(client: Octokit, data: ActionData) {
         data.persist.issue.summaryId &&
         data.issueSummaryMethod === 'refresh'
       ) {
-        // delete previous and add new
-        await client.issues.deleteComment({
-          owner: OWNER,
-          repo: REPO,
-          comment_id: data.persist.issue.summaryId,
-        });
-        data.persist.issue.summaryId = undefined;
+        await removeIssueSummary(client, data);
       }
       if (!data.persist.issue.summaryId) {
         const commentResult = await client.issues.createComment({
@@ -44,6 +50,8 @@ export async function handleIssueComment(client: Octokit, data: ActionData) {
         data.persist.issue.summaryId = commentResult.data.id;
         data.persist.action.userId = commentResult.data.user.id;
       }
+    } else if (data.issueSummaryOnlyOnEvent && data.persist.issue.summaryId) {
+      await removeIssueSummary(client, data);
     }
   }
 }
