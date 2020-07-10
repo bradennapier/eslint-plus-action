@@ -118,7 +118,6 @@ export async function createCheck(
   };
 
   const createCheckResult = await client.checks.create(params);
-
   data.state.checkId = createCheckResult.data.id;
 
   return (nextParams: Partial<OctokitUpdateChecksParams>) =>

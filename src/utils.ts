@@ -211,7 +211,7 @@ export function processLintResults(
   };
 }
 
-export async function updatePersistentStateIfNeeded(
+export async function updateIssueStateIfNeeded(
   client: Octokit,
   prevState: IssuePersistentState,
   data: ActionData,
@@ -234,9 +234,17 @@ export async function updatePersistentStateIfNeeded(
     // issue state updated
     promises.push(updateIssueState(client, data));
   }
+
+  await Promise.all(promises);
+}
+
+export async function updateWorkflowStateIfNeeded(
+  client: Octokit,
+  prevState: IssuePersistentState,
+  data: ActionData,
+): Promise<void> {
   if (!isDeepStrictEqual(prevState.workflow, data.persist.workflow)) {
     console.log('Workflow State Updating');
-    promises.push(updateWorkflowState(client, data, data.persist.workflow));
+    await updateWorkflowState(client, data, data.persist.workflow);
   }
-  await Promise.all(promises);
 }

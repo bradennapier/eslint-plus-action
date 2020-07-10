@@ -2,14 +2,6 @@ import * as github from '@actions/github';
 import { Linter } from 'eslint';
 
 export type IssuePersistentState = {
-  readonly action: {
-    /**
-     * We currently can't get this in any way but actually making a comment so we save it
-     * for future use.  This is the user that will take action when api calls are made.
-     */
-    userId: undefined | number;
-  };
-
   readonly issue: {
     /**
      * The issueNumber (pr id)
@@ -29,6 +21,11 @@ export type WorkflowPersistentState = {
   id?: number;
   /** ".github/workflows/test.yml"  */
   path?: string;
+  /**
+   * We currently can't get this in any way but actually making a comment so we save it
+   * for future use.  This is the user that will take action when api calls are made.
+   */
+  userId: undefined | number;
   readonly scheduler: {
     /**
      * Date that the schedule was last ran, if ever.
