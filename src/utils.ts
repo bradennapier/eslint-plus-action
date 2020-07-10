@@ -1,4 +1,7 @@
+import { isDeepStrictEqual } from 'util';
+
 import day from 'dayjs';
+
 import * as core from '@actions/core';
 import { CLIEngine } from 'eslint';
 
@@ -6,6 +9,8 @@ import {
   ChecksAnnotations,
   ChecksUpdateParamsOutput,
   ActionData,
+  Octokit,
+  IssuePersistentState,
 } from './types';
 
 import {
@@ -13,6 +18,7 @@ import {
   ARTIFACT_KEY_ISSUE_STATE,
   ARTIFACT_KEY_LINT_RESULTS,
 } from './constants';
+import { updateIssueState, updateWorkflowState } from './artifacts';
 
 export const getWorkflowStateName = (data: ActionData): string =>
   `${ARTIFACT_KEY_ISSUE_STATE}-${data.name}`;
@@ -187,7 +193,7 @@ export function processLintResults(
           ruleUrl: ruleDocs?.url,
           ruleId,
           message: ruleDocs?.description || '',
-          level: severity === 2 ? 'failure' : 'warning',
+          level,
           annotations: [annotation],
         });
       } else {
@@ -203,4 +209,46 @@ export function processLintResults(
   return {
     annotations,
   };
+}
+
+export async function updateIssueStateIfNeeded(
+  client: Octokit,
+  prevState: IssuePersistentState,
+  data: ActionData,
+): Promise<void> {
+  const promises: Array<Promise<unknown>> = [];
+  const prevIssueState = {
+    ...prevState,
+    workflow: undefined,
+  };
+  const nextIssueState = {
+    ...data.persist,
+    workflow: undefined,
+  };
+  if (!isDeepStrictEqual(prevIssueState, nextIssueState)) {
+    console.log('Issue State Updating');
+    console.log(
+      JSON.stringify(prevIssueState, null, 2),
+      JSON.stringify(nextIssueState, null, 2),
+    );
+    // issue state updated
+    promises.push(updateIssueState(client, data));
+  }
+
+  await Promise.all(promises);
+}
+
+export async function updateWorkflowStateIfNeeded(
+  client: Octokit,
+  prevState: IssuePersistentState,
+  data: ActionData,
+): Promise<void> {
+  if (!isDeepStrictEqual(prevState.workflow, data.persist.workflow)) {
+    console.log('Workflow State Updating');
+    console.log(
+      JSON.stringify(prevState.workflow, null, 2),
+      JSON.stringify(data.persist.workflow, null, 2),
+    );
+    await updateWorkflowState(client, data, data.persist.workflow);
+  }
 }

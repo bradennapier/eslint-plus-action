@@ -25,6 +25,7 @@ import {
   getIssueLintResultsName,
   getWorkflowStateName,
 } from './utils';
+import { getCurrentWorkflow } from './api';
 
 type ArtifactFilter =
   | null
@@ -179,14 +180,14 @@ export async function getIssueState(
     const state = cloneDeep(DEFAULT_ISSUE_STATE);
     state.issue.id = data.issueNumber;
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    (state as any).workflow = Object.freeze(workflowState);
+    (state as any).workflow = workflowState;
     return state as IssuePersistentState;
   }
 
   const state = JSON.parse(artifact);
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (state as any).workflow = Object.freeze(workflowState);
+  (state as any).workflow = workflowState;
 
   return state as IssuePersistentState;
 }
@@ -203,12 +204,21 @@ export async function getWorkflowState(
     _artifacts || (await getArtifactsForRepo(client)),
   );
 
-  if (!artifact) {
-    console.warn('No Workflow State Found, Using Default');
-    return cloneDeep(DEFAULT_WORKFLOW_STATE);
+  const state: WorkflowPersistentState = artifact
+    ? JSON.parse(artifact)
+    : cloneDeep(DEFAULT_WORKFLOW_STATE);
+
+  if (!state.id) {
+    console.log('Getting Current Workflow Information');
+    const currentWorkflow = await getCurrentWorkflow(client, data);
+    if (currentWorkflow) {
+      state.id = currentWorkflow.id;
+      state.path = currentWorkflow.path;
+      await updateWorkflowState(client, data, state);
+    }
   }
 
-  return JSON.parse(artifact);
+  return state;
 }
 
 /**

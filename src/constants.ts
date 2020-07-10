@@ -18,9 +18,6 @@ export const DEFAULT_ISSUE_STATE: Omit<
   IssuePersistentState,
   'workflow'
 > = Object.freeze({
-  action: Object.freeze({
-    userId: undefined,
-  }),
   issue: Object.freeze({
     id: undefined,
     summaryId: undefined,
@@ -28,6 +25,9 @@ export const DEFAULT_ISSUE_STATE: Omit<
 });
 
 export const DEFAULT_WORKFLOW_STATE: WorkflowPersistentState = Object.freeze({
+  id: undefined,
+  path: undefined,
+  userId: undefined,
   scheduler: Object.freeze({
     lastRunAt: undefined,
   }),

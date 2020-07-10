@@ -9,6 +9,8 @@ import {
   processEnumInput,
   getIssueLintResultsName,
   isSchedulerActive,
+  updateWorkflowStateIfNeeded,
+  updateIssueStateIfNeeded,
 } from './utils';
 import { ActionData, IssuePersistentState } from './types';
 import {
@@ -25,9 +27,9 @@ import {
   cleanupArtifactsForIssue,
   updateWorkflowState,
   getIssueState,
-  updateIssueState,
 } from './artifacts';
 import { handleIssueComment } from './issues';
+import cloneDeep from 'lodash.clonedeep';
 
 async function run(): Promise<void> {
   try {
@@ -163,8 +165,11 @@ async function run(): Promise<void> {
       default: {
         data.persist = await getIssueState(client, data);
 
-        core.info(`Context:\n ${JSON.stringify(data, null, 2)}`);
+        const startState = cloneDeep(data.persist);
 
+        core.info(`Data:\n ${JSON.stringify(data, null, 2)}`);
+        // core.info(`Context:\n ${JSON.stringify(context, null, 2)}`);
+        // core.info(`ENV: \n${JSON.stringify(process.env, null, 2)}`);
         /*
           When an action is triggered by a pull request from a forked repo we will only have
           read permissions available to us.  Our solution to this is to run this action on a schedule
@@ -187,11 +192,11 @@ async function run(): Promise<void> {
           await saveArtifact(getIssueLintResultsName(data), artifacts);
         } else {
           await handleIssueComment(client, data);
-          // we dont update state on read only changes as we do not get any
-          // data from these runs
-          await updateIssueState(client, data);
+          await updateIssueStateIfNeeded(client, startState, data);
         }
 
+        // update workflow state if changed
+        await updateWorkflowStateIfNeeded(client, startState, data);
         break;
       }
     }
