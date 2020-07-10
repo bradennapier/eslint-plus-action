@@ -1,5 +1,5 @@
 import { Octokit, ActionData } from './types';
-import { OWNER, REPO, ARTIFACTS_BASE_DIR } from './constants';
+import { OWNER, REPO } from './constants';
 import { getResultMarkdownBody } from './utils/markdown';
 
 async function removeIssueSummary(client: Octokit, data: ActionData) {
