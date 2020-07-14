@@ -12,6 +12,8 @@ import {
   getAnnotationSuggestions,
 } from './utils/markdown';
 
+const githubAnnotationLimit = 50;
+
 export async function lintChangedFiles(
   client: Octokit,
   data: ActionData,
@@ -48,14 +50,16 @@ export async function lintChangedFiles(
         summary: `${data.state.errorCount} error(s) found so far`,
         annotations:
           data.reportSuggestions && output.annotations
-            ? output.annotations.map((annotation) => {
-                return {
-                  ...annotation,
-                  message: `${annotation.message}\n\n${getAnnotationSuggestions(
-                    annotation,
-                  )}`,
-                };
-              })
+            ? output.annotations
+                .slice(0, githubAnnotationLimit)
+                .map((annotation) => {
+                  return {
+                    ...annotation,
+                    message: `${
+                      annotation.message
+                    }\n\n${getAnnotationSuggestions(annotation)}`,
+                  };
+                })
             : output.annotations,
       },
     });
