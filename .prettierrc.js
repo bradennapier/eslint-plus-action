@@ -4,5 +4,4 @@ module.exports = {
   useTabs: false,
   singleQuote: true,
   trailingComma: 'all',
-  parser: 'typescript',
 };
