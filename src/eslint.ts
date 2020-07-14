@@ -43,26 +43,31 @@ export async function lintChangedFiles(
 
     if (output.annotations && output.annotations.length > 0) {
       const annotations = [...(output.annotations || [])];
+      const batches: Array<typeof annotations> = [];
       while (annotations.length > 0) {
-        const batch = annotations.splice(0, GITHUB_ANNOTATION_LIMIT);
-        await updateCheck({
-          status: 'in_progress',
-          output: {
-            title: NAME,
-            summary: `${data.state.errorCount} error(s) found so far`,
-            annotations: data.reportSuggestions
-              ? batch.map((annotation) => {
-                  return {
-                    ...annotation,
-                    message: `${
-                      annotation.message
-                    }\n\n${getAnnotationSuggestions(annotation)}`,
-                  };
-                })
-              : batch,
-          },
-        });
+        batches.push(annotations.splice(0, GITHUB_ANNOTATION_LIMIT));
       }
+      await Promise.all(
+        batches.map((batch) =>
+          updateCheck({
+            status: 'in_progress',
+            output: {
+              title: NAME,
+              summary: `${data.state.errorCount} error(s) found so far`,
+              annotations: data.reportSuggestions
+                ? batch.map((annotation) => {
+                    return {
+                      ...annotation,
+                      message: `${
+                        annotation.message
+                      }\n\n${getAnnotationSuggestions(annotation)}`,
+                    };
+                  })
+                : batch,
+            },
+          }),
+        ),
+      );
     }
   }
 
