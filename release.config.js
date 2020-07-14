@@ -1,7 +1,18 @@
 module.exports = {
   plugins: [
+    [
+      '@semantic-release/commit-analyzer',
+      {
+        preset: 'conventionalcommits',
+      },
+    ],
+    [
+      '@semantic-release/release-notes-generator',
+      {
+        preset: 'conventionalcommits',
+      },
+    ],
     '@semantic-release/changelog',
-    '@semantic-release/release-notes-generator',
     [
       '@google/semantic-release-replace-plugin',
       {
@@ -19,7 +30,10 @@ module.exports = {
     ],
     [
       '@semantic-release/git',
-      { assets: ['package.json', 'CHANGELOG.md', 'README.md'] },
+      {
+        assets: ['package.json', 'CHANGELOG.md', 'README.md'],
+      },
     ],
+    '@semantic-release/github',
   ],
 };
