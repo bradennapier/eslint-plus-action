@@ -7,15 +7,15 @@ module.exports = {
         replacements: [
           {
             files: ['README.md'],
-            from: '__VERSION__',
+            from: '@__VERSION__',
             // eslint-disable-next-line no-template-curly-in-string
-            to: '${nextRelease.gitTag}',
+            to: '@${nextRelease.gitTag}',
             results: [
               {
                 file: 'README.md',
                 hasChanged: true,
-                numMatches: 1,
-                numReplacements: 1,
+                // numMatches: 1,
+                // numReplacements: 1,
               },
             ],
             countMatches: true,
@@ -23,6 +23,6 @@ module.exports = {
         ],
       },
     ],
-    ['@semantic-release/git', { "assets": }
+    ['@semantic-release/git', { assets: ['README.md'] }],
   ],
 };
