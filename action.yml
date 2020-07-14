@@ -2,7 +2,7 @@ name: 'ESLint Plus'
 description: 'Runs ESLint against changed files with customization, issue commenting, and more'
 author: 'Braden R. Napier'
 branding: 
-  icon: 'alert-triangle'
+  icon: 'code'
   color: 'red'
 inputs:
   github-token:
