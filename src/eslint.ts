@@ -5,7 +5,7 @@ import { getChangedFiles } from './fs';
 import { Octokit, ActionData } from './types';
 import { createCheck } from './api';
 import { processLintResults } from './utils';
-import { NAME } from './constants';
+import { NAME, GITHUB_ANNOTATION_LIMIT } from './constants';
 import {
   getLintSummary,
   getIgnoredFilesSummary,
@@ -41,24 +41,34 @@ export async function lintChangedFiles(
 
     const output = processLintResults(eslint, results, data);
 
-    await updateCheck({
-      status: 'in_progress',
-      output: {
-        title: NAME,
-        summary: `${data.state.errorCount} error(s) found so far`,
-        annotations:
-          data.reportSuggestions && output.annotations
-            ? output.annotations.map((annotation) => {
-                return {
-                  ...annotation,
-                  message: `${annotation.message}\n\n${getAnnotationSuggestions(
-                    annotation,
-                  )}`,
-                };
-              })
-            : output.annotations,
-      },
-    });
+    if (output.annotations && output.annotations.length > 0) {
+      const annotations = [...(output.annotations || [])];
+      const batches: Array<typeof annotations> = [];
+      while (annotations.length > 0) {
+        batches.push(annotations.splice(0, GITHUB_ANNOTATION_LIMIT));
+      }
+      await Promise.all(
+        batches.map((batch) =>
+          updateCheck({
+            status: 'in_progress',
+            output: {
+              title: NAME,
+              summary: `${data.state.errorCount} error(s) found so far`,
+              annotations: data.reportSuggestions
+                ? batch.map((annotation) => {
+                    return {
+                      ...annotation,
+                      message: `${
+                        annotation.message
+                      }\n\n${getAnnotationSuggestions(annotation)}`,
+                    };
+                  })
+                : batch,
+            },
+          }),
+        ),
+      );
+    }
   }
 
   data.state.conclusion = data.state.errorCount > 0 ? 'failure' : 'success';

@@ -59,4 +59,9 @@ export const HEAD_FULL_NAME = isPullRequestPayload(context.payload)
 export const { owner: OWNER, repo: REPO, number: ISSUE_NUMBER } =
   github.context.issue || github.context.repo;
 
+/**
+ * @see https://developer.github.com/v3/checks/runs/#output-object-1
+ */
+export const GITHUB_ANNOTATION_LIMIT = 50;
+
 export const { GITHUB_WORKSPACE } = process.env;
