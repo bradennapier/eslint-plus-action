@@ -1,3 +1,10 @@
+## [3.3.0-beta.3](https://github.com/bradennapier/eslint-plus-action/compare/v3.3.0-beta.2...v3.3.0-beta.3) (2020-07-14)
+
+
+### Bug Fixes
+
+* github release notes ([2d941fd](https://github.com/bradennapier/eslint-plus-action/commit/2d941fd7d6a5adb2d5410156439ecd06cfaa371d))
+
 # [3.3.0-beta.1](https://github.com/bradennapier/eslint-plus-action/compare/v3.2.0...v3.3.0-beta.1) (2020-07-14)
 
 
