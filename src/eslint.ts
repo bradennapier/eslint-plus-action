@@ -5,14 +5,12 @@ import { getChangedFiles } from './fs';
 import { Octokit, ActionData } from './types';
 import { createCheck } from './api';
 import { processLintResults } from './utils';
-import { NAME } from './constants';
+import { NAME, GITHUB_ANNOTATION_LIMIT } from './constants';
 import {
   getLintSummary,
   getIgnoredFilesSummary,
   getAnnotationSuggestions,
 } from './utils/markdown';
-
-const githubAnnotationLimit = 50;
 
 export async function lintChangedFiles(
   client: Octokit,
@@ -43,16 +41,17 @@ export async function lintChangedFiles(
 
     const output = processLintResults(eslint, results, data);
 
-    await updateCheck({
-      status: 'in_progress',
-      output: {
-        title: NAME,
-        summary: `${data.state.errorCount} error(s) found so far`,
-        annotations:
-          data.reportSuggestions && output.annotations
-            ? output.annotations
-                .slice(0, githubAnnotationLimit)
-                .map((annotation) => {
+    if (output.annotations && output.annotations.length > 0) {
+      const annotations = [...(output.annotations || [])];
+      while (annotations.length > 0) {
+        const batch = annotations.splice(0, GITHUB_ANNOTATION_LIMIT);
+        await updateCheck({
+          status: 'in_progress',
+          output: {
+            title: NAME,
+            summary: `${data.state.errorCount} error(s) found so far`,
+            annotations: data.reportSuggestions
+              ? batch.map((annotation) => {
                   return {
                     ...annotation,
                     message: `${
@@ -60,9 +59,11 @@ export async function lintChangedFiles(
                     }\n\n${getAnnotationSuggestions(annotation)}`,
                   };
                 })
-            : output.annotations,
-      },
-    });
+              : batch,
+          },
+        });
+      }
+    }
   }
 
   data.state.conclusion = data.state.errorCount > 0 ? 'failure' : 'success';
