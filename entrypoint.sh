@@ -28,8 +28,8 @@ fi
 pushd /action
 echo "Yarn Action Install"
 
-[ -f yarn.lock ] && yarn install --frozen-lockfile --prefer-offline
-[ -f package-lock.json ] && npm install 
+[ -f yarn.lock ] && NODE_ENV=production yarn install --frozen-lockfile --prefer-offline
+[ -f package-lock.json ] && NODE_ENV=production npm install 
 popd
 
 
@@ -37,4 +37,4 @@ echo "Execute From Directory: $(pwd)"
 
 NODE_PATH=node_modules GITHUB_TOKEN="${GITHUB_TOKEN:-${1:-.}}" SOURCE_ROOT=${2:-.} node /action/lib/run.js
 
-rm -rf node_modules # cleanup to prevent some weird permission errors later on 
+# rm -rf node_modules # cleanup to prevent some weird permission errors later on 
