@@ -1,5 +1,6 @@
 module.exports = {
   plugins: [
+    '@semantic-release/commit-analyzer',
     '@semantic-release/changelog',
     [
       '@google/semantic-release-replace-plugin',
@@ -23,6 +24,6 @@ module.exports = {
         ],
       },
     ],
-    ['@semantic-release/git', { assets: ['README.md'] }],
+    '@semantic-release/git',
   ],
 };
