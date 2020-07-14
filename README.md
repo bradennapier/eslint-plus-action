@@ -27,6 +27,9 @@
   <br />
 </div>
 
+[![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
+![lint](https://github.com/bradennapier/eslint-plus-action/workflows/lint/badge.svg)
+
 ## Dead Simple
 
 As easy as the following, and even the more advanced features are just a few extra lines.
@@ -40,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.3.0
+    - uses: bradennapier/eslint-plus-action@v3.4.0-beta.1
 ```
 
 ## Features
@@ -128,7 +131,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.3.0
+    - uses: bradennapier/eslint-plus-action@v3.4.0-beta.1
 ```
 
 ## Examples
@@ -146,7 +149,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.3.0
+    - uses: bradennapier/eslint-plus-action@v3.4.0-beta.1
 ```
 
 ### Environment Variables
@@ -159,7 +162,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.3.0
+    - uses: bradennapier/eslint-plus-action@v3.4.0-beta.1
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
 ```
@@ -172,7 +175,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.3.0
+    - uses: bradennapier/eslint-plus-action@v3.4.0-beta.1
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
       with: 
