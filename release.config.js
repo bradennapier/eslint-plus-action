@@ -1,7 +1,7 @@
 module.exports = {
   plugins: [
-    '@semantic-release/commit-analyzer',
     '@semantic-release/changelog',
+    '@semantic-release/release-notes-generator',
     [
       '@google/semantic-release-replace-plugin',
       {

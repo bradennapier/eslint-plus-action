@@ -172,7 +172,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.1.0
+    - uses: bradennapier/eslint-plus-action@__VERSION__
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
       with: 
