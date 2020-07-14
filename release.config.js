@@ -11,14 +11,7 @@ module.exports = {
             from: '@__VERSION__',
             // eslint-disable-next-line no-template-curly-in-string
             to: '@${nextRelease.gitTag}',
-            results: [
-              {
-                file: 'README.md',
-                hasChanged: true,
-                // numMatches: 1,
-                // numReplacements: 1,
-              },
-            ],
+
             countMatches: true,
           },
         ],
