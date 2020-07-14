@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.1.0
+    - uses: bradennapier/eslint-plus-action@__VERSION__
 ```
 
 ## Features
@@ -97,11 +97,17 @@ GitHub Actions only have read permissions when a forked PR is opened.  However, 
 
 Each time the schedule job runs it will run through any new artifacts and update the PR with the results like normal.  *If a job hasn't been detected in the last 24 hours then the action will no longer save artifacts.*  This is so you do not needlessly use up your data storage.
 
-> Note that we delete the artifacts as soon as they have been processed so they will not use up your storage for very long. 
+> Note that we delete the artifacts as soon as they have been processed so they will
+> not use up your storage for very long.
 
-> You can optionally add additional optimization by also making sure to run this action on the `[closed]` event so that we can cleanup all the artifacts when this occurs.
+> You can optionally add additional optimization by also making sure to run this action
+> on the `[closed]` event so that we can cleanup all the artifacts when this occurs.
 
-> The scheduler will not start running until you have pushed the workflow to your main branch (`master`).  If it still does not run you can try pushing an empty commit, it seems that is sometimes required `git commit --allow-empty -m 'redeploy schedule action'`
+<br />
+
+> The scheduler will not start running until you have pushed the workflow to your main 
+> branch (`master`).  If it still does not run you can try pushing an empty commit, it 
+> seems that is sometimes required `git commit --allow-empty -m 'redeploy schedule action'`
 
 ```yml
 name: "lint"
@@ -122,7 +128,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.1.0
+    - uses: bradennapier/eslint-plus-action@__VERSION__
 ```
 
 ## Examples
@@ -140,7 +146,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.1.0
+    - uses: bradennapier/eslint-plus-action@__VERSION__
 ```
 
 ### Environment Variables
@@ -153,7 +159,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.1.0
+    - uses: bradennapier/eslint-plus-action@__VERSION__
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
 ```
