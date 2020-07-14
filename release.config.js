@@ -17,6 +17,6 @@ module.exports = {
         ],
       },
     ],
-    '@semantic-release/git',
+    ['@semantic-release/git', { assets: ['README.md'] }],
   ],
 };
