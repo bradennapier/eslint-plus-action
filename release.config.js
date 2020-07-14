@@ -12,8 +12,6 @@ module.exports = {
         preset: 'conventionalcommits',
       },
     ],
-    // creates CHANGELOG.md
-    '@semantic-release/changelog',
     [
       '@google/semantic-release-replace-plugin',
       {
@@ -40,7 +38,7 @@ module.exports = {
       // commits the changed files to git
       '@semantic-release/git',
       {
-        assets: ['package.json', 'CHANGELOG.md', 'README.md'],
+        assets: ['package.json', 'README.md'],
       },
     ],
     // creates the github release
