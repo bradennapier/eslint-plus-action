@@ -21,3 +21,4 @@ jobs:
         reportIgnoredFiles: true
         reportWarningsAsErrors: true
         issueSummaryOnlyOnEvent: true
+        errorOnUnmatchedPattern: true

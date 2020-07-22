@@ -24,6 +24,7 @@ export async function lintChangedFiles(
     errorOnUnmatchedPattern: data.eslint.errorOnUnmatchedPattern,
     fix: data.eslint.fix,
     configFile: data.eslint.configFile,
+    debug: true,
   };
 
   console.log('[ESLINT] Run With Configuration ', eslintConfig);
