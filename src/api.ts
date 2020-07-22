@@ -21,6 +21,7 @@ export async function fetchFilesBatchPR(
 ): Promise<PrResponse> {
   const { repository } = await client.graphql(
     `
+    
       query ChangedFilesBatch(
         $owner: String!
         $repo: String!
