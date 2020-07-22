@@ -18,7 +18,7 @@ jobs:
     - uses: actions/checkout@v2
     - uses: ./
       with: 
+        reportWarnings: false
         reportIgnoredFiles: true
         reportWarningsAsErrors: true
         issueSummaryOnlyOnEvent: true
-        errorOnUnmatchedPattern: true
