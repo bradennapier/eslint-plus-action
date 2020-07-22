@@ -19,6 +19,3 @@ jobs:
     - uses: ./
       with: 
         reportWarnings: false
-        reportIgnoredFiles: true
-        reportWarningsAsErrors: true
-        issueSummaryOnlyOnEvent: true
