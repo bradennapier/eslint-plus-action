@@ -18,4 +18,5 @@ jobs:
           gh pr list -R "$GITHUB_REPOSITORY" --base "$BRANCH" --state open --label "Release $BRANCH"
           if [[ "$(gh pr list -R "$GITHUB_REPOSITORY" --base "$BRANCH" --state open --label "Release $BRANCH")" == "" ]]; then
             echo "Creating PR"
+            gh pr create -R "$GITHUB_REPOSITORY" --base beta --label "Release $BRANCH" --title "Release $BRANCH"
           fi
