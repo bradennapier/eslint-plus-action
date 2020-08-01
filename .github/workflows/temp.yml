@@ -12,13 +12,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REF: ${{ env.GITHUB_BASE_REF }}
+          BASE: master
         run: |
           BRANCH=${GITHUB_REF##*/}
           echo "Check If PR exists for $BRANCH"
-          gh pr list -R "$GITHUB_REPOSITORY" --base "$BRANCH" --state open --label "Release $BRANCH"
-          if [[ "$(gh pr list -R "$GITHUB_REPOSITORY" --base "$BRANCH" --state open --label "Release $BRANCH")" == "" ]]; then
+          gh pr list -R "$GITHUB_REPOSITORY" --base "$BASE" --state open --label "Release $BRANCH"
+          if [[ "$(gh pr list -R "$GITHUB_REPOSITORY" --base "$BASE" --state open --label "Release $BRANCH")" == "" ]]; then
             echo "Creating PR repos/"${GITHUB_REPOSITORY}"/pulls"
-            RESULT=$(gh api repos/"${GITHUB_REPOSITORY}"/pulls -F head="$BRANCH" -F base='master' -F title="Release $BRANCH")
+            RESULT=$(gh api repos/"${GITHUB_REPOSITORY}"/pulls -F head="$BRANCH" -F base="$BASE" -F title="Release $BRANCH")
             PR_NUM=$(echo $RESULT | jq -r '.number')
             echo "PR Number: $PR_NUM"
             printf '{"labels": ["Release %s"]}' $BRANCH | gh api repos/"${GITHUB_REPOSITORY}"/issues/"${PR_NUM}"/labels --input -
