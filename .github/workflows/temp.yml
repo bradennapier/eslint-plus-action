@@ -21,5 +21,5 @@ jobs:
             RESULT=$(gh api repos/"${GITHUB_REPOSITORY}"/pulls -F head="$BRANCH" -F base='master' -F title="Release $BRANCH")
             PR_NUM=$(echo $RESULT | jq -r '.number')
             echo "PR Number: $PR_NUM"
-            gh api repos/"${GITHUB_REPOSITORY}"/issues/"${PR_NUM}"/labels -f labels="[\"Release $BRANCH\"]"
+            gh api repos/"${GITHUB_REPOSITORY}"/issues/"${PR_NUM}"/labels -f labels=[\"Release $BRANCH\"]
           fi
