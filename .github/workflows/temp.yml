@@ -18,5 +18,5 @@ jobs:
           gh pr list -R "$GITHUB_REPOSITORY" --base "$BRANCH" --state open --label "Release $BRANCH"
           if [[ "$(gh pr list -R "$GITHUB_REPOSITORY" --base "$BRANCH" --state open --label "Release $BRANCH")" == "" ]]; then
             echo "Creating PR"
-            gh pr create -R "$GITHUB_REPOSITORY" --base beta --label "Release $BRANCH" --title "Release $BRANCH"
+            gh api /repos/"${GITHUB_REPOSITORY}"/pulls -F owner=':owner' -F head="$BRANCH" -f base='master' -f title="Release $BRANCH"
           fi
