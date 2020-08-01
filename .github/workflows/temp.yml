@@ -17,6 +17,6 @@ jobs:
           echo "Check If PR exists for $BRANCH"
           gh pr list -R "$GITHUB_REPOSITORY" --base "$BRANCH" --state open --label "Release $BRANCH"
           if [[ "$(gh pr list -R "$GITHUB_REPOSITORY" --base "$BRANCH" --state open --label "Release $BRANCH")" == "" ]]; then
-            echo "Creating PR"
-            gh api /repos/"${GITHUB_REPOSITORY}"/pulls -F head="$BRANCH" -f base='master' -f title="Release $BRANCH"
+            echo "Creating PR repos/"${GITHUB_REPOSITORY}"/pulls"
+            gh api repos/"${GITHUB_REPOSITORY}"/pulls -F head="$BRANCH" -F base='master' -F title="Release $BRANCH"
           fi
