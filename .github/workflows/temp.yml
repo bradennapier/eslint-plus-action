@@ -15,7 +15,7 @@ jobs:
         run: |
           BRANCH=${GITHUB_REF##*/}
           echo "Check If PR exists for $BRANCH"
-          gh pr list --base "$BRANCH" --state open --label "Release $BRANCH"
-          if [[ "$(gh pr list --base "$BRANCH" --state open --label "Release $BRANCH")" == "" ]]; then
+          gh pr list -R "$GITHUB_REPOSITORY" --base "$BRANCH" --state open --label "Release $BRANCH"
+          if [[ "$(gh pr list -R "$GITHUB_REPOSITORY" --base "$BRANCH" --state open --label "Release $BRANCH")" == "" ]]; then
             echo "Creating PR"
           fi
