@@ -1,0 +1,20 @@
+name: Release
+on:
+  push:
+    branches:
+      - temp
+jobs:
+  pr:
+    name: Create Release PR
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check For PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REF: ${{ env.GITHUB_BASE_REF }}
+        run: |
+          echo "Check If PR exists for $REF"
+          gh pr list --base "$REF" --state open --label "Release $REF"
+          if [[ "$(gh pr list --base "$REF" --state open --label "Release $REF")" == "" ]]; then
+            echo "Creating PR"
+          fi
