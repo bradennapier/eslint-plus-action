@@ -13,8 +13,9 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           REF: ${{ env.GITHUB_BASE_REF }}
         run: |
-          echo "Check If PR exists for $GITHUB_REF"
-          gh pr list --base "$GITHUB_REF" --state open --label "Release $GITHUB_REF"
-          if [[ "$(gh pr list --base "$GITHUB_REF" --state open --label "Release $GITHUB_REF")" == "" ]]; then
+          BRANCH=${GITHUB_REF##*/}
+          echo "Check If PR exists for $BRANCH"
+          gh pr list --base "$BRANCH" --state open --label "Release $BRANCH"
+          if [[ "$(gh pr list --base "$BRANCH" --state open --label "Release $BRANCH")" == "" ]]; then
             echo "Creating PR"
           fi
