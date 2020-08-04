@@ -22,8 +22,6 @@ export const SerializerOctokitPlugin = (
   clientOptions: Parameters<OctokitPlugin>[1],
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
 ): { [key: string]: (...args: any[]) => any } => {
-  console.log('[SerializerOctokitPlugin] | Plugin Called: ', clientOptions);
-
   const { data }: { data: ActionData } = clientOptions.serializer;
 
   const match = clientOptions.serializer.routes
@@ -69,14 +67,18 @@ export const SerializerOctokitPlugin = (
             );
           }
 
-          // TODO - should probably serialize a small amount of data and recapture
-          // TODO - this data when needed on scheduler.
-          // we need to convert these for them to be usable
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          (data.state as any).rulesSummaries = [...data.state.rulesSummaries];
-
           const serializeResult = await serializer.serialize(
-            data,
+            {
+              ...data,
+              state: {
+                ...data.state,
+                // TODO - should probably serialize a small amount of data and recapture
+                // TODO - this data when needed on scheduler.
+                // we need to convert these for them to be usable
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                rulesSummaries: Array.from(data.state.rulesSummaries) as any,
+              },
+            },
             requestOptions,
           );
 
@@ -139,11 +141,12 @@ export const SerializerOctokitPlugin = (
                 );
               }
 
+              // this is converted with Array.from() before serializing, turn back into map
+              data.state.rulesSummaries = new Map(data.state.rulesSummaries);
+
               await serializer.deserialize(data, descriptor, octokit);
               await handleIssueComment(octokit, data);
               await updateIssueState(octokit, data);
-
-              console.log('Success!');
 
               // the result artifact can now be removed
               await deleteArtifactByName(

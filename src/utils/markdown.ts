@@ -75,13 +75,14 @@ function getRuleSummary(summary: LintRuleSummary, data: ActionData): string {
 }
 
 export function getSortedRuleSummaries(data: ActionData): string {
-  if ([...data.state.rulesSummaries].length === 0) {
+  const summaries = Array.from(data.state.rulesSummaries);
+  if (summaries.length === 0) {
     return '';
   }
   return dedent`
     ---
     
-    ${[...data.state.rulesSummaries]
+    ${summaries
       .sort(([, a], [, b]) => a.level.localeCompare(b.level))
       .map(([, summary]) => getRuleSummary(summary, data))
       .join('\n\n---\n\n')}
