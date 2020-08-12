@@ -200,6 +200,8 @@ export function processLintResults(
         rule.annotations.push(annotation);
       }
 
+      console.warn('ESLint Annotation: ', annotation);
+
       annotations.push(annotation);
     }
   }
