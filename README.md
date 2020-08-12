@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.4.0
+    - uses: bradennapier/eslint-plus-action@v3.4.1-beta.2
 ```
 
 ## Features
@@ -77,9 +77,9 @@ You provide configuration properties within your workflow by using the `with` pr
 | issueSummaryType | string | compact | false | Changes the PR comment to be "full" (as shown on actions page) or "compact" |
 | issueSummaryMethod | string | edit | false | When issueSummary is enabled, allows having the bot edit or refresh the comment on each new push, can be 'edit' or 'refresh' |
 | issueSummaryOnlyOnEvent | boolean | false | false | Only provide the issue summary comment if there are warnings or errors present? |
+| annotateWarnings | boolean | true | false | By setting this to "false", only errors will be annotated |
 | reportSuggestions | boolean | true | false | Report suggestions when available within the annotations? |
 | reportIgnoredFiles | boolean | false | false | Report a list of any ignored files? |
-| reportWarnings | boolean | true | false | By setting this to "false", only errors will be annotated |
 | reportWarningsAsErrors | boolean | false | false | Report any eslint warnings as errors? |
 | extensions | array | .js,.jsx,.ts,.tsx | false | An array of extensions to lint |
 | includeGlob | array | \*\*/\* | false | Optional array of globs to include from the changed files list |
@@ -131,7 +131,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.4.0
+    - uses: bradennapier/eslint-plus-action@v3.4.1-beta.2
 ```
 
 ## Examples
@@ -149,7 +149,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.4.0
+    - uses: bradennapier/eslint-plus-action@v3.4.1-beta.2
 ```
 
 ### Environment Variables
@@ -162,7 +162,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.4.0
+    - uses: bradennapier/eslint-plus-action@v3.4.1-beta.2
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
 ```
@@ -175,7 +175,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: bradennapier/eslint-plus-action@v3.4.0
+    - uses: bradennapier/eslint-plus-action@v3.4.1-beta.2
       env:
         NPM_TOKEN: ${{secrets.NPM_TOKEN}}
       with: 
