@@ -35,7 +35,7 @@ export const DEFAULT_WORKFLOW_STATE: WorkflowPersistentState = Object.freeze({
 
 export const NAME = 'ESLint Results';
 
-export const ARTIFACT_KEY = 'eslint-cache-key';
+export const ARTIFACT_KEY = 'eslint-v8-cache-key';
 
 export const ARTIFACT_KEY_LINT_RESULTS = `${ARTIFACT_KEY}-lint-results`;
 export const ARTIFACT_KEY_ISSUE_STATE = `${ARTIFACT_KEY}-state`;
