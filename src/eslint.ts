@@ -1,5 +1,5 @@
 // import * as core from '@actions/core';
-import { CLIEngine } from 'eslint';
+import { ESLint } from 'eslint';
 
 import { getChangedFiles } from './fs';
 import { Octokit, ActionData } from './types';
@@ -23,12 +23,12 @@ export async function lintChangedFiles(
     rulePaths: data.eslint.rulePaths,
     errorOnUnmatchedPattern: data.eslint.errorOnUnmatchedPattern,
     fix: data.eslint.fix,
-    configFile: data.eslint.configFile,
+    overrideConfigFile: data.eslint.configFile,
   };
 
   console.log('[ESLINT] Run With Configuration ', eslintConfig);
 
-  const eslint = new CLIEngine(eslintConfig);
+  const eslint = new ESLint(eslintConfig);
 
   const updateCheck = await createCheck(client, data);
 
@@ -37,7 +37,7 @@ export async function lintChangedFiles(
       break;
     }
 
-    const results = await eslint.executeOnFiles(changed);
+    const results = await eslint.lintFiles(changed);
 
     const output = processLintResults(eslint, results, data);
 

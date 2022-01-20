@@ -3,7 +3,7 @@ import { isDeepStrictEqual } from 'util';
 import day from 'dayjs';
 
 import * as core from '@actions/core';
-import { CLIEngine } from 'eslint';
+import { ESLint } from 'eslint';
 
 import {
   ChecksAnnotations,
@@ -124,25 +124,25 @@ export const processInput = <D>(key: string, defaultValue?: D): string | D => {
 };
 
 export function processLintResults(
-  engine: CLIEngine,
-  report: CLIEngine.LintReport,
+  engine: ESLint,
+  reports: ESLint.LintResult[],
   data: ActionData,
 ): {
   annotations: ChecksUpdateParamsOutput['annotations'];
 } {
   const { state } = data;
-  const { results } = report;
   const annotations: ChecksAnnotations[] = [];
 
-  state.errorCount += report.errorCount;
-  state.warningCount += report.warningCount;
-  state.fixableErrorCount += report.fixableErrorCount;
-  state.fixableWarningCount += report.fixableWarningCount;
+  for (const report of reports) {
+    const { messages, filePath } = report;
 
-  for (const result of results) {
-    const { messages } = result;
-    const filePath = result.filePath.replace(`${GITHUB_WORKSPACE}/`, '');
-    core.debug(`----- Results for File: ${filePath} -----`);
+    state.errorCount += report.errorCount;
+    state.warningCount += report.warningCount;
+    state.fixableErrorCount += report.fixableErrorCount;
+    state.fixableWarningCount += report.fixableWarningCount;
+
+    const adjustedFilepath = filePath.replace(`${GITHUB_WORKSPACE}/`, '');
+    core.debug(`----- Results for File: ${adjustedFilepath} -----`);
 
     for (const lintMessage of messages) {
       const {
@@ -164,7 +164,7 @@ export function processLintResults(
         if (message.startsWith('File ignored')) {
           state.warningCount -= 1;
           state.ignoredCount += 1;
-          state.ignoredFiles.push(filePath);
+          state.ignoredFiles.push(adjustedFilepath);
         }
         continue;
       }
@@ -177,7 +177,7 @@ export function processLintResults(
       }
 
       const annotation: ChecksAnnotations = {
-        path: filePath,
+        path: adjustedFilepath,
         start_line: line,
         end_line: line,
         annotation_level: level,
@@ -188,7 +188,7 @@ export function processLintResults(
 
       const rule = state.rulesSummaries.get(ruleId);
       if (!rule) {
-        const ruleDocs = engine.getRules().get(ruleId)?.meta?.docs;
+        const ruleDocs = engine.getRulesMetaForResults(reports)[ruleId]?.docs;
         state.rulesSummaries.set(ruleId, {
           ruleUrl: ruleDocs?.url,
           ruleId,
