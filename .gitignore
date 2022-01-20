@@ -99,3 +99,4 @@ __tests__/runner/*
 # dont ignore lib files so we dont need to build in action
 # lib/**/*
 README.md
+.idea/
