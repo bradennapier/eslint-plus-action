@@ -23,7 +23,7 @@ export async function lintChangedFiles(
     rulePaths: data.eslint.rulePaths,
     errorOnUnmatchedPattern: data.eslint.errorOnUnmatchedPattern,
     fix: data.eslint.fix,
-    configFile: data.eslint.configFile,
+    overrideConfigFile: data.eslint.configFile,
   };
 
   console.log('[ESLINT] Run With Configuration ', eslintConfig);

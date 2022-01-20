@@ -145,14 +145,12 @@ export async function downloadArtifact(
   client: Octokit,
   target: GitHubArtifact,
 ): Promise<string> {
-  const artifactTarget = {
+  const downloadData = await client.actions.downloadArtifact({
     owner: OWNER,
     repo: REPO,
     artifact_id: target.id,
     archive_format: 'zip',
-  };
-  console.log(artifactTarget);
-  const downloadData = await client.actions.downloadArtifact(artifactTarget);
+  });
 
   return unzipEntry(target.name, Buffer.from(downloadData.data));
 }
