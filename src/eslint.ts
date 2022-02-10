@@ -71,7 +71,12 @@ export async function lintChangedFiles(
     }
   }
 
-  data.state.conclusion = data.state.errorCount > 0 ? 'failure' : 'success';
+  data.state.conclusion =
+    data.state.errorCount > 0 ||
+    !data.reportWarningsAsErrors ||
+    data.state.warningCount > 0
+      ? 'failure'
+      : 'success';
 
   await updateCheck({
     conclusion: data.state.conclusion,
